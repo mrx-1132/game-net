@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>GameNet Remote</title>
 <meta name="theme-color" content="#0F1219" id="themeColor">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="GameNet">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
 <style>
 /* تم تیره (پیش‌فرض) */
 :root{--bg:#0B0E14;--card:#141923;--line:#ffffff14;--tx:#F7FAFC;--mu:#8b95a7;--bl:#2563eb;--gr:#059669;--rd:#dc2626;--am:#d97706;
@@ -43,6 +49,7 @@ input,select{width:100%;padding:12px;border-radius:12px;border:1px solid var(--l
 .step{display:flex;align-items:center;gap:10px}.step button{width:38px;height:38px;padding:0;font-size:20px;background:var(--soft);color:var(--tx)}.step span{min-width:24px;text-align:center;font-weight:800}
 .pk{max-height:42vh;overflow:auto;margin:8px 0}
 .sum{display:flex;justify-content:space-between;font-size:14px;padding:3px 0}.sum.big{font-size:17px;font-weight:800;border-top:1px solid var(--line);margin-top:6px;padding-top:8px}
+.tip{background:var(--warn-bg);color:var(--tx);border-radius:14px;padding:12px;font-size:13px;line-height:1.9;margin-bottom:10px}.tip b{color:var(--warn-tx)}
 .chk{display:flex;align-items:center;gap:8px;margin:10px 0;font-size:14px}.chk input{width:auto;margin:0}
 #themeBtn{background:var(--soft);color:var(--tx);padding:6px 10px;border-radius:10px;font-size:15px;margin-inline-start:10px}
 #toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(24px + env(safe-area-inset-bottom));background:#065f46;color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;font-weight:700;z-index:50;display:none;max-width:90%;text-align:center}
@@ -54,6 +61,72 @@ input,select{width:100%;padding:12px;border-radius:12px;border:1px solid var(--l
 <div id="toast"></div>
 <script>
 const LS = { url: 'gn_url', token: 'gn_token', name: 'gn_dev', theme: 'gn_theme' };
+
+// ---------- حالت اجرا ----------
+// NATIVE: اپ اندروید (APK)    WEB: باز شده از خود کامپیوتر (آیفون / هر مرورگر)
+const NATIVE = !!(window.Capacitor && (window.Capacitor.isNativePlatform ? window.Capacitor.isNativePlatform() : true));
+const WEB = !NATIVE && /^https?:$/.test(location.protocol);
+const IOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const STANDALONE = navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
+const CONFIRM_LABEL = NATIVE ? 'تأیید با اثر انگشت' : 'تأیید با رمز';
+const apiBase = () => (WEB ? location.origin : localStorage.getItem(LS.url));
+
+// ---------- رمز تأیید (نسخه وب؛ جای اثر انگشت) ----------
+// فقط روی همین گوشی، به صورت هش با salt ذخیره می‌شود. ۵ اشتباه = ۱ دقیقه قفل، ۱۰ اشتباه = لغو جفت‌سازی.
+const PIN_KEY = 'gn_pin', PIN_FAIL = 'gn_pin_fail';
+function sha256(ascii){function r(v,a){return(v>>>a)|(v<<(32-a))}var mp=Math.pow,mw=mp(2,32),res='',w=[],abl=ascii.length*8,h=sha256.h=sha256.h||[],k=sha256.k=sha256.k||[],pl=k.length,ic={},i,j;for(var c=2;pl<64;c++){if(!ic[c]){for(i=0;i<313;i+=c)ic[i]=c;h[pl]=(mp(c,.5)*mw)|0;k[pl++]=(mp(c,1/3)*mw)|0}}ascii+='\x80';while(ascii.length%64-56)ascii+='\x00';for(i=0;i<ascii.length;i++){j=ascii.charCodeAt(i);if(j>>8)return;w[i>>2]|=j<<((3-i)%4)*8}w[w.length]=((abl/mw)|0);w[w.length]=(abl);for(j=0;j<w.length;){var W=w.slice(j,j+=16),oh=h;h=h.slice(0,8);for(i=0;i<64;i++){var w15=W[i-15],w2=W[i-2],a=h[0],e=h[4],t1=h[7]+(r(e,6)^r(e,11)^r(e,25))+((e&h[5])^((~e)&h[6]))+k[i]+(W[i]=(i<16)?W[i]:(W[i-16]+(r(w15,7)^r(w15,18)^(w15>>>3))+W[i-7]+(r(w2,17)^r(w2,19)^(w2>>>10)))|0),t2=(r(a,2)^r(a,13)^r(a,22))+((a&h[1])^(a&h[2])^(h[1]&h[2]));h=[(t1+t2)|0].concat(h);h[4]=(h[4]+t1)|0}for(i=0;i<8;i++)h[i]=(h[i]+oh[i])|0}for(i=0;i<8;i++){for(j=3;j+1;j--){var b=(h[i]>>(j*8))&255;res+=((b<16)?0:'')+b.toString(16)}}return res}
+function pinHash(pin, salt) { let x = salt + ':' + pin; for (let i = 0; i < 3000; i++) x = sha256(salt + x); return x; }
+function setPin(pin) {
+  const salt = Array.from({ length: 16 }, () => Math.floor(Math.random() * 256).toString(16).padStart(2, '0')).join('');
+  localStorage.setItem(PIN_KEY, salt + '$' + pinHash(pin, salt));
+}
+function checkPin(pin) {
+  const [salt, hash] = (localStorage.getItem(PIN_KEY) || '').split('$');
+  return !!salt && pinHash(pin, salt) === hash;
+}
+function pinFails() { try { return JSON.parse(localStorage.getItem(PIN_FAIL)) || { n: 0, until: 0 }; } catch { return { n: 0, until: 0 }; } }
+function pinLockLeft() { return Math.max(0, Math.ceil((pinFails().until - Date.now()) / 1000)); }
+
+function pinPrompt(reason) {
+  return new Promise((resolve, reject) => {
+    const has = !!localStorage.getItem(PIN_KEY);
+    const box = document.createElement('div');
+    box.className = 'sheet'; box.style.zIndex = 40;
+    box.innerHTML = `<div><div class="name">${has ? 'تأیید با رمز' : 'تعیین رمز تأیید'}</div>
+      <div class="mu" style="margin:6px 0 8px">${esc(reason)}</div>
+      ${has ? '' : '<div class="mu" style="margin-bottom:6px">این رمز فقط روی همین گوشی ذخیره می‌شود و برای تسویه، نسیه و پرداخت پرسیده می‌شود.</div>'}
+      <input id="p1" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off" placeholder="رمز ۴ تا ۶ رقمی">
+      ${has ? '' : '<input id="p2" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off" placeholder="تکرار رمز">'}
+      <div class="err" id="perr"></div>
+      <div class="row"><button class="s" id="pc" style="flex:1">انصراف</button><button id="po" style="flex:2">تأیید</button></div>
+      ${has ? '<button class="s" id="pf" style="width:100%;margin-top:8px;font-size:12px">رمز را فراموش کرده‌ام</button>' : ''}</div>`;
+    document.body.appendChild(box);
+    const q = (x) => box.querySelector(x);
+    const finish = (ok, msg) => { box.remove(); ok ? resolve(true) : reject(new Error(msg)); };
+    setTimeout(() => q('#p1').focus(), 50);
+    q('#pc').onclick = () => finish(false, 'تأیید لغو شد');
+    if (has) q('#pf').onclick = () => {
+      if (!confirm('برای ساختن رمز جدید، گوشی باید دوباره با کد کامپیوتر جفت شود. ادامه می‌دهید؟')) return;
+      box.remove(); closeSheet(); unpair(); reject(new Error('جفت‌سازی دوباره لازم است'));
+    };
+    q('#po').onclick = () => {
+      const v = toLatin(q('#p1').value);
+      if (!/^\d{4,6}$/.test(v)) return (q('#perr').textContent = 'رمز باید ۴ تا ۶ رقم باشد');
+      if (!has) {
+        if (v !== toLatin(q('#p2').value)) return (q('#perr').textContent = 'تکرار رمز یکی نیست');
+        setPin(v); return finish(true);
+      }
+      const left = pinLockLeft();
+      if (left) return (q('#perr').textContent = `تلاش زیاد؛ ${fa(left)} ثانیه صبر کنید`);
+      if (checkPin(v)) { localStorage.removeItem(PIN_FAIL); return finish(true); }
+      const f = pinFails(); f.n += 1;
+      if (f.n >= 10) { box.remove(); closeSheet(); unpair(); return reject(new Error('رمز ۱۰ بار اشتباه وارد شد؛ دسترسی این گوشی حذف شد')); }
+      if (f.n % 5 === 0) f.until = Date.now() + 60000;
+      localStorage.setItem(PIN_FAIL, JSON.stringify(f));
+      q('#perr').textContent = 'رمز اشتباه است'; q('#p1').value = '';
+    };
+  });
+}
 
 // ---------- Theme: auto (مثل گوشی) / light / dark ----------
 const THEMES = ['auto', 'light', 'dark'];
@@ -98,7 +171,7 @@ function toast(msg, bad) {
 }
 
 async function api(path, opts = {}) {
-  const base = localStorage.getItem(LS.url), token = localStorage.getItem(LS.token);
+  const base = apiBase(), token = localStorage.getItem(LS.token);
   const ctrl = new AbortController(), t = setTimeout(() => ctrl.abort(), 8000);
   try {
     const r = await fetch(base + path, {
@@ -117,8 +190,9 @@ async function api(path, opts = {}) {
 
 async function bio(reason) {
   const cap = window.Capacitor;
-  const NB = cap && cap.Plugins && cap.Plugins.NativeBiometric;
-  if (!cap) return confirm(reason + '\n(حالت تست مرورگر — اثر انگشت واقعی فقط در APK)'); // فقط برای تست روی PC
+  if (WEB) return pinPrompt(reason);
+  if (!NATIVE) { if (confirm(reason + '\n(حالت تست — اثر انگشت واقعی فقط در APK)')) return true; throw new Error('تأیید لغو شد'); }
+  const NB = cap.Plugins && cap.Plugins.NativeBiometric;
   if (!NB) throw new Error('افزونه اثر انگشت نصب نشده است');
   const a = await NB.isAvailable();
   if (!a.isAvailable) throw new Error('اثر انگشت یا قفل صفحه روی این گوشی فعال نیست');
@@ -126,31 +200,45 @@ async function bio(reason) {
   return true;
 }
 
-function unpair() { localStorage.removeItem(LS.token); state = null; render(); }
+function unpair() { localStorage.removeItem(LS.token); localStorage.removeItem(PIN_KEY); localStorage.removeItem(PIN_FAIL); state = null; render(); }
 function openSheet(html) { $('#sheet').innerHTML = `<div class="sheet"><div>${html}</div></div>`; }
 function closeSheet() { $('#sheet').innerHTML = ''; }
 
 // ---------- Setup ----------
+function installTip() {
+  if (!WEB || !IOS || STANDALONE) return '';
+  return `<div class="tip"><b>نصب روی آیفون:</b> در Safari دکمه اشتراک‌گذاری (مربع با فلش رو به بالا) پایین صفحه را بزنید و
+  <b>Add to Home Screen</b> را انتخاب کنید. بعد برنامه را از صفحه اصلی گوشی باز کنید و آن‌جا جفت‌سازی کنید
+  (آیفون اطلاعات Safari و برنامه نصب‌شده را جدا نگه می‌دارد).</div>`;
+}
+
 function renderSetup(msg = '') {
-  $('#app').innerHTML = `<main><div class="card"><div class="row" style="margin-bottom:8px"><div class="name">اتصال به برنامه گیم‌نت</div><button id="themeBtn" type="button" onclick="cycleTheme()"></button></div>
+  const params = new URLSearchParams(location.search);
+  const preCode = WEB ? (params.get('code') || '').replace(/\D/g, '').slice(0, 6) : '';
+  $('#app').innerHTML = `<main>${installTip()}<div class="card"><div class="row" style="margin-bottom:8px"><div class="name">اتصال به برنامه گیم‌نت</div><button id="themeBtn" type="button" onclick="cycleTheme()"></button></div>
   <div class="mu">روی کامپیوتر: تنظیمات ← «ریموت موبایل» ← ساخت کد جفت‌سازی.</div>
-  <input id="host" dir="ltr" placeholder="192.168.1.10:4747" value="${esc((localStorage.getItem(LS.url) || '').replace('http://', ''))}">
-  <input id="code" dir="ltr" inputmode="numeric" maxlength="6" placeholder="کد ۶ رقمی">
-  <input id="dev" placeholder="نام این گوشی" value="${esc(localStorage.getItem(LS.name) || '')}">
+  ${WEB
+    ? `<div class="mu" style="margin:8px 0">کامپیوتر: <span dir="ltr">${esc(location.host)}</span></div>`
+    : `<input id="host" dir="ltr" placeholder="192.168.1.10:4747" value="${esc((localStorage.getItem(LS.url) || '').replace('http://', ''))}">`}
+  <input id="code" dir="ltr" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="کد ۶ رقمی" value="${esc(preCode)}">
+  <input id="dev" placeholder="نام این گوشی" value="${esc(localStorage.getItem(LS.name) || (IOS ? 'آیفون' : ''))}">
   <div class="err" id="err">${esc(msg)}</div>
   <button id="go" style="width:100%">اتصال</button></div></main>`;
   applyTheme();
   $('#go').onclick = async () => {
-    let host = $('#host').value.trim().replace(/^https?:\/\//, '').replace(/\/+$/, '');
-    if (!host) return ($('#err').textContent = 'آدرس را وارد کنید');
-    if (!/:\d+$/.test(host)) host += ':4747';
-    localStorage.setItem(LS.url, 'http://' + host);
+    if (!WEB) {
+      let host = $('#host').value.trim().replace(/^https?:\/\//, '').replace(/\/+$/, '');
+      if (!host) return ($('#err').textContent = 'آدرس را وارد کنید');
+      if (!/:\d+$/.test(host)) host += ':4747';
+      localStorage.setItem(LS.url, 'http://' + host);
+    }
     const name = $('#dev').value.trim() || 'گوشی';
     localStorage.setItem(LS.name, name);
     $('#go').disabled = true; $('#err').textContent = '';
     try {
       const j = await api('/api/pair', { method: 'POST', body: JSON.stringify({ code: toLatin($('#code').value), deviceName: name }) });
       localStorage.setItem(LS.token, j.token);
+      if (WEB && location.search) history.replaceState(null, '', location.pathname);
       render(); poll();
     } catch (e) { $('#err').textContent = e.message; $('#go').disabled = false; }
   };
@@ -363,7 +451,7 @@ function openSettle(id) {
   <label class="chk"><input type="checkbox" id="rc"> رُند کردن به نزدیک‌ترین هزار تومان</label>
   <div id="pb"></div>
   <div class="mu">مبلغ نهایی لحظه‌ی ثبت روی کامپیوتر محاسبه می‌شود.</div>
-  <div class="err" id="err"></div><div class="row"><button class="s" id="x" style="flex:1">انصراف</button><button class="r" id="ok" style="flex:2">تأیید با اثر انگشت</button></div>`);
+  <div class="err" id="err"></div><div class="row"><button class="s" id="x" style="flex:1">انصراف</button><button class="r" id="ok" style="flex:2">${CONFIRM_LABEL}</button></div>`);
   const calc = () => {
     const total = m.totalCost || 0, off = round ? Math.round(total / 1000) * 1000 - total : 0;
     const net = Math.max(0, Math.max(0, total + off) - (m.partialPaid || 0));
@@ -381,7 +469,7 @@ function openSettle(id) {
       await bio(`تسویه ${s.name} — ${money(net)}`);
       const r = await send({ type: 'settle', systemId: id, round, ...p });
       closeSheet(); toast(r.message || 'تسویه شد');
-    } catch (e) { $('#err').textContent = e.message || 'تأیید اثر انگشت انجام نشد'; $('#ok').disabled = false; }
+    } catch (e) { $('#err').textContent = e.message || 'تأیید انجام نشد'; $('#ok').disabled = false; }
   };
 }
 
@@ -404,7 +492,7 @@ function renderSale() {
       if (p.method === 'debt') await bio(`فروش نسیه بوفه — ${money(total)}`);
       const r = await send({ type: 'directSale', items: cartItems(saleCart), customerName: $('#cn').value, ...p });
       toast(r.message || 'فروش ثبت شد'); saleCart = {}; render();
-    } catch (e) { $('#err').textContent = e.message || 'تأیید اثر انگشت انجام نشد'; upd(); }
+    } catch (e) { $('#err').textContent = e.message || 'تأیید انجام نشد'; upd(); }
   };
 }
 
@@ -415,7 +503,7 @@ function openLedger(id) {
   <div class="seg" id="k"><button data-k="debt_added" class="on">ثبت بدهی</button><button data-k="payment_made">ثبت پرداخت</button></div>
   <input id="amt" inputmode="numeric" placeholder="مبلغ">
   <input id="ds" placeholder="توضیحات (اختیاری)">
-  <div class="err" id="err"></div><div class="row"><button class="s" id="x" style="flex:1">انصراف</button><button id="ok" style="flex:2">تأیید با اثر انگشت</button></div>`);
+  <div class="err" id="err"></div><div class="row"><button class="s" id="x" style="flex:1">انصراف</button><button id="ok" style="flex:2">${CONFIRM_LABEL}</button></div>`);
   $('#k').querySelectorAll('button').forEach((b) => (b.onclick = () => { kind = b.dataset.k; $('#k').querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === b)); }));
   $('#x').onclick = closeSheet;
   $('#ok').onclick = async () => {
@@ -426,7 +514,7 @@ function openLedger(id) {
       await bio(`${kind === 'debt_added' ? 'ثبت بدهی' : 'ثبت پرداخت'} ${fa(amount)} برای ${d.name}`);
       await send({ type: 'ledger', debtorId: id, kind, amount, description: $('#ds').value });
       closeSheet(); toast('ثبت شد');
-    } catch (e) { $('#err').textContent = e.message || 'تأیید اثر انگشت انجام نشد'; $('#ok').disabled = false; }
+    } catch (e) { $('#err').textContent = e.message || 'تأیید انجام نشد'; $('#ok').disabled = false; }
   };
 }
 

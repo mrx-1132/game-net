@@ -127,6 +127,40 @@ function startRemoteServer(getWindow, { isAllowed = () => true } = {}) {
   api.use(cors()); // احراز هویت با Bearer token است، نه کوکی
   api.use(express.json({ limit: '10kb' }));
 
+  api.use((_req, res, next) => {
+    res.set('X-Content-Type-Options', 'nosniff');
+    res.set('X-Frame-Options', 'DENY');
+    res.set('Referrer-Policy', 'no-referrer');
+    next();
+  });
+
+  // نسخه وب ریموت (برای آیفون و هر گوشی بدون APK): http://IP:4747
+  const WEB_DIR = path.join(__dirname, '..', 'mobile', 'www');
+  const MANIFEST = {
+    name: 'GameNet Remote',
+    short_name: 'GameNet',
+    lang: 'fa',
+    dir: 'rtl',
+    start_url: '/',
+    scope: '/',
+    display: 'standalone',
+    background_color: '#0B0E14',
+    theme_color: '#0F1219',
+    icons: [
+      { src: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+      { src: '/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
+    ],
+  };
+  api.get(['/', '/index.html'], (_req, res) => {
+    res.set('Cache-Control', 'no-cache');
+    res.sendFile(path.join(WEB_DIR, 'index.html'));
+  });
+  api.get('/manifest.webmanifest', (_req, res) => res.type('application/manifest+json').send(JSON.stringify(MANIFEST)));
+  api.get(['/icon-180.png', '/icon-192.png', '/icon-512.png'], (req, res) => {
+    res.set('Cache-Control', 'public, max-age=86400');
+    res.sendFile(path.join(WEB_DIR, path.basename(req.path)));
+  });
+
   api.get('/api/ping', (_req, res) => res.json({ ok: true, app: 'gamenet-manager' }));
 
   api.use('/api', (req, res, next) => {
