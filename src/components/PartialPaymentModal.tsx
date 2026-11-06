@@ -110,9 +110,9 @@ export default function PartialPaymentModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm dir-rtl font-sans animate-in fade-in duration-200">
-      <div className="relative w-full max-w-lg bg-[#0F131C] border border-white/10 rounded-2xl shadow-2xl overflow-hidden text-right">
+      <div className="relative w-full max-w-lg bg-surface-0f131c border border-white/10 rounded-2xl shadow-2xl overflow-hidden text-right">
         {/* Header */}
-        <div className="p-4 bg-[#151A26] border-b border-white/10 flex items-center justify-between">
+        <div className="p-4 bg-surface-151a26 border-b border-white/10 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="p-2 bg-blue-600/20 text-blue-400 rounded-xl border border-blue-500/20">
               <CreditCard className="w-5 h-5" />
@@ -135,7 +135,7 @@ export default function PartialPaymentModal({
 
         <div className="p-5 space-y-4 max-h-[80vh] overflow-y-auto">
           {/* Bill Summary Banner */}
-          <div className="p-4 bg-[#090C12] border border-white/5 rounded-xl space-y-2.5">
+          <div className="p-4 bg-surface-090c12 border border-white/5 rounded-xl space-y-2.5">
             <div className="grid grid-cols-2 gap-2 text-xs">
               <div className="space-y-1">
                 <span className="text-[10px] text-slate-400 block font-medium">تعداد دسته/بازیکن فعلی:</span>
@@ -180,7 +180,7 @@ export default function PartialPaymentModal({
                 {previousPayments.map((payment, idx) => (
                   <div
                     key={payment.id || idx}
-                    className="p-2 bg-[#151924] border border-white/5 rounded-lg flex items-center justify-between text-xs"
+                    className="p-2 bg-surface-151924 border border-white/5 rounded-lg flex items-center justify-between text-xs"
                   >
                     <div className="space-y-0.5">
                       <div className="flex items-center gap-2 font-bold text-white">
@@ -231,7 +231,7 @@ export default function PartialPaymentModal({
                       key={div}
                       type="button"
                       onClick={() => handleDivisionClick(div)}
-                      className="p-2 bg-[#151A26] hover:bg-blue-600/20 border border-white/5 hover:border-blue-500/30 rounded-xl transition-all cursor-pointer text-center group"
+                      className="p-2 bg-surface-151a26 hover:bg-blue-600/20 border border-white/5 hover:border-blue-500/30 rounded-xl transition-all cursor-pointer text-center group"
                     >
                       <span className="text-[10px] text-slate-400 group-hover:text-blue-300 block font-medium">
                         تقسیم بر {div}
@@ -255,7 +255,7 @@ export default function PartialPaymentModal({
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 placeholder="مثال: 25000"
-                className="w-full px-3.5 py-2.5 bg-[#090C12] border border-white/10 focus:border-blue-500 rounded-xl text-white font-mono font-bold text-base focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all text-left dir-ltr"
+                className="w-full px-3.5 py-2.5 bg-surface-090c12 border border-white/10 focus:border-blue-500 rounded-xl text-white font-mono font-bold text-base focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all text-left dir-ltr"
               />
             </div>
 
@@ -269,7 +269,7 @@ export default function PartialPaymentModal({
                   className={`p-2.5 rounded-xl border font-bold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer ${
                     paymentMethod === 'card'
                       ? 'bg-blue-600/20 border-blue-500 text-blue-300 shadow-lg'
-                      : 'bg-[#151A26] border-white/5 text-slate-400 hover:text-slate-200'
+                      : 'bg-surface-151a26 border-white/5 text-slate-400 hover:text-slate-200'
                   }`}
                 >
                   <CreditCard className="w-4 h-4" />
@@ -281,7 +281,7 @@ export default function PartialPaymentModal({
                   className={`p-2.5 rounded-xl border font-bold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer ${
                     paymentMethod === 'cash'
                       ? 'bg-emerald-600/20 border-emerald-500 text-emerald-300 shadow-lg'
-                      : 'bg-[#151A26] border-white/5 text-slate-400 hover:text-slate-200'
+                      : 'bg-surface-151a26 border-white/5 text-slate-400 hover:text-slate-200'
                   }`}
                 >
                   <Wallet className="w-4 h-4" />
@@ -297,7 +297,7 @@ export default function PartialPaymentModal({
                 <select
                   value={selectedCardReaderId}
                   onChange={(e) => setSelectedCardReaderId(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#090C12] border border-white/10 rounded-xl text-white text-xs font-bold focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-surface-090c12 border border-white/10 rounded-xl text-white text-xs font-bold focus:outline-none focus:border-blue-500"
                 >
                   {cardReaders.map((cr) => (
                     <option key={cr.id} value={cr.id}>
@@ -316,7 +316,7 @@ export default function PartialPaymentModal({
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
                 placeholder="مثال: سهم علی (خروج از بازی)"
-                className="w-full px-3 py-2 bg-[#090C12] border border-white/10 rounded-xl text-white text-xs font-medium focus:outline-none focus:border-blue-500"
+                className="w-full px-3 py-2 bg-surface-090c12 border border-white/10 rounded-xl text-white text-xs font-medium focus:outline-none focus:border-blue-500"
               />
             </div>
 
@@ -328,7 +328,7 @@ export default function PartialPaymentModal({
                   id="reduceCount"
                   checked={reducePlayerCount}
                   onChange={(e) => setReducePlayerCount(e.target.checked)}
-                  className="mt-0.5 w-4 h-4 text-blue-600 rounded focus:ring-blue-500 border-white/20 bg-[#090C12] cursor-pointer"
+                  className="mt-0.5 w-4 h-4 text-blue-600 rounded focus:ring-blue-500 border-white/20 bg-surface-090c12 cursor-pointer"
                 />
                 <label htmlFor="reduceCount" className="text-xs text-slate-200 font-medium cursor-pointer leading-relaxed">
                   <span className="font-bold text-blue-300 block">

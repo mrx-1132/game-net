@@ -11,6 +11,8 @@ import { loadSigningKey } from './license/keys.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = parseInt(process.env.PORT || process.env.APP_PORT || process.env.LICENSE_PORT || '3000', 10);
+// پشت Nginx فقط روی 127.0.0.1 گوش بدهید (HOST=127.0.0.1)
+const HOST = process.env.HOST || '0.0.0.0';
 
 export async function startStandaloneServer() {
   const key = loadSigningKey();
@@ -44,7 +46,7 @@ export async function startStandaloneServer() {
   const json = express.json({ limit: '100kb' });
   app.use((req, res, next) => (req.path === '/api/admin/restore' ? next() : json(req, res, next)));
 
-  app.get(['/health', '/api/health'], (_req, res) => res.json({ status: 'ok', uptime: process.uptime() }));
+  app.get(['/health', '/api/health'], (_req, res) => res.json({ status: 'ok', database: store.kind === 'postgresql' ? 'PostgreSQL' : 'JSON File', uptime: process.uptime() }));
 
   // پروکسی SMS.ir (برای نسخه وب)
   app.all('/api/sms-ir*', async (req, res) => {
@@ -76,8 +78,8 @@ export async function startStandaloneServer() {
     app.get('/', (_req, res) => res.json({ status: 'active', service: 'GameNet License Server' }));
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 GameNet License Server on http://0.0.0.0:${PORT}`);
+  app.listen(PORT, HOST, () => {
+    console.log(`🚀 GameNet License Server on http://${HOST}:${PORT}`);
     console.log(`🔐 Storage: ${store.kind} | signing key id: ${key.kid}`);
   });
 }

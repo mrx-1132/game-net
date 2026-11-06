@@ -26,7 +26,7 @@ export default function RemoteAccessPanel() {
   const left = pair ? Math.max(0, Math.round((pair.expiresAt - now) / 1000)) : 0;
 
   return (
-    <div className="p-5 bg-[#151921] border border-white/5 rounded-2xl space-y-4 shadow-xl text-sm" dir="rtl">
+    <div className="p-5 bg-surface-151921 border border-white/5 rounded-2xl space-y-4 shadow-xl text-sm" dir="rtl">
       <h3 className="text-sm font-bold text-white flex items-center gap-2">📱 ریموت موبایل</h3>
       <div>
         <div className="text-xs opacity-70 mb-1">آدرس سرور (گوشی باید به همین وای‌فای وصل باشد):</div>

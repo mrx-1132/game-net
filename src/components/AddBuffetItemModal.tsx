@@ -102,10 +102,10 @@ export default function AddBuffetItemModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm" dir="rtl">
       <div 
-        className="w-full max-w-lg bg-[#151921] border border-white/5 rounded-2xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-200"
+        className="w-full max-w-lg bg-surface-151921 border border-white/5 rounded-2xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-200"
         id="add-buffet-item-modal"
       >
-        <div className="flex items-center justify-between p-4 border-b border-white/5 bg-[#0B0E14]">
+        <div className="flex items-center justify-between p-4 border-b border-white/5 bg-surface-0b0e14">
           <h3 className="text-sm font-bold text-white flex items-center gap-2 uppercase tracking-tight">
             <ShoppingCart className="w-5 h-5 text-blue-400" />
             افزودن خوراکی به فاکتور - {system.name}
@@ -119,21 +119,21 @@ export default function AddBuffetItemModal({
           </button>
         </div>
 
-        <div className="p-4 bg-[#0B0E14] border-b border-white/5 text-[11px]">
+        <div className="p-4 bg-surface-0b0e14 border-b border-white/5 text-[11px]">
           <p className="text-slate-400 leading-6 mb-3">
              مورد نظر را به فاکتور مشتری فعال <strong>{session.customerName}</strong> اضافه کنید. محاسبه خودکار روی فاکتور نهایی و پایان سیستم اعمال خواهد شد.
           </p>
 
           {/* Currently attached items with removal option */}
           {session.buffetItems && session.buffetItems.length > 0 && (
-            <div className="mb-3 p-2.5 bg-[#151921] border border-blue-500/20 rounded-xl space-y-1.5">
+            <div className="mb-3 p-2.5 bg-surface-151921 border border-blue-500/20 rounded-xl space-y-1.5">
               <div className="flex justify-between items-center text-[10px] text-slate-300 font-bold">
                 <span className="flex items-center gap-1">🍿 اقلام قبلی متصل به این سیستم ({session.buffetItems.length}):</span>
                 <span className="text-amber-400 font-normal text-[9px]">حذف موارد ثبت‌شده اشتباه</span>
               </div>
               <div className="space-y-1 max-h-28 overflow-y-auto pr-1">
                 {session.buffetItems.map((attached) => (
-                  <div key={attached.id} className="flex justify-between items-center bg-[#07090D] p-1.5 rounded-lg border border-white/5 text-[10px]">
+                  <div key={attached.id} className="flex justify-between items-center bg-surface-07090d p-1.5 rounded-lg border border-white/5 text-[10px]">
                     <span className="text-slate-200">
                       {attached.name} <span className="text-slate-500">({attached.quantity} عدد)</span>
                     </span>
@@ -165,12 +165,12 @@ export default function AddBuffetItemModal({
               placeholder="جستجوی محصول (هایپ، چیپس و ...)"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pr-10 pl-3 py-2 bg-[#151921] border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs shadow-inner"
+              className="w-full pr-10 pl-3 py-2 bg-surface-151921 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs shadow-inner"
             />
           </div>
 
           {/* Categories Filter Pills */}
-          <div className="flex flex-wrap items-center gap-1 bg-[#151921]/50 p-1 border border-white/5 rounded-lg mt-2.5">
+          <div className="flex flex-wrap items-center gap-1 bg-surface-151921/50 p-1 border border-white/5 rounded-lg mt-2.5">
             <button
               type="button"
               onClick={() => setActiveCategoryTab('all')}
@@ -232,13 +232,13 @@ export default function AddBuffetItemModal({
                   className={`flex items-center justify-between p-3 rounded-xl border transition-all ${
                     qty > 0 
                       ? 'bg-blue-500/5 border-blue-500/30' 
-                      : 'bg-[#0B0E14]/40 border-white/5 hover:bg-white/5'
+                      : 'bg-surface-0b0e14/40 border-white/5 hover:bg-white/5'
                   }`}
                 >
                   <div className="space-y-1">
                     <div className="flex items-center gap-1.5">
                       <span className="text-xs font-semibold text-white block">{item.name}</span>
-                      <span className="text-[7.5px] px-1 py-0.2 rounded font-bold border border-white/5 bg-[#0B0E14]">
+                      <span className="text-[7.5px] px-1 py-0.2 rounded font-bold border border-white/5 bg-surface-0b0e14">
                         {item.category === 'cafe' ? (
                           <span className="text-amber-400">كافه</span>
                         ) : item.category === 'snack' ? (
@@ -261,11 +261,11 @@ export default function AddBuffetItemModal({
                   </div>
 
                   {/* Quantity selector */}
-                  <div className="flex items-center gap-3 bg-[#0B0E14] border border-white/10 rounded-lg p-1">
+                  <div className="flex items-center gap-3 bg-surface-0b0e14 border border-white/10 rounded-lg p-1">
                     <button
                       type="button"
                       onClick={() => handleUpdateQty(item.id, false)}
-                      className="p-1.5 rounded bg-[#151921] text-slate-400 hover:text-white transition-colors cursor-pointer"
+                      className="p-1.5 rounded bg-surface-151921 text-slate-400 hover:text-white transition-colors cursor-pointer"
                       disabled={qty === 0}
                     >
                       <Minus className="w-3.5 h-3.5" />
@@ -276,7 +276,7 @@ export default function AddBuffetItemModal({
                     <button
                       type="button"
                       onClick={() => handleUpdateQty(item.id, true)}
-                      className="p-1.5 rounded bg-[#151921] text-slate-400 hover:text-white transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                      className="p-1.5 rounded bg-surface-151921 text-slate-400 hover:text-white transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
                       disabled={item.stock !== undefined && qty >= item.stock}
                     >
                       <Plus className="w-3.5 h-3.5" />
@@ -289,7 +289,7 @@ export default function AddBuffetItemModal({
         </div>
 
         {/* Modal Footer Summary */}
-        <div className="p-4 border-t border-white/5 bg-[#0B0E14] flex justify-between items-center text-xs">
+        <div className="p-4 border-t border-white/5 bg-surface-0b0e14 flex justify-between items-center text-xs">
           <div className="text-right">
             <span className="text-slate-450 text-[10px] block">اقلام انتخاب شده: {getActiveCount()} عدد</span>
             <span className="text-blue-400 font-bold font-mono text-sm leading-none block mt-1">
@@ -314,7 +314,7 @@ export default function AddBuffetItemModal({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 bg-[#0B0E14] hover:bg-white/5 text-slate-400 hover:text-white rounded-xl transition-all border border-white/10 text-xs cursor-pointer"
+              className="px-4 py-2.5 bg-surface-0b0e14 hover:bg-white/5 text-slate-400 hover:text-white rounded-xl transition-all border border-white/10 text-xs cursor-pointer"
             >
               انصراف
             </button>

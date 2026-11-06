@@ -4,11 +4,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>GameNet Remote</title>
+<meta name="theme-color" content="#0F1219" id="themeColor">
 <style>
-:root{--bg:#0B0E14;--card:#141923;--line:#ffffff14;--tx:#F7FAFC;--mu:#8b95a7;--bl:#2563eb;--gr:#059669;--rd:#dc2626;--am:#d97706}
+/* تم تیره (پیش‌فرض) */
+:root{--bg:#0B0E14;--card:#141923;--line:#ffffff14;--tx:#F7FAFC;--mu:#8b95a7;--bl:#2563eb;--gr:#059669;--rd:#dc2626;--am:#d97706;
+  --hdr:#0F1219;--soft:#ffffff14;--soft2:#ffffff0d;--ok-bg:#05966933;--ok-tx:#34d399;--warn-bg:#d9770633;--warn-tx:#fbbf24;--bad-tx:#f87171;--scrim:#000a;color-scheme:dark}
+/* تم روشن: با تنظیم «روشن»، یا «خودکار» وقتی گوشی روی حالت روشن است */
+:root[data-theme="light"]{--bg:#eef2f6;--card:#ffffff;--line:#0f172a1a;--tx:#0f172a;--mu:#5b6576;--hdr:#ffffff;--soft:#0f172a0f;--soft2:#0f172a0a;
+  --ok-bg:#d1fae5;--ok-tx:#047857;--warn-bg:#fef3c7;--warn-tx:#b45309;--bad-tx:#dc2626;--scrim:#0f172a66;color-scheme:light}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){--bg:#eef2f6;--card:#ffffff;--line:#0f172a1a;--tx:#0f172a;--mu:#5b6576;--hdr:#ffffff;--soft:#0f172a0f;--soft2:#0f172a0a;
+  --ok-bg:#d1fae5;--ok-tx:#047857;--warn-bg:#fef3c7;--warn-tx:#b45309;--bad-tx:#dc2626;--scrim:#0f172a66;color-scheme:light}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,Tahoma,sans-serif;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
-header{position:sticky;top:0;background:#0F1219;border-bottom:1px solid var(--line);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;z-index:5}
+header{position:sticky;top:0;background:var(--hdr);border-bottom:1px solid var(--line);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;z-index:5}
 .dot{width:9px;height:9px;border-radius:50%;background:var(--rd);display:inline-block;margin-left:6px}.dot.ok{background:var(--gr)}
 .tabs{display:flex;gap:8px;padding:12px 16px 0}
 .tab{flex:1;padding:10px 4px;border-radius:12px;background:var(--card);border:1px solid var(--line);color:var(--mu);font-size:13px;font-weight:700;text-align:center}
@@ -17,25 +25,26 @@ main{padding:12px 16px 40px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px}
 .row{display:flex;justify-content:space-between;align-items:center;gap:8px}
 .name{font-weight:800;font-size:16px}.mu{color:var(--mu);font-size:12px}
-.badge{font-size:11px;padding:3px 8px;border-radius:99px;background:#ffffff14}
-.b-active{background:#05966933;color:#34d399}.b-paused{background:#d9770633;color:#fbbf24}.b-inactive{background:#ffffff0d;color:var(--mu)}
+.badge{font-size:11px;padding:3px 8px;border-radius:99px;background:var(--soft)}
+.b-active{background:var(--ok-bg);color:var(--ok-tx)}.b-paused{background:var(--warn-bg);color:var(--warn-tx)}.b-inactive{background:var(--soft2);color:var(--mu)}
 .timer{font-family:ui-monospace,monospace;font-size:22px;font-weight:800;margin:8px 0 4px;direction:ltr;text-align:right}
 .cost{font-size:13px;margin-bottom:6px}
 .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.acts button{flex:1;min-width:70px;padding:10px 6px;font-size:13px}
 button{font:inherit;border:0;border-radius:12px;padding:11px 14px;font-weight:700;color:#fff;background:var(--bl)}
-button.g{background:var(--gr)}button.a{background:var(--am)}button.r{background:var(--rd)}button.s{background:#ffffff14}
+button.g{background:var(--gr)}button.a{background:var(--am)}button.r{background:var(--rd)}button.s{background:var(--soft);color:var(--tx)}
 button:disabled{opacity:.45}
-input,select{width:100%;padding:12px;border-radius:12px;border:1px solid var(--line);background:#0F1219;color:var(--tx);font:inherit;margin:6px 0}
-.sheet{position:fixed;inset:0;background:#000a;display:flex;align-items:flex-end;z-index:20}
-.sheet>div{width:100%;max-height:90vh;overflow:auto;background:#0F1219;border-radius:20px 20px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));border-top:1px solid var(--line)}
-.seg{display:flex;gap:8px;margin:8px 0}.seg button{flex:1;background:#ffffff14}.seg button.on{background:var(--bl)}
-.err{color:#f87171;font-size:13px;min-height:18px;margin:6px 0}
-.bal{font-weight:800}.pos{color:#f87171}.zero{color:#34d399}
+input,select{width:100%;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--hdr);color:var(--tx);font:inherit;margin:6px 0}
+.sheet{position:fixed;inset:0;background:var(--scrim);display:flex;align-items:flex-end;z-index:20}
+.sheet>div{width:100%;max-height:90vh;overflow:auto;background:var(--hdr);border-radius:20px 20px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));border-top:1px solid var(--line)}
+.seg{display:flex;gap:8px;margin:8px 0}.seg button{flex:1;background:var(--soft);color:var(--tx)}.seg button.on{color:#fff}.seg button.on{background:var(--bl)}
+.err{color:var(--bad-tx);font-size:13px;min-height:18px;margin:6px 0}
+.bal{font-weight:800}.pos{color:var(--bad-tx)}.zero{color:var(--ok-tx)}
 .item{padding:8px 0;border-bottom:1px solid var(--line)}.item .nm{font-weight:700;font-size:14px}
-.step{display:flex;align-items:center;gap:10px}.step button{width:38px;height:38px;padding:0;font-size:20px;background:#ffffff14}.step span{min-width:24px;text-align:center;font-weight:800}
+.step{display:flex;align-items:center;gap:10px}.step button{width:38px;height:38px;padding:0;font-size:20px;background:var(--soft);color:var(--tx)}.step span{min-width:24px;text-align:center;font-weight:800}
 .pk{max-height:42vh;overflow:auto;margin:8px 0}
 .sum{display:flex;justify-content:space-between;font-size:14px;padding:3px 0}.sum.big{font-size:17px;font-weight:800;border-top:1px solid var(--line);margin-top:6px;padding-top:8px}
 .chk{display:flex;align-items:center;gap:8px;margin:10px 0;font-size:14px}.chk input{width:auto;margin:0}
+#themeBtn{background:var(--soft);color:var(--tx);padding:6px 10px;border-radius:10px;font-size:15px;margin-inline-start:10px}
 #toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(24px + env(safe-area-inset-bottom));background:#065f46;color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;font-weight:700;z-index:50;display:none;max-width:90%;text-align:center}
 </style>
 </head>
@@ -44,7 +53,35 @@ input,select{width:100%;padding:12px;border-radius:12px;border:1px solid var(--l
 <div id="sheet"></div>
 <div id="toast"></div>
 <script>
-const LS = { url: 'gn_url', token: 'gn_token', name: 'gn_dev' };
+const LS = { url: 'gn_url', token: 'gn_token', name: 'gn_dev', theme: 'gn_theme' };
+
+// ---------- Theme: auto (مثل گوشی) / light / dark ----------
+const THEMES = ['auto', 'light', 'dark'];
+const THEME_ICON = { auto: '🌗', light: '☀️', dark: '🌙' };
+const THEME_LABEL = { auto: 'خودکار (مثل گوشی)', light: 'روشن', dark: 'تیره' };
+const themeMq = window.matchMedia('(prefers-color-scheme: light)');
+function getTheme() { const t = localStorage.getItem(LS.theme); return THEMES.includes(t) ? t : 'auto'; }
+function applyTheme() {
+  const t = getTheme();
+  if (t === 'auto') document.documentElement.removeAttribute('data-theme');
+  else document.documentElement.setAttribute('data-theme', t);
+  const light = t === 'light' || (t === 'auto' && themeMq.matches);
+  const meta = document.getElementById('themeColor');
+  if (meta) meta.setAttribute('content', light ? '#ffffff' : '#0F1219');
+  const b = document.getElementById('themeBtn');
+  if (b) { b.textContent = THEME_ICON[t]; b.title = 'تم: ' + THEME_LABEL[t]; }
+  // نوار وضعیت اندروید (اگر افزونه StatusBar نصب باشد)
+  const SB = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.StatusBar;
+  if (SB) { SB.setStyle({ style: light ? 'LIGHT' : 'DARK' }).catch(() => {}); SB.setBackgroundColor && SB.setBackgroundColor({ color: light ? '#ffffff' : '#0F1219' }).catch(() => {}); }
+}
+function cycleTheme() {
+  const t = THEMES[(THEMES.indexOf(getTheme()) + 1) % THEMES.length];
+  localStorage.setItem(LS.theme, t);
+  applyTheme();
+  toast('تم: ' + THEME_LABEL[t]);
+}
+themeMq.addEventListener ? themeMq.addEventListener('change', applyTheme) : themeMq.addListener(applyTheme);
+applyTheme();
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const fa = (n) => Number(n).toLocaleString('fa-IR');
@@ -95,13 +132,14 @@ function closeSheet() { $('#sheet').innerHTML = ''; }
 
 // ---------- Setup ----------
 function renderSetup(msg = '') {
-  $('#app').innerHTML = `<main><div class="card"><div class="name" style="margin-bottom:8px">اتصال به برنامه گیم‌نت</div>
+  $('#app').innerHTML = `<main><div class="card"><div class="row" style="margin-bottom:8px"><div class="name">اتصال به برنامه گیم‌نت</div><button id="themeBtn" type="button" onclick="cycleTheme()"></button></div>
   <div class="mu">روی کامپیوتر: تنظیمات ← «ریموت موبایل» ← ساخت کد جفت‌سازی.</div>
   <input id="host" dir="ltr" placeholder="192.168.1.10:4747" value="${esc((localStorage.getItem(LS.url) || '').replace('http://', ''))}">
   <input id="code" dir="ltr" inputmode="numeric" maxlength="6" placeholder="کد ۶ رقمی">
   <input id="dev" placeholder="نام این گوشی" value="${esc(localStorage.getItem(LS.name) || '')}">
   <div class="err" id="err">${esc(msg)}</div>
   <button id="go" style="width:100%">اتصال</button></div></main>`;
+  applyTheme();
   $('#go').onclick = async () => {
     let host = $('#host').value.trim().replace(/^https?:\/\//, '').replace(/\/+$/, '');
     if (!host) return ($('#err').textContent = 'آدرس را وارد کنید');
@@ -122,12 +160,13 @@ function renderSetup(msg = '') {
 function render() {
   if (!localStorage.getItem(LS.token)) return renderSetup();
   const T = [['systems', 'سیستم‌ها'], ['sale', 'بوفه'], ['debt', 'نسیه']];
-  $('#app').innerHTML = `<header><div class="name">GameNet</div><div class="mu"><span class="dot ${online ? 'ok' : ''}" id="dot"></span><span id="st">${online ? 'متصل' : 'قطع'}</span></div></header>
+  $('#app').innerHTML = `<header><div class="name">GameNet</div><div class="mu row"><span><span class="dot ${online ? 'ok' : ''}" id="dot"></span><span id="st">${online ? 'متصل' : 'قطع'}</span></span><button id="themeBtn" type="button" onclick="cycleTheme()"></button></div></header>
   <div class="tabs">${T.map(([k, l]) => `<div class="tab ${tab === k ? 'on' : ''}" data-t="${k}">${l}</div>`).join('')}</div>
   <main>${tab === 'debt' ? '<input id="q" placeholder="جستجوی نام یا شماره…">' : ''}<div id="list"></div></main>`;
   document.querySelectorAll('.tab').forEach((el) => (el.onclick = () => { tab = el.dataset.t; if (tab === 'sale') saleCart = {}; render(); }));
   if (tab === 'debt') $('#q').oninput = renderList;
   if (tab === 'sale') renderSale(); else renderList();
+  applyTheme();
 }
 
 function elapsed(s) {

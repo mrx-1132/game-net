@@ -314,7 +314,7 @@ export default function DebtTab({
           </div>
         </div>
 
-        <div className="p-4 bg-[#151921] border border-white/5 rounded-2xl flex items-center gap-4 shadow-xl">
+        <div className="p-4 bg-surface-151921 border border-white/5 rounded-2xl flex items-center gap-4 shadow-xl">
           <div className="p-3 bg-blue-500/10 text-blue-400 rounded-xl">
             <UserPlus className="w-6 h-6" />
           </div>
@@ -345,7 +345,7 @@ export default function DebtTab({
         <div className="lg:col-span-5 space-y-6">
           
           {/* Form: Add Debtor */}
-          <div className="p-5 bg-[#151921] border border-white/5 rounded-2xl space-y-4 shadow-xl">
+          <div className="p-5 bg-surface-151921 border border-white/5 rounded-2xl space-y-4 shadow-xl">
             <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
               <UserPlus className="w-4 h-4 text-blue-400" />
               افزودن حساب نسیه جدید
@@ -366,7 +366,7 @@ export default function DebtTab({
                   placeholder="نام و نام خانوادگی مشتری"
                   value={newDebtorName}
                   onChange={(e) => setNewDebtorName(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#0B0E14] border border-white/10 rounded-lg text-white placeholder-slate-650 focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs"
+                  className="w-full px-3 py-2 bg-surface-0b0e14 border border-white/10 rounded-lg text-white placeholder-slate-650 focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs"
                 />
               </div>
 
@@ -381,7 +381,7 @@ export default function DebtTab({
                     placeholder="نمونه: 09123456789 (اختیاری)"
                     value={newDebtorPhone}
                     onChange={(e) => setNewDebtorPhone(e.target.value)}
-                    className="w-full pr-9 pl-3 py-2 bg-[#0B0E14] border border-white/10 rounded-lg text-white placeholder-slate-650 focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs"
+                    className="w-full pr-9 pl-3 py-2 bg-surface-0b0e14 border border-white/10 rounded-lg text-white placeholder-slate-650 focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs"
                     dir="ltr"
                   />
                 </div>
@@ -400,7 +400,7 @@ export default function DebtTab({
                     placeholder="مثال: 50 (ساعت)"
                     value={newDebtorHours}
                     onChange={(e) => setNewDebtorHours(e.target.value)}
-                    className="w-full pr-9 pl-3 py-2 bg-[#0B0E14] border border-white/10 rounded-lg text-white placeholder-slate-650 focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs"
+                    className="w-full pr-9 pl-3 py-2 bg-surface-0b0e14 border border-white/10 rounded-lg text-white placeholder-slate-650 focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs"
                   />
                 </div>
               </div>
@@ -416,7 +416,7 @@ export default function DebtTab({
           </div>
 
           {/* List of debtors & Search */}
-          <div className="p-5 bg-[#151921] border border-white/5 rounded-2xl space-y-4 shadow-xl">
+          <div className="p-5 bg-surface-151921 border border-white/5 rounded-2xl space-y-4 shadow-xl">
             <div className="space-y-1">
               <h3 className="text-sm font-bold text-white uppercase tracking-wider">لیست مشتریان بدهکار</h3>
               <p className="text-[10px] text-slate-400">یک شخص را جهت تسویه یا ثبت بدهی از پایین انتخاب نمایید.</p>
@@ -431,7 +431,7 @@ export default function DebtTab({
                 placeholder="جستجو با نام یا شماره تماس..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pr-10 pl-3 py-2 bg-[#0B0E14] border border-white/10 rounded-lg text-white placeholder-slate-650 focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs"
+                className="w-full pr-10 pl-3 py-2 bg-surface-0b0e14 border border-white/10 rounded-lg text-white placeholder-slate-650 focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs"
               />
             </div>
 
@@ -454,7 +454,7 @@ export default function DebtTab({
                             : debtor.balance < 0
                               ? 'bg-emerald-500/10 border-emerald-500/80 shadow-lg shadow-emerald-500/5'
                               : 'bg-blue-500/10 border-blue-500/80 shadow-lg shadow-blue-500/5'
-                          : 'bg-[#0B0E14]/40 border-white/5 hover:bg-white/5'
+                          : 'bg-surface-0b0e14/40 border-white/5 hover:bg-white/5'
                       }`}
                     >
                       <div className="space-y-1">
@@ -538,10 +538,10 @@ export default function DebtTab({
         {/* Column 2: Financial Panel & Transactions (Takes 7 cols) */}
         <div className="lg:col-span-7">
           {activeDebtor ? (
-            <div className="bg-[#151921] border border-white/5 rounded-2xl p-6 space-y-6 shadow-xl">
+            <div className="bg-surface-151921 border border-white/5 rounded-2xl p-6 space-y-6 shadow-xl">
               
               {/* Profile Card Header */}
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 bg-[#0B0E14]/60 rounded-xl border border-white/5">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 bg-surface-0b0e14/60 rounded-xl border border-white/5">
                 <div className="space-y-1.5">
                   <div className="flex items-center gap-2">
                     <h4 className="text-md font-bold text-white">{activeDebtor.name}</h4>
@@ -567,7 +567,7 @@ export default function DebtTab({
                   </div>
                 </div>
 
-                <div className="text-right flex items-center gap-4 bg-[#0B0E14] p-3 rounded-lg border border-white/5 flex-wrap">
+                <div className="text-right flex items-center gap-4 bg-surface-0b0e14 p-3 rounded-lg border border-white/5 flex-wrap">
                   {/* Total Gameplay Hours Badge */}
                   <div className="text-right border-l border-white/10 pl-4">
                     <span className="text-[10px] text-emerald-400 block leading-3 font-bold flex items-center gap-1 justify-end">
@@ -620,7 +620,7 @@ export default function DebtTab({
               </div>
 
               {/* Form: Record manual adjustment (Pay / Debt) */}
-              <div className="p-4 bg-[#0B0E14]/40 border border-white/5 rounded-xl">
+              <div className="p-4 bg-surface-0b0e14/40 border border-white/5 rounded-xl">
                 <h5 className="text-xs font-bold text-slate-300 block mb-3">ثبت تراکنش حسابداری دستی</h5>
                 
                 {txError && (
@@ -638,7 +638,7 @@ export default function DebtTab({
                     <select
                       value={txType}
                       onChange={(e) => setTxType(e.target.value as any)}
-                      className="w-full px-2 py-2 bg-[#151921] border border-white/5 rounded-lg text-white text-xs focus:outline-none"
+                      className="w-full px-2 py-2 bg-surface-151921 border border-white/5 rounded-lg text-white text-xs focus:outline-none"
                     >
                       <option value="payment_made">🟢 دریافت پرداخت (کاهش بدهی)</option>
                       <option value="debt_added">🔴 ثبت بدهی جدید (افزایش بدهی)</option>
@@ -653,7 +653,7 @@ export default function DebtTab({
                       placeholder="مثال: 50000"
                       value={txAmount}
                       onChange={(e) => setTxAmount(e.target.value)}
-                      className="w-full px-2.5 py-2 bg-[#151921] border border-white/5 rounded-lg text-white text-xs font-mono"
+                      className="w-full px-2.5 py-2 bg-surface-151921 border border-white/5 rounded-lg text-white text-xs font-mono"
                     />
                     {txAmount && !isNaN(Number(txAmount)) && (
                       <span className="text-[10px] text-emerald-400 block font-mono font-bold mt-1 text-right">
@@ -670,7 +670,7 @@ export default function DebtTab({
                       placeholder="توضیح کوتاه تراکنش..."
                       value={txDesc}
                       onChange={(e) => setTxDesc(e.target.value)}
-                      className="w-full px-2.5 py-2 bg-[#151921] border border-white/5 rounded-lg text-white text-xs"
+                      className="w-full px-2.5 py-2 bg-surface-151921 border border-white/5 rounded-lg text-white text-xs"
                     />
                   </div>
 
@@ -716,13 +716,13 @@ export default function DebtTab({
                 <div className="border border-white/5 rounded-xl overflow-hidden text-xs">
                   <table className="w-full text-right" dir="rtl">
                     <thead>
-                      <tr className="bg-[#0B0E14] font-semibold text-slate-400 border-b border-white/5">
+                      <tr className="bg-surface-0b0e14 font-semibold text-slate-400 border-b border-white/5">
                         <th className="px-4 py-3">تاریخ تراکنش</th>
                         <th className="px-4 py-3">شرح تراکنش</th>
                         <th className="px-4 py-3 text-left">مبلغ و تغییرات</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-white/5 bg-[#0B0E14]/20">
+                    <tbody className="divide-y divide-white/5 bg-surface-0b0e14/20">
                       {activeDebtor.transactions.length === 0 ? (
                         <tr>
                           <td colSpan={3} className="px-4 py-8 text-center text-slate-550">
@@ -759,7 +759,7 @@ export default function DebtTab({
 
             </div>
           ) : (
-            <div className="h-full flex flex-col justify-center items-center py-20 px-6 border border-dashed border-white/10 rounded-2xl bg-[#151921]/20 text-center text-slate-500">
+            <div className="h-full flex flex-col justify-center items-center py-20 px-6 border border-dashed border-white/10 rounded-2xl bg-surface-151921/20 text-center text-slate-500">
               <ClipboardList className="w-12 h-12 text-slate-600 mb-4 animate-pulse" />
               <p className="text-sm font-semibold max-w-[280px] mx-auto text-slate-400 leading-relaxed">
                 لطفاً یک مشتری را از لیست سمت راست انتخاب کنید تا پرونده بدهی‌ها و خریدهای نسیه او را مدیریت کنید.
@@ -773,7 +773,7 @@ export default function DebtTab({
       {/* Custom Edit Debtor Info Modal */}
       {editingDebtor && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-[999] animate-fade-in" style={{ direction: 'rtl' }}>
-          <div className="bg-[#121620] border border-blue-500/30 max-w-sm w-full rounded-2xl overflow-hidden shadow-2xl p-5 space-y-4 relative">
+          <div className="bg-surface-121620 border border-blue-500/30 max-w-sm w-full rounded-2xl overflow-hidden shadow-2xl p-5 space-y-4 relative">
             <div className="flex items-center justify-between border-b border-white/10 pb-3">
               <div className="flex items-center gap-2 text-blue-400 font-bold text-sm">
                 <Phone className="w-4 h-4 text-blue-400" />
@@ -802,7 +802,7 @@ export default function DebtTab({
                   type="text"
                   value={editName}
                   onChange={(e) => setEditName(e.target.value)}
-                  className="w-full bg-[#080A0F] border border-white/10 focus:border-blue-500 rounded-xl px-3 py-2 text-xs text-white focus:outline-none"
+                  className="w-full bg-surface-080a0f border border-white/10 focus:border-blue-500 rounded-xl px-3 py-2 text-xs text-white focus:outline-none"
                   placeholder="مثال: آرش کیانی"
                   autoFocus
                 />
@@ -816,7 +816,7 @@ export default function DebtTab({
                     dir="ltr"
                     value={editPhone}
                     onChange={(e) => setEditPhone(e.target.value)}
-                    className="w-full bg-[#080A0F] border border-white/10 focus:border-blue-500 rounded-xl px-3 py-2 pl-9 text-xs text-white font-mono focus:outline-none text-left"
+                    className="w-full bg-surface-080a0f border border-white/10 focus:border-blue-500 rounded-xl px-3 py-2 pl-9 text-xs text-white font-mono focus:outline-none text-left"
                     placeholder="09123456789"
                   />
                   <Phone className="w-4 h-4 text-slate-500 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -835,7 +835,7 @@ export default function DebtTab({
                     min="0"
                     value={editHours}
                     onChange={(e) => setEditHours(e.target.value)}
-                    className="w-full bg-[#080A0F] border border-white/10 focus:border-blue-500 rounded-xl px-3 py-2 pl-9 text-xs text-white font-mono focus:outline-none text-left"
+                    className="w-full bg-surface-080a0f border border-white/10 focus:border-blue-500 rounded-xl px-3 py-2 pl-9 text-xs text-white font-mono focus:outline-none text-left"
                     placeholder="مثال: 50"
                   />
                   <Clock className="w-4 h-4 text-emerald-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -855,7 +855,7 @@ export default function DebtTab({
                 <button
                   type="button"
                   onClick={() => setEditingDebtor(null)}
-                  className="px-4 py-2 bg-[#080A0F] hover:bg-white/10 text-slate-300 text-xs rounded-xl border border-white/10 transition-all cursor-pointer"
+                  className="px-4 py-2 bg-surface-080a0f hover:bg-white/10 text-slate-300 text-xs rounded-xl border border-white/10 transition-all cursor-pointer"
                 >
                   انصراف
                 </button>
@@ -868,7 +868,7 @@ export default function DebtTab({
       {/* Custom Delete Confirmation Modal */}
       {deleteConfirmDebtor && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-[999] animate-fade-in" style={{ direction: 'rtl' }}>
-          <div className="bg-[#121620] border border-red-500/20 max-w-md w-full rounded-2xl overflow-hidden shadow-2xl p-6 space-y-5 relative">
+          <div className="bg-surface-121620 border border-red-500/20 max-w-md w-full rounded-2xl overflow-hidden shadow-2xl p-6 space-y-5 relative">
             <div className="flex items-center gap-3 border-b border-white/5 pb-3">
               <div className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center text-red-500 shrink-0">
                 <ShieldAlert className="w-5 h-5 animate-pulse" />
@@ -897,7 +897,7 @@ export default function DebtTab({
               <button
                 type="button"
                 onClick={() => setDeleteConfirmDebtor(null)}
-                className="px-4 py-2 bg-[#1b202e] hover:bg-[#232a3d] text-slate-300 hover:text-white rounded-xl transition-all cursor-pointer font-bold text-xs"
+                className="px-4 py-2 bg-surface-1b202e hover:bg-surface-232a3d text-slate-300 hover:text-white rounded-xl transition-all cursor-pointer font-bold text-xs"
               >
                 انصراف
               </button>
@@ -930,7 +930,7 @@ export default function DebtTab({
       {/* Sensitive Changes Operator Password Verification Modal */}
       {sensitiveAuthModal && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-[9999] animate-fade-in" style={{ direction: 'rtl' }}>
-          <div className="bg-[#121620] border border-amber-500/40 max-w-md w-full rounded-2xl overflow-hidden shadow-2xl p-6 space-y-5 relative">
+          <div className="bg-surface-121620 border border-amber-500/40 max-w-md w-full rounded-2xl overflow-hidden shadow-2xl p-6 space-y-5 relative">
             <div className="flex items-center justify-between border-b border-white/10 pb-3">
               <div className="flex items-center gap-2 text-amber-400 font-bold text-sm">
                 <Lock className="w-5 h-5 text-amber-400 shrink-0" />
@@ -976,7 +976,7 @@ export default function DebtTab({
                       setAuthPassword(e.target.value);
                       setAuthError('');
                     }}
-                    className="w-full bg-[#080A0F] border border-white/10 focus:border-amber-500 rounded-xl px-3 py-2.5 pl-10 text-xs text-white font-mono focus:outline-none"
+                    className="w-full bg-surface-080a0f border border-white/10 focus:border-amber-500 rounded-xl px-3 py-2.5 pl-10 text-xs text-white font-mono focus:outline-none"
                     placeholder="رمز عبور را وارد کنید..."
                     autoFocus
                   />
@@ -1005,7 +1005,7 @@ export default function DebtTab({
                     setAuthPassword('');
                     setAuthError('');
                   }}
-                  className="px-4 py-2.5 bg-[#080A0F] hover:bg-white/10 text-slate-300 text-xs rounded-xl border border-white/10 transition-all cursor-pointer font-bold"
+                  className="px-4 py-2.5 bg-surface-080a0f hover:bg-white/10 text-slate-300 text-xs rounded-xl border border-white/10 transition-all cursor-pointer font-bold"
                 >
                   انصراف
                 </button>

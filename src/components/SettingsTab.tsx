@@ -738,7 +738,7 @@ export default function SettingsTab({
         
         {/* Left Side: Create System Card (Takes 5 cols) */}
         <div className="lg:col-span-5 space-y-6">
-          <div className="p-5 bg-[#151921] border border-white/5 rounded-2xl space-y-4 shadow-xl">
+          <div className="p-5 bg-surface-151921 border border-white/5 rounded-2xl space-y-4 shadow-xl">
             <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
               <Monitor className="w-4 h-4 text-blue-400" />
               افزودن سیستم یا کنسول جدید
@@ -766,7 +766,7 @@ export default function SettingsTab({
                   placeholder="مثال: سیستم 7 (Xbox یا PS5 VIP)"
                   value={newSystemName}
                   onChange={(e) => setNewSystemName(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#0B0E14] border border-white/10 rounded-lg text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="w-full px-3 py-2 bg-surface-0b0e14 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
               </div>
 
@@ -812,7 +812,7 @@ export default function SettingsTab({
                       setNewSystemType(val);
                     }
                   }}
-                  className="w-full px-3 py-2 bg-[#0B0E14] border border-white/10 rounded-lg text-white focus:outline-none text-xs cursor-pointer"
+                  className="w-full px-3 py-2 bg-surface-0b0e14 border border-white/10 rounded-lg text-white focus:outline-none text-xs cursor-pointer"
                 >
                   {Object.keys(rates).map((typeKey) => {
                     const label = 
@@ -836,7 +836,7 @@ export default function SettingsTab({
                     placeholder="مثال: XBOX"
                     value={customTypeName}
                     onChange={(e) => setCustomTypeName(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#0B0E14] border border-blue-500/30 rounded-lg text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full px-3 py-2 bg-surface-0b0e14 border border-blue-500/30 rounded-lg text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
               )}
@@ -854,27 +854,27 @@ export default function SettingsTab({
 
         {/* Right Side: Active Systems Nodes Management Table (Takes 7 cols) */}
         <div className="lg:col-span-7">
-          <div className="p-5 bg-[#151921] border border-white/5 rounded-2xl space-y-4 shadow-xl">
+          <div className="p-5 bg-surface-151921 border border-white/5 rounded-2xl space-y-4 shadow-xl">
             <h3 className="text-sm font-bold text-white uppercase tracking-wider">لیست و وضعیت فیزیکی سیستم‌ها</h3>
             
             <div className="border border-white/5 rounded-xl overflow-hidden text-xs">
               <table className="w-full text-right" dir="rtl">
                 <thead>
-                  <tr className="bg-[#0B0E14] font-semibold text-slate-400 border-b border-white/5">
+                  <tr className="bg-surface-0b0e14 font-semibold text-slate-400 border-b border-white/5">
                     <th className="px-4 py-3">نام صندلی/کارت</th>
                     <th className="px-4 py-3">مدل دستگاه</th>
                     <th className="px-4 py-3 text-center">وضعیت فعلی</th>
                     <th className="px-4 py-3 text-left">عملیات حذف</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/5 bg-[#0B0E14]/20">
+                <tbody className="divide-y divide-white/5 bg-surface-0b0e14/20">
                   {systems.map((sys) => (
                     <tr key={sys.id} className="hover:bg-white/5 transition-colors">
                       <td className="px-4 py-3 font-semibold text-slate-200">
                         {sys.name}
                       </td>
                       <td className="px-4 py-3">
-                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#0B0E14] border border-white/5 text-slate-350">
+                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-surface-0b0e14 border border-white/5 text-slate-350">
                           {sys.type}
                         </span>
                       </td>
@@ -913,7 +913,7 @@ export default function SettingsTab({
       </div>
 
       {/* 2. Rates Grid Customization */}
-      <div className="p-5 bg-[#151921] border border-white/5 rounded-2xl space-y-6 shadow-xl">
+      <div className="p-5 bg-surface-151921 border border-white/5 rounded-2xl space-y-6 shadow-xl">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
             <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
@@ -952,7 +952,7 @@ export default function SettingsTab({
                 currentType === 'PC' ? 'text-teal-400' : 'text-emerald-400';
 
               return (
-                <div key={typeKey} className="p-4 bg-[#0B0E14]/60 border border-white/5 rounded-xl space-y-4 shadow-inner relative">
+                <div key={typeKey} className="p-4 bg-surface-0b0e14/60 border border-white/5 rounded-xl space-y-4 shadow-inner relative">
                   <div className="flex items-center justify-between">
                     <span className={`text-xs font-bold block ${typeColor}`}>{typeLabel}</span>
                     {!isDefaultType && (
@@ -992,7 +992,7 @@ export default function SettingsTab({
                           type="number"
                           value={localRates[currentType].hourlyRate1P}
                           onChange={(e) => handleRateChange(currentType, 'hourlyRate1P', e.target.value)}
-                          className="w-full px-2 py-1.5 bg-[#0B0E14] border border-white/10 rounded font-mono text-center text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          className="w-full px-2 py-1.5 bg-surface-0b0e14 border border-white/10 rounded font-mono text-center text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
                         />
                         {localRates[currentType].hourlyRate1P !== undefined && !isNaN(Number(localRates[currentType].hourlyRate1P)) && (
                           <span className="text-[9px] text-blue-400 block font-mono font-bold text-center">
@@ -1010,7 +1010,7 @@ export default function SettingsTab({
                           type="number"
                           value={localRates[currentType].hourlyRate2P}
                           onChange={(e) => handleRateChange(currentType, 'hourlyRate2P', e.target.value)}
-                          className="w-full px-2 py-1.5 bg-[#0B0E14] border border-white/10 rounded font-mono text-center text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          className="w-full px-2 py-1.5 bg-surface-0b0e14 border border-white/10 rounded font-mono text-center text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
                         />
                         {localRates[currentType].hourlyRate2P !== undefined && !isNaN(Number(localRates[currentType].hourlyRate2P)) && (
                           <span className="text-[9px] text-indigo-400 block font-mono font-bold text-center">
@@ -1028,7 +1028,7 @@ export default function SettingsTab({
                           type="number"
                           value={localRates[currentType].hourlyRate3P}
                           onChange={(e) => handleRateChange(currentType, 'hourlyRate3P', e.target.value)}
-                          className="w-full px-2 py-1.5 bg-[#0B0E14] border border-white/10 rounded font-mono text-center text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          className="w-full px-2 py-1.5 bg-surface-0b0e14 border border-white/10 rounded font-mono text-center text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
                         />
                         {localRates[currentType].hourlyRate3P !== undefined && !isNaN(Number(localRates[currentType].hourlyRate3P)) && (
                           <span className="text-[9px] text-purple-400 block font-mono font-bold text-center">
@@ -1046,7 +1046,7 @@ export default function SettingsTab({
                           type="number"
                           value={localRates[currentType].hourlyRate4P}
                           onChange={(e) => handleRateChange(currentType, 'hourlyRate4P', e.target.value)}
-                          className="w-full px-2 py-1.5 bg-[#0B0E14] border border-white/10 rounded font-mono text-center text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          className="w-full px-2 py-1.5 bg-surface-0b0e14 border border-white/10 rounded font-mono text-center text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
                         />
                         {localRates[currentType].hourlyRate4P !== undefined && !isNaN(Number(localRates[currentType].hourlyRate4P)) && (
                           <span className="text-[9px] text-amber-400 block font-mono font-bold text-center">
@@ -1090,7 +1090,7 @@ export default function SettingsTab({
       </div>
 
       {/* 2.5 App Title & Logo Branding Configuration */}
-      <div className="p-5 bg-[#151921] border border-white/5 rounded-2xl space-y-6 shadow-xl text-right">
+      <div className="p-5 bg-surface-151921 border border-white/5 rounded-2xl space-y-6 shadow-xl text-right">
         <div className="space-y-1">
           <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2 font-sans">
             <Building className="w-4 h-4 text-blue-400" />
@@ -1102,7 +1102,7 @@ export default function SettingsTab({
         </div>
 
         {userRole !== 'admin' ? (
-          <div className="p-3 bg-[#0B0E14] border border-amber-500/20 rounded-xl text-amber-400 text-xs flex items-center gap-2 font-sans">
+          <div className="p-3 bg-surface-0b0e14 border border-amber-500/20 rounded-xl text-amber-400 text-xs flex items-center gap-2 font-sans">
             <Lock className="w-4 h-4 text-amber-400 shrink-0" />
             <span>تغییر عنوان و لوگوی مرکز فقط توسط **مدیریت کل** امکان‌پذیر است. کاربر عادی مجاز به تغییر نمی‌باشد.</span>
           </div>
@@ -1118,7 +1118,7 @@ export default function SettingsTab({
                     value={localAppName}
                     onChange={(e) => setLocalAppName(e.target.value)}
                     placeholder="مثال: سامانه هوشمند مدیریت گیم‌نت"
-                    className="w-full px-3 py-2 bg-[#0B0E14] border border-white/10 rounded-lg text-white text-xs font-bold focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full px-3 py-2 bg-surface-0b0e14 border border-white/10 rounded-lg text-white text-xs font-bold focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                   <button
                     type="submit"
@@ -1142,7 +1142,7 @@ export default function SettingsTab({
               <label className="text-[10px] text-slate-400 block font-medium mb-2">لوگوی اختصاصی هدر:</label>
               <div className="flex flex-wrap items-center gap-4">
                 {/* Logo Frame matching header */}
-                <div className="flex items-center gap-3 p-2.5 bg-[#0B0E14] border border-white/10 rounded-xl">
+                <div className="flex items-center gap-3 p-2.5 bg-surface-0b0e14 border border-white/10 rounded-xl">
                   {appLogo ? (
                     <div className="w-11 h-11 rounded-xl overflow-hidden bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-900/30 shrink-0 border border-white/10">
                       <img
@@ -1203,7 +1203,7 @@ export default function SettingsTab({
       />
 
       {/* 3. Alarm and Browser Notification Settings */}
-      <div className="p-5 bg-[#151921] border border-white/5 rounded-2xl space-y-6 shadow-xl">
+      <div className="p-5 bg-surface-151921 border border-white/5 rounded-2xl space-y-6 shadow-xl">
         <div className="space-y-1">
           <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
             <Settings className="w-4 h-4 text-blue-400" />
@@ -1227,7 +1227,7 @@ export default function SettingsTab({
                   const val = Math.max(5, parseInt(e.target.value, 10) || 5);
                   setLocalAlarmInterval(val);
                 }}
-                className="w-32 px-3 py-2 bg-[#0B0E14] border border-white/10 rounded-lg text-white font-mono text-center focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-32 px-3 py-2 bg-surface-0b0e14 border border-white/10 rounded-lg text-white font-mono text-center focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
               <button
                 type="button"
@@ -1253,7 +1253,7 @@ export default function SettingsTab({
               <select
                 value={localAutoLogout}
                 onChange={(e) => setLocalAutoLogout(Number(e.target.value))}
-                className="w-full px-3 py-2 bg-[#0B0E14] border border-white/10 rounded-lg text-white text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full px-3 py-2 bg-surface-0b0e14 border border-white/10 rounded-lg text-white text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
               >
                 <option value={0}>غیرفعال (بدون خروج خودکار)</option>
                 <option value={1}>۱ دقیقه</option>
@@ -1287,7 +1287,7 @@ export default function SettingsTab({
       </div>
 
       {/* 3.5 Preset Custom Timer Minutes Settings */}
-      <div className="p-5 bg-[#151921] border border-white/5 rounded-2xl space-y-6 shadow-xl text-right">
+      <div className="p-5 bg-surface-151921 border border-white/5 rounded-2xl space-y-6 shadow-xl text-right">
         <div className="space-y-1">
           <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2 font-sans">
             <Clock className="w-4 h-4 text-blue-400" />
@@ -1307,7 +1307,7 @@ export default function SettingsTab({
                 value={localPresets}
                 onChange={(e) => setLocalPresets(e.target.value)}
                 placeholder="30, 45, 60"
-                className="w-full px-3 py-2 bg-[#0B0E14] border border-white/10 rounded-lg text-white font-mono text-center focus:outline-none focus:ring-1 focus:ring-blue-500 font-bold tracking-wider"
+                className="w-full px-3 py-2 bg-surface-0b0e14 border border-white/10 rounded-lg text-white font-mono text-center focus:outline-none focus:ring-1 focus:ring-blue-500 font-bold tracking-wider"
               />
               <button
                 type="submit"
@@ -1328,7 +1328,7 @@ export default function SettingsTab({
       </div>
 
       {/* Preset Cash Division Shortcuts Settings */}
-      <div className="p-5 bg-[#151921] border border-white/5 rounded-2xl space-y-6 shadow-xl text-right">
+      <div className="p-5 bg-surface-151921 border border-white/5 rounded-2xl space-y-6 shadow-xl text-right">
         <div className="space-y-1">
           <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2 font-sans">
             <Calculator className="w-4 h-4 text-emerald-400" />
@@ -1348,7 +1348,7 @@ export default function SettingsTab({
                 value={localCashDivisors}
                 onChange={(e) => setLocalCashDivisors(e.target.value)}
                 placeholder="2, 3, 4"
-                className="w-full px-3 py-2 bg-[#0B0E14] border border-white/10 rounded-lg text-white font-mono text-center focus:outline-none focus:ring-1 focus:ring-emerald-500 font-bold tracking-wider"
+                className="w-full px-3 py-2 bg-surface-0b0e14 border border-white/10 rounded-lg text-white font-mono text-center focus:outline-none focus:ring-1 focus:ring-emerald-500 font-bold tracking-wider"
               />
               <button
                 type="submit"
@@ -1369,7 +1369,7 @@ export default function SettingsTab({
       </div>
 
       {/* Admin Password Settings Card */}
-      <div className="p-5 bg-[#151921] border border-white/5 rounded-2xl space-y-6 shadow-xl">
+      <div className="p-5 bg-surface-151921 border border-white/5 rounded-2xl space-y-6 shadow-xl">
         <div className="space-y-1">
           <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
             <Lock className="w-4 h-4 text-blue-400" />
@@ -1389,7 +1389,7 @@ export default function SettingsTab({
                 placeholder="مثال: admin"
                 value={localAdminUsername}
                 onChange={(e) => setLocalAdminUsername(e.target.value)}
-                className="w-full px-3 py-2 bg-[#0B0E14] border border-white/10 rounded-lg text-white font-mono text-center focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs"
+                className="w-full px-3 py-2 bg-surface-0b0e14 border border-white/10 rounded-lg text-white font-mono text-center focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs"
               />
             </div>
 
@@ -1400,7 +1400,7 @@ export default function SettingsTab({
                 placeholder="مثال: 123"
                 value={localAdminPassword}
                 onChange={(e) => setLocalAdminPassword(e.target.value)}
-                className="w-full px-3 py-2 bg-[#0B0E14] border border-white/10 rounded-lg text-white font-mono text-center focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs"
+                className="w-full px-3 py-2 bg-surface-0b0e14 border border-white/10 rounded-lg text-white font-mono text-center focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs"
               />
             </div>
           </div>
@@ -1437,7 +1437,7 @@ export default function SettingsTab({
       </div>
 
       {/* 3.5 Operators & Shift Personnel Management Section */}
-      <div className="p-5 bg-[#151921] border border-white/5 rounded-2xl space-y-6 shadow-xl">
+      <div className="p-5 bg-surface-151921 border border-white/5 rounded-2xl space-y-6 shadow-xl">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-white/5 pb-4">
           <div className="space-y-1">
             <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
@@ -1454,7 +1454,7 @@ export default function SettingsTab({
         </div>
 
         {/* Mandatory Operator Login Toggle Option */}
-        <div className="p-4 bg-[#0B0E14]/80 border border-indigo-500/20 rounded-xl space-y-3">
+        <div className="p-4 bg-surface-0b0e14/80 border border-indigo-500/20 rounded-xl space-y-3">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-start sm:items-center gap-3">
               <div className={`p-2 rounded-xl shrink-0 ${requireOperatorLogin ? 'bg-indigo-600/20 text-indigo-400 border border-indigo-500/30' : 'bg-slate-800/40 text-slate-500 border border-white/5'}`}>
@@ -1517,7 +1517,7 @@ export default function SettingsTab({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Create or Edit Operator Form */}
           <div className="lg:col-span-5 space-y-4">
-            <div className="p-4 bg-[#0B0E14]/70 border border-white/5 rounded-xl space-y-4 text-right">
+            <div className="p-4 bg-surface-0b0e14/70 border border-white/5 rounded-xl space-y-4 text-right">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-indigo-300 flex items-center gap-1.5">
                   <UserPlus className="w-4 h-4 text-indigo-400" />
@@ -1557,7 +1557,7 @@ export default function SettingsTab({
                     placeholder="مثال: علی حسینی (شیفت عصر)"
                     value={opName}
                     onChange={(e) => setOpName(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#151921] border border-white/10 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-indigo-500 text-xs font-sans"
+                    className="w-full px-3 py-2 bg-surface-151921 border border-white/10 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-indigo-500 text-xs font-sans"
                   />
                 </div>
 
@@ -1570,7 +1570,7 @@ export default function SettingsTab({
                       placeholder="مثال: ali"
                       value={opUsername}
                       onChange={(e) => setOpUsername(e.target.value)}
-                      className="w-full px-3 py-2 bg-[#151921] border border-white/10 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-indigo-500 text-xs font-mono"
+                      className="w-full px-3 py-2 bg-surface-151921 border border-white/10 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-indigo-500 text-xs font-mono"
                     />
                   </div>
                   <div className="space-y-1">
@@ -1581,7 +1581,7 @@ export default function SettingsTab({
                       placeholder="مثال: 1234"
                       value={opPassword}
                       onChange={(e) => setOpPassword(e.target.value)}
-                      className="w-full px-3 py-2 bg-[#151921] border border-white/10 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-indigo-500 text-xs font-mono"
+                      className="w-full px-3 py-2 bg-surface-151921 border border-white/10 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-indigo-500 text-xs font-mono"
                     />
                   </div>
                 </div>
@@ -1590,72 +1590,72 @@ export default function SettingsTab({
                   <span className="text-[11px] font-bold text-slate-300 block">سطح دسترسی‌های این اپراتور:</span>
                   
                   <div className="space-y-1.5 text-[10px]">
-                    <label className="flex items-center gap-2 p-2 bg-[#151921] border border-white/5 rounded-lg cursor-pointer hover:bg-white/5 transition-colors">
+                    <label className="flex items-center gap-2 p-2 bg-surface-151921 border border-white/5 rounded-lg cursor-pointer hover:bg-white/5 transition-colors">
                       <input
                         type="checkbox"
                         checked={opPermissions.buffet}
                         onChange={(e) => setOpPermissions({ ...opPermissions, buffet: e.target.checked })}
-                        className="rounded bg-[#0B0E14] border-white/10 text-indigo-500 w-3.5 h-3.5 cursor-pointer"
+                        className="rounded bg-surface-0b0e14 border-white/10 text-indigo-500 w-3.5 h-3.5 cursor-pointer"
                       />
                       <span className="text-slate-200 font-medium">صندوق بوفه و فروش مستقیم</span>
                     </label>
 
-                    <label className="flex items-center gap-2 p-2 bg-[#151921] border border-white/5 rounded-lg cursor-pointer hover:bg-white/5 transition-colors">
+                    <label className="flex items-center gap-2 p-2 bg-surface-151921 border border-white/5 rounded-lg cursor-pointer hover:bg-white/5 transition-colors">
                       <input
                         type="checkbox"
                         checked={opPermissions.debt}
                         onChange={(e) => setOpPermissions({ ...opPermissions, debt: e.target.checked })}
-                        className="rounded bg-[#0B0E14] border-white/10 text-indigo-500 w-3.5 h-3.5 cursor-pointer"
+                        className="rounded bg-surface-0b0e14 border-white/10 text-indigo-500 w-3.5 h-3.5 cursor-pointer"
                       />
                       <span className="text-slate-200 font-medium">دفتر نسیه و ثبت بدهکاری</span>
                     </label>
 
-                    <label className="flex items-center gap-2 p-2 bg-[#151921] border border-white/5 rounded-lg cursor-pointer hover:bg-white/5 transition-colors">
+                    <label className="flex items-center gap-2 p-2 bg-surface-151921 border border-white/5 rounded-lg cursor-pointer hover:bg-white/5 transition-colors">
                       <input
                         type="checkbox"
                         checked={opPermissions.reports}
                         onChange={(e) => setOpPermissions({ ...opPermissions, reports: e.target.checked })}
-                        className="rounded bg-[#0B0E14] border-white/10 text-indigo-500 w-3.5 h-3.5 cursor-pointer"
+                        className="rounded bg-surface-0b0e14 border-white/10 text-indigo-500 w-3.5 h-3.5 cursor-pointer"
                       />
                       <span className="text-slate-200 font-medium">صورت‌های مالی و سود</span>
                     </label>
 
-                    <label className="flex items-center gap-2 p-2 bg-[#151921] border border-white/5 rounded-lg cursor-pointer hover:bg-white/5 transition-colors">
+                    <label className="flex items-center gap-2 p-2 bg-surface-151921 border border-white/5 rounded-lg cursor-pointer hover:bg-white/5 transition-colors">
                       <input
                         type="checkbox"
                         checked={opPermissions.backups}
                         onChange={(e) => setOpPermissions({ ...opPermissions, backups: e.target.checked })}
-                        className="rounded bg-[#0B0E14] border-white/10 text-indigo-500 w-3.5 h-3.5 cursor-pointer"
+                        className="rounded bg-surface-0b0e14 border-white/10 text-indigo-500 w-3.5 h-3.5 cursor-pointer"
                       />
                       <span className="text-slate-200 font-medium">دیتابیس و بکاپ‌ها</span>
                     </label>
 
-                    <label className="flex items-center gap-2 p-2 bg-[#151921] border border-white/5 rounded-lg cursor-pointer hover:bg-white/5 transition-colors">
+                    <label className="flex items-center gap-2 p-2 bg-surface-151921 border border-white/5 rounded-lg cursor-pointer hover:bg-white/5 transition-colors">
                       <input
                         type="checkbox"
                         checked={opPermissions.settings}
                         onChange={(e) => setOpPermissions({ ...opPermissions, settings: e.target.checked })}
-                        className="rounded bg-[#0B0E14] border-white/10 text-indigo-500 w-3.5 h-3.5 cursor-pointer"
+                        className="rounded bg-surface-0b0e14 border-white/10 text-indigo-500 w-3.5 h-3.5 cursor-pointer"
                       />
                       <span className="text-slate-200 font-medium">تنظیمات عمومی</span>
                     </label>
 
-                    <label className="flex items-center gap-2 p-2 bg-[#151921] border border-rose-500/20 rounded-lg cursor-pointer hover:bg-rose-500/5 transition-colors">
+                    <label className="flex items-center gap-2 p-2 bg-surface-151921 border border-rose-500/20 rounded-lg cursor-pointer hover:bg-rose-500/5 transition-colors">
                       <input
                         type="checkbox"
                         checked={!!opPermissions.closeWorkingDay}
                         onChange={(e) => setOpPermissions({ ...opPermissions, closeWorkingDay: e.target.checked })}
-                        className="rounded bg-[#0B0E14] border-white/10 text-rose-500 w-3.5 h-3.5 cursor-pointer"
+                        className="rounded bg-surface-0b0e14 border-white/10 text-rose-500 w-3.5 h-3.5 cursor-pointer"
                       />
                       <span className="text-rose-300 font-medium">اتمام روز کاری (ثبت شیفت)</span>
                     </label>
 
-                    <label className="flex items-center gap-2 p-2 bg-[#151921] border border-amber-500/20 rounded-lg cursor-pointer hover:bg-amber-500/5 transition-colors">
+                    <label className="flex items-center gap-2 p-2 bg-surface-151921 border border-amber-500/20 rounded-lg cursor-pointer hover:bg-amber-500/5 transition-colors">
                       <input
                         type="checkbox"
                         checked={!!opPermissions.allowUserEdits}
                         onChange={(e) => setOpPermissions({ ...opPermissions, allowUserEdits: e.target.checked })}
-                        className="rounded bg-[#0B0E14] border-white/10 text-amber-500 w-3.5 h-3.5 cursor-pointer"
+                        className="rounded bg-surface-0b0e14 border-white/10 text-amber-500 w-3.5 h-3.5 cursor-pointer"
                       />
                       <span className="text-amber-300 font-medium">مجوز ویرایش و تغییرات حساس</span>
                     </label>
@@ -1678,7 +1678,7 @@ export default function SettingsTab({
             <span className="text-xs font-bold text-slate-300 block">لیست اپراتورهای تعریف‌شده ({toPersianDigits(operators.length)} نفر)</span>
 
             {operators.length === 0 ? (
-              <div className="p-8 text-center bg-[#0B0E14]/40 border border-white/5 rounded-xl space-y-2">
+              <div className="p-8 text-center bg-surface-0b0e14/40 border border-white/5 rounded-xl space-y-2">
                 <Users className="w-8 h-8 text-slate-600 mx-auto" />
                 <p className="text-xs text-slate-400">هیچ اپراتوری ثبت نشده است. می‌توانید نخستین اپراتور خود را ایجاد کنید.</p>
               </div>
@@ -1689,8 +1689,8 @@ export default function SettingsTab({
                     key={op.id}
                     className={`p-3.5 rounded-xl border transition-all ${
                       op.isActive
-                        ? 'bg-[#0B0E14]/80 border-white/10 hover:border-indigo-500/30'
-                        : 'bg-[#0B0E14]/30 border-white/5 opacity-60'
+                        ? 'bg-surface-0b0e14/80 border-white/10 hover:border-indigo-500/30'
+                        : 'bg-surface-0b0e14/30 border-white/5 opacity-60'
                     }`}
                   >
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/5 pb-2.5">
@@ -1780,7 +1780,7 @@ export default function SettingsTab({
         <div className="border-t border-white/5 pt-4 space-y-3">
           <span className="text-xs font-bold text-slate-300 block">سطح دسترسی پیش‌فرض برای کاربر عادی بدون لایسنس/حساب</span>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-            <label className="flex items-center gap-3 p-2.5 bg-[#0B0E14] border border-white/5 rounded-xl cursor-pointer select-none">
+            <label className="flex items-center gap-3 p-2.5 bg-surface-0b0e14 border border-white/5 rounded-xl cursor-pointer select-none">
               <input
                 type="checkbox"
                 checked={userPermissions.buffet}
@@ -1789,12 +1789,12 @@ export default function SettingsTab({
                     onUpdateUserPermissions({ ...userPermissions, buffet: e.target.checked });
                   }
                 }}
-                className="rounded bg-[#151921] border-white/10 text-indigo-500 w-4 h-4 cursor-pointer"
+                className="rounded bg-surface-151921 border-white/10 text-indigo-500 w-4 h-4 cursor-pointer"
               />
               <span className="text-xs text-slate-300 font-medium">صندوق بوفه پیش‌فرض</span>
             </label>
 
-            <label className="flex items-center gap-3 p-2.5 bg-[#0B0E14] border border-white/5 rounded-xl cursor-pointer select-none">
+            <label className="flex items-center gap-3 p-2.5 bg-surface-0b0e14 border border-white/5 rounded-xl cursor-pointer select-none">
               <input
                 type="checkbox"
                 checked={userPermissions.debt}
@@ -1803,12 +1803,12 @@ export default function SettingsTab({
                     onUpdateUserPermissions({ ...userPermissions, debt: e.target.checked });
                   }
                 }}
-                className="rounded bg-[#151921] border-white/10 text-indigo-500 w-4 h-4 cursor-pointer"
+                className="rounded bg-surface-151921 border-white/10 text-indigo-500 w-4 h-4 cursor-pointer"
               />
               <span className="text-xs text-slate-300 font-medium">دفتر نسیه پیش‌فرض</span>
             </label>
 
-            <label className="flex items-center gap-3 p-2.5 bg-[#0B0E14] border border-white/5 rounded-xl cursor-pointer select-none">
+            <label className="flex items-center gap-3 p-2.5 bg-surface-0b0e14 border border-white/5 rounded-xl cursor-pointer select-none">
               <input
                 type="checkbox"
                 checked={userPermissions.reports}
@@ -1817,7 +1817,7 @@ export default function SettingsTab({
                     onUpdateUserPermissions({ ...userPermissions, reports: e.target.checked });
                   }
                 }}
-                className="rounded bg-[#151921] border-white/10 text-indigo-500 w-4 h-4 cursor-pointer"
+                className="rounded bg-surface-151921 border-white/10 text-indigo-500 w-4 h-4 cursor-pointer"
               />
               <span className="text-xs text-slate-300 font-medium">صورت‌های مالی پیش‌فرض</span>
             </label>
@@ -1826,7 +1826,7 @@ export default function SettingsTab({
       </div>
 
       {/* 4. Card Reader (POS) Configuration */}
-      <div className="p-5 bg-[#151921] border border-white/5 rounded-2xl space-y-6 shadow-xl">
+      <div className="p-5 bg-surface-151921 border border-white/5 rounded-2xl space-y-6 shadow-xl">
         <div className="space-y-1">
           <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
             <CreditCard className="w-4 h-4 text-emerald-400" />
@@ -1840,7 +1840,7 @@ export default function SettingsTab({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 font-sans">
           {/* Left panel: Add new card reader */}
           <div className="lg:col-span-5 space-y-4">
-            <div className="p-4 bg-[#0B0E14]/60 border border-white/5 rounded-xl space-y-4 text-right">
+            <div className="p-4 bg-surface-0b0e14/60 border border-white/5 rounded-xl space-y-4 text-right">
               <span className="text-xs font-bold text-slate-300 block">ثبت کارتخوان جدید</span>
 
               {cardReaderError && (
@@ -1863,7 +1863,7 @@ export default function SettingsTab({
                     placeholder="مثال: کارتخوان بانک ملی، کارتخوان بانک سامان"
                     value={newCardReaderName}
                     onChange={(e) => setNewCardReaderName(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#0B0E14] border border-white/10 rounded-lg text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full px-3 py-2 bg-surface-0b0e14 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
                 <button
@@ -1882,13 +1882,13 @@ export default function SettingsTab({
             <div className="border border-white/5 rounded-xl overflow-hidden text-xs text-right">
               <table className="w-full text-right" dir="rtl">
                 <thead>
-                  <tr className="bg-[#0B0E14] font-semibold text-slate-400 border-b border-white/5">
+                  <tr className="bg-surface-0b0e14 font-semibold text-slate-400 border-b border-white/5">
                     <th className="px-4 py-2.5">ردیف</th>
                     <th className="px-4 py-2.5 text-right">نام کارتخوان</th>
                     <th className="px-4 py-2.5 text-left">عملیات حذف</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/5 bg-[#0B0E14]/20">
+                <tbody className="divide-y divide-white/5 bg-surface-0b0e14/20">
                   {cardReaders.length === 0 ? (
                     <tr>
                       <td colSpan={3} className="px-4 py-6 text-center text-slate-500">
@@ -1921,7 +1921,7 @@ export default function SettingsTab({
       </div>
 
       {/* 4.5 Extra Services & Presets Management Section */}
-      <div className="p-5 bg-[#151921] border border-white/5 rounded-2xl space-y-6 shadow-xl">
+      <div className="p-5 bg-surface-151921 border border-white/5 rounded-2xl space-y-6 shadow-xl">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-white/5 pb-4">
           <div className="space-y-1">
             <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
@@ -1940,7 +1940,7 @@ export default function SettingsTab({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Add / Edit Form */}
           <div className="lg:col-span-5 space-y-4">
-            <div className="p-4 bg-[#0B0E14]/70 border border-white/5 rounded-xl space-y-4 text-right">
+            <div className="p-4 bg-surface-0b0e14/70 border border-white/5 rounded-xl space-y-4 text-right">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-amber-300 flex items-center gap-1.5">
                   <Plus className="w-4 h-4 text-amber-400" />
@@ -1980,7 +1980,7 @@ export default function SettingsTab({
                     placeholder="مثال: کرایه واقعیت مجازی (VR) / دسته اضافه"
                     value={svcName}
                     onChange={(e) => setSvcName(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#151921] border border-white/10 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-amber-500 text-xs font-sans"
+                    className="w-full px-3 py-2 bg-surface-151921 border border-white/10 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-amber-500 text-xs font-sans"
                   />
                 </div>
 
@@ -1995,7 +1995,7 @@ export default function SettingsTab({
                       placeholder="مثال: 25000"
                       value={svcPrice}
                       onChange={(e) => setSvcPrice(e.target.value)}
-                      className="w-full px-3 py-2 bg-[#151921] border border-white/10 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-amber-500 text-xs font-mono"
+                      className="w-full px-3 py-2 bg-surface-151921 border border-white/10 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-amber-500 text-xs font-mono"
                     />
                   </div>
 
@@ -2004,7 +2004,7 @@ export default function SettingsTab({
                     <select
                       value={svcCategory}
                       onChange={(e) => setSvcCategory(e.target.value as 'equipment' | 'damage' | 'vip')}
-                      className="w-full px-3 py-2 bg-[#151921] border border-white/10 rounded-xl text-white focus:outline-none focus:ring-1 focus:ring-amber-500 text-xs font-sans"
+                      className="w-full px-3 py-2 bg-surface-151921 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-1 focus:ring-amber-500 text-xs font-sans"
                     >
                       <option value="equipment">تجهیزات و لوازم</option>
                       <option value="damage">خسارت و جریمه</option>
@@ -2020,7 +2020,7 @@ export default function SettingsTab({
                     placeholder="توضیح کوتاه درباره این سرویس..."
                     value={svcDescription}
                     onChange={(e) => setSvcDescription(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#151921] border border-white/10 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-amber-500 text-xs font-sans"
+                    className="w-full px-3 py-2 bg-surface-151921 border border-white/10 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-amber-500 text-xs font-sans"
                   />
                 </div>
 
@@ -2039,7 +2039,7 @@ export default function SettingsTab({
           <div className="lg:col-span-7 space-y-3">
             <span className="text-xs font-bold text-slate-300 block mb-2">لیست خدمات و امکانات فعال در سیستم:</span>
             {extraServices.length === 0 ? (
-              <div className="p-6 bg-[#0B0E14]/40 border border-white/5 rounded-xl text-center text-slate-500 text-xs font-bold">
+              <div className="p-6 bg-surface-0b0e14/40 border border-white/5 rounded-xl text-center text-slate-500 text-xs font-bold">
                 هیچ سرویس جانبی تعریف نشده است.
               </div>
             ) : (
@@ -2047,7 +2047,7 @@ export default function SettingsTab({
                 {extraServices.map((item) => (
                   <div
                     key={item.id}
-                    className="p-3 bg-[#0B0E14] border border-white/5 hover:border-amber-500/30 rounded-xl transition-all flex flex-col justify-between gap-2 text-right"
+                    className="p-3 bg-surface-0b0e14 border border-white/5 hover:border-amber-500/30 rounded-xl transition-all flex flex-col justify-between gap-2 text-right"
                   >
                     <div className="space-y-1">
                       <div className="flex items-center justify-between gap-2">
@@ -2099,7 +2099,7 @@ export default function SettingsTab({
       </div>
 
       {/* 4.8 Telegram Bot Financial Reports Integration */}
-      <div className="p-5 bg-[#151921] border border-white/5 rounded-2xl space-y-6 shadow-xl font-sans" dir="rtl">
+      <div className="p-5 bg-surface-151921 border border-white/5 rounded-2xl space-y-6 shadow-xl font-sans" dir="rtl">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-white/5 pb-4">
           <div className="space-y-1">
             <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
@@ -2160,7 +2160,7 @@ export default function SettingsTab({
 
         <form onSubmit={handleSaveTelegram} className="space-y-4 text-right">
           {/* Enable Toggle Switch */}
-          <div className="p-3.5 bg-[#0B0E14] border border-white/5 rounded-xl flex items-center justify-between">
+          <div className="p-3.5 bg-surface-0b0e14 border border-white/5 rounded-xl flex items-center justify-between">
             <div className="space-y-0.5">
               <span className="text-xs font-bold text-white block">
                 فعال‌سازی ارسال خودکار خلاصه مالی در پایان روز کاری
@@ -2200,7 +2200,7 @@ export default function SettingsTab({
                   setLocalTelegramConfig((prev) => ({ ...prev, botToken: e.target.value.trim() }))
                 }
                 placeholder="123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ_1234567"
-                className="w-full px-3.5 py-2.5 bg-[#0B0E14] border border-white/10 rounded-xl text-sky-300 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-sky-500 font-mono text-xs text-left"
+                className="w-full px-3.5 py-2.5 bg-surface-0b0e14 border border-white/10 rounded-xl text-sky-300 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-sky-500 font-mono text-xs text-left"
               />
               <p className="text-[9.5px] text-slate-400">
                 توکن اختصاصی که پس از ساخت بات در تلگرام توسط BotFather@ به شما داده شده است.
@@ -2224,7 +2224,7 @@ export default function SettingsTab({
                   setLocalTelegramConfig((prev) => ({ ...prev, chatId: e.target.value.trim() }))
                 }
                 placeholder="123456789 یا 100123456789-"
-                className="w-full px-3.5 py-2.5 bg-[#0B0E14] border border-white/10 rounded-xl text-sky-300 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-sky-500 font-mono text-xs text-left"
+                className="w-full px-3.5 py-2.5 bg-surface-0b0e14 border border-white/10 rounded-xl text-sky-300 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-sky-500 font-mono text-xs text-left"
               />
               <p className="text-[9.5px] text-slate-400">
                 شناسه عددی اکانت تلگرام شما، یا شناسه گروه/کانالی که بات در آن عضو و ادمین است.
@@ -2248,7 +2248,7 @@ export default function SettingsTab({
                 }))
               }
               placeholder="https://api.telegram.org"
-              className="w-full px-3.5 py-2 bg-[#0B0E14] border border-white/10 rounded-xl text-slate-300 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-sky-500 font-mono text-xs text-left"
+              className="w-full px-3.5 py-2 bg-surface-0b0e14 border border-white/10 rounded-xl text-slate-300 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-sky-500 font-mono text-xs text-left"
             />
             <p className="text-[9.5px] text-slate-400">
               به‌صورت پیش‌فرض روی <code>https://api.telegram.org</code> قرار دارد. در صورت نیاز به ریورس‌پروکسی یا سرور واسط می‌توانید آدرس آن را اینجا تغییر دهید.
@@ -2286,7 +2286,7 @@ export default function SettingsTab({
           </div>
 
           {/* Quick Setup Instructions Help Accordion */}
-          <div className="p-4 bg-[#0B0E14]/70 border border-white/5 rounded-xl space-y-2 text-xs mt-3">
+          <div className="p-4 bg-surface-0b0e14/70 border border-white/5 rounded-xl space-y-2 text-xs mt-3">
             <span className="font-bold text-sky-400 block flex items-center gap-1.5 text-xs">
               <HelpCircle className="w-4 h-4" />
               راهنمای سریع ۲ دقیقه‌ای راه‌اندازی بات تلگرام:
@@ -2310,7 +2310,7 @@ export default function SettingsTab({
       </div>
 
       {/* 5. Subscription & Developer Licensing Management */}
-      <div className="p-5 bg-[#151921] border border-white/5 rounded-2xl space-y-6 shadow-xl font-sans" dir="rtl">
+      <div className="p-5 bg-surface-151921 border border-white/5 rounded-2xl space-y-6 shadow-xl font-sans" dir="rtl">
         <div className="space-y-1">
           <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
             <Key className="w-4 h-4 text-amber-400" />
@@ -2323,7 +2323,7 @@ export default function SettingsTab({
 
         {/* Client Current Subscription Info */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="md:col-span-2 bg-[#0B0E14]/60 border border-white/5 p-4 rounded-xl space-y-3">
+          <div className="md:col-span-2 bg-surface-0b0e14/60 border border-white/5 p-4 rounded-xl space-y-3">
             <span className="text-xs font-bold text-slate-300 block border-b border-white/5 pb-1.5 text-right">مشخصات لایسنس فعال روی این سیستم</span>
             
             {lic.currentClient ? (
@@ -2383,7 +2383,7 @@ export default function SettingsTab({
           </div>
 
           {/* Master Developer Console Access */}
-          <div className="bg-[#0B0E14]/60 border border-white/5 p-4 rounded-xl flex flex-col justify-between space-y-3">
+          <div className="bg-surface-0b0e14/60 border border-white/5 p-4 rounded-xl flex flex-col justify-between space-y-3">
             <div className="space-y-1 text-right">
               <span className="text-xs font-bold text-slate-300 block border-b border-white/5 pb-1.5">ورود به پنل توسعه‌دهنده</span>
               <p className="text-[10px] text-slate-500 leading-normal">
@@ -2421,7 +2421,7 @@ export default function SettingsTab({
         {lic.isDevConsoleUnlocked && (
           <div className="pt-6 border-t border-white/10 space-y-6 animate-in slide-in-from-top duration-300 text-right">
             {/* SMS.IR API GATEWAY DIRECT INTEGRATION CARD */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 bg-[#0f131c] p-5 rounded-2xl border border-amber-500/20 shadow-xl">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 bg-surface-0f131c p-5 rounded-2xl border border-amber-500/20 shadow-xl">
               <div className="lg:col-span-2 space-y-4">
                 <div className="flex items-center justify-between border-b border-white/10 pb-2.5">
                   <div className="flex items-center gap-2">
@@ -2458,7 +2458,7 @@ export default function SettingsTab({
                         value={smsApiKeyLocal}
                         onChange={(e) => handleUpdateSmsApiKey(e.target.value)}
                         placeholder="pBA7mhPzUHUCPzUqqVvU321gWgTIytTh4RCWdsL65RC3Zi0D"
-                        className="flex-1 px-3 py-2 bg-[#06080d] border border-amber-500/30 rounded-xl text-amber-300 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-amber-500 font-mono text-xs text-left"
+                        className="flex-1 px-3 py-2 bg-surface-06080d border border-amber-500/30 rounded-xl text-amber-300 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-amber-500 font-mono text-xs text-left"
                       />
                       <button
                         type="button"
@@ -2491,7 +2491,7 @@ export default function SettingsTab({
                       value={smsLineNumberLocal}
                       onChange={(e) => handleUpdateSmsLineNumber(e.target.value)}
                       placeholder="مثال: 300077... (در صورت خالی بودن خودکار شناسایی می‌شود)"
-                      className="w-full px-3 py-2 bg-[#06080d] border border-white/10 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-amber-500 font-mono text-xs text-left"
+                      className="w-full px-3 py-2 bg-surface-06080d border border-white/10 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-amber-500 font-mono text-xs text-left"
                     />
                     {availableSmsLines.length > 0 && (
                       <div className="flex items-center gap-1.5 flex-wrap pt-1">
@@ -2504,7 +2504,7 @@ export default function SettingsTab({
                             className={`px-2 py-0.5 text-[10.5px] font-mono rounded-lg border transition-all cursor-pointer ${
                               smsLineNumberLocal === line
                                 ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 font-bold shadow-xs'
-                                : 'bg-[#030508] text-slate-300 border-white/10 hover:bg-white/10'
+                                : 'bg-surface-030508 text-slate-300 border-white/10 hover:bg-white/10'
                             }`}
                           >
                             {line}
@@ -2534,7 +2534,7 @@ export default function SettingsTab({
                 </div>
 
                 {/* Local Storage Mode Status */}
-                <div className="p-3 bg-[#131a28] rounded-xl border border-white/5 space-y-2 mt-2">
+                <div className="p-3 bg-surface-131a28 rounded-xl border border-white/5 space-y-2 mt-2">
                   <div className="flex justify-between items-center">
                     <span className="text-[10px] text-amber-300 font-bold">وضعیت ذخیره‌سازی لایسنس‌ها (حالت لوکال / آفلاین)</span>
                     <span className="text-[9px] text-emerald-400 font-mono bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
@@ -2548,7 +2548,7 @@ export default function SettingsTab({
               </div>
 
               {/* TEST SMS SENDER BOX */}
-              <div className="bg-[#080b12] border border-white/10 rounded-xl p-3.5 flex flex-col justify-between text-right space-y-3">
+              <div className="bg-surface-080b12 border border-white/10 rounded-xl p-3.5 flex flex-col justify-between text-right space-y-3">
                 <div className="space-y-1 border-b border-white/5 pb-2">
                   <span className="text-[11px] font-bold text-amber-300 block flex items-center gap-1.5">
                     <Phone className="w-3.5 h-3.5 text-amber-400" />
@@ -2568,7 +2568,7 @@ export default function SettingsTab({
                       value={testMobile}
                       onChange={(e) => setTestMobile(e.target.value)}
                       placeholder="09123456789"
-                      className="w-full px-3 py-1.5 bg-[#030508] border border-white/10 rounded-lg text-white font-mono text-xs focus:ring-1 focus:ring-amber-500 text-left"
+                      className="w-full px-3 py-1.5 bg-surface-030508 border border-white/10 rounded-lg text-white font-mono text-xs focus:ring-1 focus:ring-amber-500 text-left"
                     />
                   </div>
 
@@ -2578,7 +2578,7 @@ export default function SettingsTab({
                       rows={2}
                       value={testSmsMessage}
                       onChange={(e) => setTestSmsMessage(e.target.value)}
-                      className="w-full p-2 bg-[#030508] border border-white/10 rounded-lg text-slate-200 text-[10px] focus:ring-1 focus:ring-amber-500 resize-none"
+                      className="w-full p-2 bg-surface-030508 border border-white/10 rounded-lg text-slate-200 text-[10px] focus:ring-1 focus:ring-amber-500 resize-none"
                     />
                   </div>
 

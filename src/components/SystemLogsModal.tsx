@@ -296,10 +296,10 @@ export default function SystemLogsModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200" dir="rtl" id="system-logs-modal">
-      <div className="bg-[#151921] border border-white/10 rounded-2xl w-full max-w-3xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+      <div className="bg-surface-151921 border border-white/10 rounded-2xl w-full max-w-3xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
         
         {/* Header */}
-        <div className="p-4 border-b border-white/10 flex items-center justify-between bg-[#0F1219]">
+        <div className="p-4 border-b border-white/10 flex items-center justify-between bg-surface-0f1219">
           <div className="flex items-center gap-2.5">
             <div className="p-2 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
               <FileText className="w-5 h-5" />
@@ -326,7 +326,7 @@ export default function SystemLogsModal({
         </div>
 
         {/* Toolbar & Filters */}
-        <div className="p-3 border-b border-white/5 bg-[#0F1219]/50 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="p-3 border-b border-white/5 bg-surface-0f1219/50 flex flex-col sm:flex-row items-center justify-between gap-3">
           {/* Search box */}
           <div className="relative w-full sm:w-64">
             <Search className="w-3.5 h-3.5 absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -335,7 +335,7 @@ export default function SystemLogsModal({
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="جستجو در لاگ‌ها..."
-              className="w-full pr-8 pl-3 py-1.5 bg-[#0B0E14] border border-white/10 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500/50"
+              className="w-full pr-8 pl-3 py-1.5 bg-surface-0b0e14 border border-white/10 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500/50"
             />
           </div>
 
@@ -355,7 +355,7 @@ export default function SystemLogsModal({
                 className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all cursor-pointer whitespace-nowrap ${
                   filterType === f.key
                     ? 'bg-amber-500 text-black shadow-md shadow-amber-500/20'
-                    : 'bg-[#0B0E14] text-slate-400 hover:text-white border border-white/5'
+                    : 'bg-surface-0b0e14 text-slate-400 hover:text-white border border-white/5'
                 }`}
               >
                 {f.label}
@@ -370,7 +370,7 @@ export default function SystemLogsModal({
             filteredLogs.map((log) => (
               <div 
                 key={log.id} 
-                className="p-2.5 bg-[#0B0E14] border border-white/5 hover:border-white/10 rounded-xl flex items-start justify-between gap-3 text-xs transition-all hover:bg-[#0B0E14]/80 group"
+                className="p-2.5 bg-surface-0b0e14 border border-white/5 hover:border-white/10 rounded-xl flex items-start justify-between gap-3 text-xs transition-all hover:bg-surface-0b0e14/80 group"
               >
                 <div className="flex items-start gap-2.5 min-w-0">
                   <div className="p-1.5 rounded-lg bg-white/5 border border-white/5 shrink-0 mt-0.5">
@@ -425,13 +425,13 @@ export default function SystemLogsModal({
 
         {/* Custom Log Note Entry */}
         {onAddLog && (
-          <form onSubmit={handleAddCustomLogSubmit} className="p-3 border-t border-white/5 bg-[#0F1219]/30 flex items-center gap-2">
+          <form onSubmit={handleAddCustomLogSubmit} className="p-3 border-t border-white/5 bg-surface-0f1219/30 flex items-center gap-2">
             <input
               type="text"
               value={customNote}
               onChange={(e) => setCustomNote(e.target.value)}
               placeholder="افزودن یادداشت یا لاگ دستی..."
-              className="grow px-3 py-1.5 bg-[#0B0E14] border border-white/10 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500/50"
+              className="grow px-3 py-1.5 bg-surface-0b0e14 border border-white/10 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500/50"
             />
             <button
               type="submit"
@@ -444,7 +444,7 @@ export default function SystemLogsModal({
         )}
 
         {/* Footer */}
-        <div className="p-3 border-t border-white/10 bg-[#0F1219] flex items-center justify-between text-xs">
+        <div className="p-3 border-t border-white/10 bg-surface-0f1219 flex items-center justify-between text-xs">
           <button
             type="button"
             onClick={onClearLogs}

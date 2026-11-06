@@ -216,15 +216,15 @@ export default function LicensingPortal({
     }}>
       <div className={`relative min-h-screen text-slate-100 font-sans ${theme === 'light' ? 'light' : ''}`} dir="rtl">
         {st === 'loading' ? (
-          <div className="min-h-screen bg-[#07090e] flex items-center justify-center">
+          <div className="min-h-screen bg-surface-07090e flex items-center justify-center">
             <RefreshCw className="w-6 h-6 text-indigo-400 animate-spin" />
           </div>
         ) : showLockScreen ? (
-          <div className="min-h-screen bg-[#07090e] flex items-center justify-center p-4 relative overflow-hidden">
+          <div className="min-h-screen bg-surface-07090e flex items-center justify-center p-4 relative overflow-hidden">
             <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-600/5 rounded-full blur-3xl pointer-events-none" />
             <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-indigo-600/5 rounded-full blur-3xl pointer-events-none" />
 
-            <div className="w-full max-w-md bg-[#0f131a] border border-white/10 rounded-3xl shadow-2xl overflow-hidden relative z-10 p-6 space-y-6">
+            <div className="w-full max-w-md bg-surface-0f131a border border-white/10 rounded-3xl shadow-2xl overflow-hidden relative z-10 p-6 space-y-6">
               <div className="text-center space-y-2">
                 <div className="inline-flex p-3 bg-indigo-500/10 text-indigo-400 rounded-2xl border border-indigo-500/20 mb-1">
                   <Lock className="w-7 h-7" />
@@ -381,7 +381,7 @@ export default function LicensingPortal({
 
         {showUnlockModal && (
           <div className="fixed inset-0 bg-black/85 backdrop-blur-md z-[9999] flex items-center justify-center p-4" dir="rtl">
-            <div className="w-full max-w-sm bg-[#0f131c] border border-amber-500/20 rounded-2xl p-5 space-y-4 shadow-2xl relative">
+            <div className="w-full max-w-sm bg-surface-0f131c border border-amber-500/20 rounded-2xl p-5 space-y-4 shadow-2xl relative">
               <div className="text-center space-y-1">
                 <div className="bg-amber-500/10 text-amber-500 w-10 h-10 rounded-full flex items-center justify-center mx-auto border border-amber-500/20">
                   <Key className="w-5 h-5" />

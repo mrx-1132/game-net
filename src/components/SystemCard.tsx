@@ -477,13 +477,13 @@ export default function SystemCard({
         className={`relative flex flex-col border transition-all duration-300 ${s.container} ${
           isActive
             ? isPaused
-              ? 'bg-[#151921] border-amber-500/30'
+              ? 'bg-surface-151921 border-amber-500/30'
               : isLimitReached
-                ? 'bg-[#181115] border-rose-500/60 ring-2 ring-rose-500/30 animate-pulse'
-                : 'bg-[#151921] border-blue-500/30 ring-1 ring-blue-500/10'
+                ? 'bg-surface-181115 border-rose-500/60 ring-2 ring-rose-500/30 animate-pulse'
+                : 'bg-surface-151921 border-blue-500/30 ring-1 ring-blue-500/10'
             : system.status === 'inactive'
-              ? 'bg-[#151921]/60 border-white/5 opacity-50 grayscale text-slate-500'
-              : 'bg-[#151921] border-white/5 hover:border-white/10'
+              ? 'bg-surface-151921/60 border-white/5 opacity-50 grayscale text-slate-500'
+              : 'bg-surface-151921 border-white/5 hover:border-white/10'
         }`}
         id={`system-card-${system.id}`}
         dir="rtl"
@@ -504,7 +504,7 @@ export default function SystemCard({
 
         {/* 1. Device Info Column */}
         <div className="flex items-center gap-3 w-full lg:w-1/4 pr-2">
-          <div className={`bg-[#0B0E14] border border-white/5 shrink-0 ${s.iconBox}`}>
+          <div className={`bg-surface-0b0e14 border border-white/5 shrink-0 ${s.iconBox}`}>
             <Monitor className={`${s.iconSize} ${
               isActive ? (isPaused ? 'text-amber-500' : 'text-blue-500') : system.status === 'free' ? 'text-emerald-500' : 'text-slate-600'
             }`} />
@@ -545,7 +545,7 @@ export default function SystemCard({
 
             {isActive && system.activeSession && (
               <div className="flex flex-col gap-1.5 mt-2">
-                <div className="flex items-center gap-1.5 bg-[#090C11]/80 border border-white/5 w-fit rounded-lg p-0.5 mt-1">
+                <div className="flex items-center gap-1.5 bg-surface-090c11/80 border border-white/5 w-fit rounded-lg p-0.5 mt-1">
                   <span className="text-slate-500 font-bold text-[10px] px-1.5">دسته:</span>
                   {([1, 2, 3, 4] as const).map((count) => (
                     <button
@@ -620,7 +620,7 @@ export default function SystemCard({
 
                   {/* Popover / Mini Menu */}
                   {showTimerMenu && (
-                    <div className="absolute right-0 lg:left-0 lg:right-auto mt-1.5 w-64 bg-[#0F1219] border border-white/10 rounded-xl p-3 shadow-2xl z-40 text-right font-sans cursor-default normal-case tracking-normal">
+                    <div className="absolute right-0 lg:left-0 lg:right-auto mt-1.5 w-64 bg-surface-0f1219 border border-white/10 rounded-xl p-3 shadow-2xl z-40 text-right font-sans cursor-default normal-case tracking-normal">
                       <div className="text-[11px] text-zinc-300 font-bold border-b border-white/5 pb-1.5 mb-2.5 flex items-center justify-between">
                         <span>تنظیم تایمر دلخواه مشتری</span>
                         <button 
@@ -685,7 +685,7 @@ export default function SystemCard({
                               dir="ltr"
                               value={tempValue}
                               onChange={(e) => setTempValue(e.target.value)}
-                              className="w-full bg-[#050608] border border-white/10 rounded-lg pr-2.5 pl-14 py-1.5 text-xs text-white focus:outline-none focus:border-blue-500 font-mono"
+                              className="w-full bg-surface-050608 border border-white/10 rounded-lg pr-2.5 pl-14 py-1.5 text-xs text-white focus:outline-none focus:border-blue-500 font-mono"
                               placeholder={tempType === 'time' ? 'مثال: 60' : 'مثال: 50000'}
                               min="1"
                             />
@@ -835,7 +835,7 @@ export default function SystemCard({
 
         {/* 2. Timer & Duration Block */}
         {isActive && isEditingTime ? (
-          <div className="flex flex-col items-center bg-[#121620] border-2 border-blue-500 rounded-xl p-2.5 space-y-1.5 z-20 w-full lg:w-52 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+          <div className="flex flex-col items-center bg-surface-121620 border-2 border-blue-500 rounded-xl p-2.5 space-y-1.5 z-20 w-full lg:w-52 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between w-full gap-2 border-b border-white/10 pb-1 mb-1">
               <span className="text-blue-400 text-[10px] font-bold shrink-0">ویرایش دستی زمان (دقیقه)</span>
               <button
@@ -857,7 +857,7 @@ export default function SystemCard({
                 max="1440"
                 value={tempMinutes}
                 onChange={(e) => setTempMinutes(e.target.value)}
-                className="w-20 bg-[#080A0F] border border-blue-500/50 rounded-lg py-1 px-2 text-center text-white text-xs font-mono font-bold focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-20 bg-surface-080a0f border border-blue-500/50 rounded-lg py-1 px-2 text-center text-white text-xs font-mono font-bold focus:outline-none focus:ring-1 focus:ring-blue-500"
                 placeholder="دقیقه"
                 autoFocus
               />
@@ -886,7 +886,7 @@ export default function SystemCard({
                     const next = Math.max(0, current + offset);
                     setTempMinutes(next.toString());
                   }}
-                  className="bg-[#1A202C] hover:bg-blue-600/30 text-slate-200 text-[9px] font-mono font-bold py-1 rounded-md border border-white/10 cursor-pointer transition-colors"
+                  className="bg-surface-1a202c hover:bg-blue-600/30 text-slate-200 text-[9px] font-mono font-bold py-1 rounded-md border border-white/10 cursor-pointer transition-colors"
                 >
                   {offset > 0 ? `+${offset}` : offset}
                 </button>
@@ -901,7 +901,7 @@ export default function SystemCard({
                 setIsEditingTime(true);
               }
             }}
-            className={`w-full lg:w-auto flex items-center justify-between lg:justify-center lg:flex-col bg-[#0B0E14] border border-white/10 hover:border-blue-500/50 rounded-xl relative group transition-all duration-200 ${isActive ? 'cursor-pointer' : ''} ${s.timerBox}`}
+            className={`w-full lg:w-auto flex items-center justify-between lg:justify-center lg:flex-col bg-surface-0b0e14 border border-white/10 hover:border-blue-500/50 rounded-xl relative group transition-all duration-200 ${isActive ? 'cursor-pointer' : ''} ${s.timerBox}`}
             title={isActive ? "برای ویرایش دستی زمان بازی کلیک کنید" : ""}
           >
             <div className="flex items-center gap-1.5">
@@ -916,7 +916,7 @@ export default function SystemCard({
               {isActive ? formatDuration(metrics.elapsedMs) : '--:--:--'}
             </span>
             {isActive && (
-              <div className="absolute inset-0 bg-[#0E121C] opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-xl">
+              <div className="absolute inset-0 bg-surface-0e121c opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-xl">
                 <span className="text-[9px] text-white bg-blue-600 hover:bg-blue-500 px-3 py-1 rounded-lg font-bold shadow-lg border border-blue-400/40">
                   ✎ ویرایش دستی زمان
                 </span>
@@ -1053,7 +1053,7 @@ export default function SystemCard({
                 <button
                   type="button"
                   onClick={() => setShowMoreMenu(!showMoreMenu)}
-                  className={`bg-[#0B0E14] hover:bg-[#151921] border border-white/10 hover:border-amber-500/30 text-slate-200 flex items-center justify-center shrink-0 transition-all cursor-pointer ${s.btn} ${showMoreMenu ? 'border-amber-500/50 bg-[#151921]' : ''}`}
+                  className={`bg-surface-0b0e14 hover:bg-surface-151921 border border-white/10 hover:border-amber-500/30 text-slate-200 flex items-center justify-center shrink-0 transition-all cursor-pointer ${s.btn} ${showMoreMenu ? 'border-amber-500/50 bg-surface-151921' : ''}`}
                   title="گزینه‌های بیشتر سیستم"
                 >
                   <MoreVertical className={s.btnIcon} />
@@ -1063,7 +1063,7 @@ export default function SystemCard({
 
                 {/* More Menu Dropdown Content */}
                 {showMoreMenu && (
-                  <div className="absolute left-0 top-full mt-1.5 w-56 bg-[#121620] border border-white/10 rounded-xl shadow-2xl p-1.5 z-50 space-y-1 text-right animate-in fade-in zoom-in-95 duration-100" dir="rtl">
+                  <div className="absolute left-0 top-full mt-1.5 w-56 bg-surface-121620 border border-white/10 rounded-xl shadow-2xl p-1.5 z-50 space-y-1 text-right animate-in fade-in zoom-in-95 duration-100" dir="rtl">
                     <button
                       type="button"
                       onClick={() => { setShowMoreMenu(false); onAddBuffet(system.id); }}
@@ -1151,7 +1151,7 @@ export default function SystemCard({
               <button
                 type="button"
                 onClick={() => onChangeStatus(system.id, 'inactive')}
-                className={`bg-[#0B0E14] border border-white/5 hover:border-white/15 hover:text-slate-300 text-slate-400 transition-all cursor-pointer ${s.btn}`}
+                className={`bg-surface-0b0e14 border border-white/5 hover:border-white/15 hover:text-slate-300 text-slate-400 transition-all cursor-pointer ${s.btn}`}
               >
                 <span>غیرفعال‌سازی</span>
               </button>
@@ -1160,7 +1160,7 @@ export default function SystemCard({
             <button
               type="button"
               onClick={() => onChangeStatus(system.id, 'free')}
-              className={`bg-[#0B0E14] hover:bg-[#151921] border border-white/5 hover:border-white/15 text-slate-200 transition-all flex items-center cursor-pointer ${s.btn}`}
+              className={`bg-surface-0b0e14 hover:bg-surface-151921 border border-white/5 hover:border-white/15 text-slate-200 transition-all flex items-center cursor-pointer ${s.btn}`}
             >
               <CheckCircle className={`text-emerald-400 ${s.btnIcon}`} />
               <span>فعال‌سازی مجدد</span>
@@ -1192,14 +1192,14 @@ export default function SystemCard({
             onChange={(e) => onUpdateNote && onUpdateNote(system.id, e.target.value)}
             placeholder="ثبت یادداشت (تلفن مشتری، گزارش خرابی دستگاه، دسته اضافی و...)"
             rows={1}
-            className="w-full text-[11px] px-2.5 py-1.5 bg-[#07090D] hover:bg-[#0B0E14] focus:bg-[#0B0E14] border border-white/5 hover:border-white/10 focus:border-blue-500/30 rounded-xl text-slate-300 placeholder-slate-600 focus:outline-none transition-all resize-none h-10 font-sans leading-normal text-right"
+            className="w-full text-[11px] px-2.5 py-1.5 bg-surface-07090d hover:bg-surface-0b0e14 focus:bg-surface-0b0e14 border border-white/5 hover:border-white/10 focus:border-blue-500/30 rounded-xl text-slate-300 placeholder-slate-600 focus:outline-none transition-all resize-none h-10 font-sans leading-normal text-right"
           />
         </div>
 
         {/* Customer Info Edit Modal (List View) */}
         {isEditingCustomer && system.activeSession && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 animate-in fade-in duration-150">
-            <div className="bg-[#121620] border border-blue-500/40 rounded-2xl p-5 max-w-sm w-full space-y-4 shadow-2xl text-right animate-in zoom-in-95 duration-150" dir="rtl">
+            <div className="bg-surface-121620 border border-blue-500/40 rounded-2xl p-5 max-w-sm w-full space-y-4 shadow-2xl text-right animate-in zoom-in-95 duration-150" dir="rtl">
               <div className="flex items-center justify-between border-b border-white/10 pb-2.5">
                 <div className="flex items-center gap-2 text-blue-400 font-bold text-sm">
                   <User className="w-4 h-4 text-blue-400" />
@@ -1223,7 +1223,7 @@ export default function SystemCard({
                     type="text"
                     value={tempCustomerName}
                     onChange={(e) => setTempCustomerName(e.target.value)}
-                    className="w-full bg-[#080A0F] border border-white/10 focus:border-blue-500 rounded-xl px-3 py-2 text-xs text-white focus:outline-none"
+                    className="w-full bg-surface-080a0f border border-white/10 focus:border-blue-500 rounded-xl px-3 py-2 text-xs text-white focus:outline-none"
                     placeholder="مثال: علی رضایی"
                     autoFocus
                   />
@@ -1239,7 +1239,7 @@ export default function SystemCard({
                       dir="ltr"
                       value={tempCustomerPhone}
                       onChange={(e) => setTempCustomerPhone(e.target.value)}
-                      className="w-full bg-[#080A0F] border border-white/10 focus:border-blue-500 rounded-xl px-3 py-2 pl-9 text-xs text-white font-mono focus:outline-none text-left"
+                      className="w-full bg-surface-080a0f border border-white/10 focus:border-blue-500 rounded-xl px-3 py-2 pl-9 text-xs text-white font-mono focus:outline-none text-left"
                       placeholder="09123456789"
                     />
                     <Phone className="w-4 h-4 text-slate-500 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -1259,7 +1259,7 @@ export default function SystemCard({
                   <button
                     type="button"
                     onClick={() => setIsEditingCustomer(false)}
-                    className="px-4 py-2 bg-[#080A0F] hover:bg-white/10 text-slate-300 text-xs rounded-xl border border-white/10 transition-all cursor-pointer"
+                    className="px-4 py-2 bg-surface-080a0f hover:bg-white/10 text-slate-300 text-xs rounded-xl border border-white/10 transition-all cursor-pointer"
                   >
                     انصراف
                   </button>
@@ -1272,7 +1272,7 @@ export default function SystemCard({
         {/* Confirmation Modal for Controller Count Change (List View) */}
         {pendingPlayerCount !== null && system.activeSession && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 animate-in fade-in duration-150">
-            <div className="bg-[#121620] border border-blue-500/40 rounded-2xl p-5 max-w-sm w-full space-y-4 shadow-2xl text-right animate-in zoom-in-95 duration-150" dir="rtl">
+            <div className="bg-surface-121620 border border-blue-500/40 rounded-2xl p-5 max-w-sm w-full space-y-4 shadow-2xl text-right animate-in zoom-in-95 duration-150" dir="rtl">
               <div className="flex items-center gap-2.5 text-blue-400 font-bold text-sm border-b border-white/10 pb-2.5">
                 <ArrowRightLeft className="w-4 h-4 text-blue-400" />
                 <span>تایید تغییر تعداد دسته</span>
@@ -1305,7 +1305,7 @@ export default function SystemCard({
                 <button
                   type="button"
                   onClick={() => setPendingPlayerCount(null)}
-                  className="px-4 py-2 bg-[#080A0F] hover:bg-white/10 text-slate-300 text-xs rounded-xl border border-white/10 transition-all cursor-pointer"
+                  className="px-4 py-2 bg-surface-080a0f hover:bg-white/10 text-slate-300 text-xs rounded-xl border border-white/10 transition-all cursor-pointer"
                 >
                   انصراف
                 </button>
@@ -1342,13 +1342,13 @@ export default function SystemCard({
       className={`relative flex flex-col justify-between border shadow-lg transition-all duration-300 ${g.container} ${
         isActive
           ? isPaused
-            ? 'bg-[#151921] border-amber-500/30'
+            ? 'bg-surface-151921 border-amber-500/30'
             : isLimitReached
-              ? 'bg-[#181115] border-rose-500/60 ring-2 ring-rose-500/30 animate-pulse'
-              : 'bg-[#151921] border-blue-500/30 ring-1 ring-blue-500/10'
+              ? 'bg-surface-181115 border-rose-500/60 ring-2 ring-rose-500/30 animate-pulse'
+              : 'bg-surface-151921 border-blue-500/30 ring-1 ring-blue-500/10'
           : system.status === 'inactive'
-            ? 'bg-[#151921]/60 border-white/5 opacity-50 grayscale text-slate-500'
-            : 'bg-[#151921] border-white/5 hover:border-white/10'
+            ? 'bg-surface-151921/60 border-white/5 opacity-50 grayscale text-slate-500'
+            : 'bg-surface-151921 border-white/5 hover:border-white/10'
       }`}
       id={`system-card-${system.id}`}
       dir="rtl"
@@ -1442,7 +1442,7 @@ export default function SystemCard({
 
               {/* Popover / Mini Menu */}
               {showTimerMenu && (
-                <div className="absolute left-0 mt-1.5 w-64 bg-[#0F1219]/98 border border-white/10 rounded-xl p-3 shadow-2xl z-40 text-right font-sans cursor-default normal-case tracking-normal">
+                <div className="absolute left-0 mt-1.5 w-64 bg-surface-0f1219/98 border border-white/10 rounded-xl p-3 shadow-2xl z-40 text-right font-sans cursor-default normal-case tracking-normal">
                   <div className="text-[11px] text-zinc-300 font-bold border-b border-white/5 pb-1.5 mb-2.5 flex items-center justify-between">
                     <span>تنظیم تایمر دلخواه مشتری</span>
                     <button 
@@ -1507,7 +1507,7 @@ export default function SystemCard({
                           dir="ltr"
                           value={tempValue}
                           onChange={(e) => setTempValue(e.target.value)}
-                          className="w-full bg-[#050608] border border-white/10 rounded-lg pr-2.5 pl-14 py-1.5 text-xs text-white focus:outline-none focus:border-blue-500 font-mono"
+                          className="w-full bg-surface-050608 border border-white/10 rounded-lg pr-2.5 pl-14 py-1.5 text-xs text-white focus:outline-none focus:border-blue-500 font-mono"
                           placeholder={tempType === 'time' ? 'مثال: 60' : 'مثال: 50000'}
                           min="1"
                         />
@@ -1653,7 +1653,7 @@ export default function SystemCard({
           )}
 
           {/* Console Type Icon graphic */}
-          <div className={`bg-[#0B0E14] border border-white/5 ${g.iconBox}`}>
+          <div className={`bg-surface-0b0e14 border border-white/5 ${g.iconBox}`}>
             <Monitor className={`${g.iconSize} ${
               isActive ? (isPaused ? 'text-amber-500' : isLimitReached ? 'text-rose-500 animate-pulse' : 'text-blue-500') : system.status === 'free' ? 'text-emerald-500' : 'text-slate-600'
             }`} />
@@ -1662,13 +1662,13 @@ export default function SystemCard({
       </div>
 
       {/* Card Content & Timer area */}
-      <div className={`border-white/5 bg-[#0B0E14]/40 ${g.contentPadding}`}>
+      <div className={`border-white/5 bg-surface-0b0e14/40 ${g.contentPadding}`}>
         {isActive && system.activeSession ? (
           <div className={`w-full ${g.contentSpacing}`}>
             {/* Players Controller count badge */}
             <div className={`flex justify-between items-center ${g.playersLabel}`}>
               <span>تعداد دسته:</span>
-              <div className="flex items-center gap-1 bg-[#090C11] p-0.5 border border-white/5 rounded-lg">
+              <div className="flex items-center gap-1 bg-surface-090c11 p-0.5 border border-white/5 rounded-lg">
                 {([1, 2, 3, 4] as const).map((count) => (
                   <button
                     key={count}
@@ -1688,7 +1688,7 @@ export default function SystemCard({
 
             {/* Dynamic Running Timer Display */}
             {isEditingTime ? (
-              <div className="flex flex-col items-center bg-[#121620] border-2 border-blue-500 rounded-xl p-2.5 space-y-2 z-20 w-full shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+              <div className="flex flex-col items-center bg-surface-121620 border-2 border-blue-500 rounded-xl p-2.5 space-y-2 z-20 w-full shadow-2xl animate-in fade-in zoom-in-95 duration-150">
                 <div className="flex items-center justify-between w-full gap-2 border-b border-white/10 pb-1 mb-1">
                   <span className="text-blue-400 text-[10px] font-bold shrink-0">ویرایش دستی زمان (دقیقه)</span>
                   <button
@@ -1708,7 +1708,7 @@ export default function SystemCard({
                     max="1440"
                     value={tempMinutes}
                     onChange={(e) => setTempMinutes(e.target.value)}
-                    className="flex-1 bg-[#080A0F] border border-blue-500/50 rounded-lg py-1 px-2 text-center text-white text-xs font-mono font-bold focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="flex-1 bg-surface-080a0f border border-blue-500/50 rounded-lg py-1 px-2 text-center text-white text-xs font-mono font-bold focus:outline-none focus:ring-1 focus:ring-blue-500"
                     placeholder="دقیقه"
                     autoFocus
                   />
@@ -1738,7 +1738,7 @@ export default function SystemCard({
                         const next = Math.max(0, current + offset);
                         setTempMinutes(next.toString());
                       }}
-                      className="bg-[#1A202C] hover:bg-blue-600/30 text-slate-200 text-[9px] font-mono font-bold py-1 rounded-md border border-white/10 cursor-pointer transition-colors"
+                      className="bg-surface-1a202c hover:bg-blue-600/30 text-slate-200 text-[9px] font-mono font-bold py-1 rounded-md border border-white/10 cursor-pointer transition-colors"
                     >
                       {offset > 0 ? `+${offset}` : offset}
                     </button>
@@ -1751,7 +1751,7 @@ export default function SystemCard({
                   setTempMinutes(Math.round(metrics.elapsedMs / 60000).toString());
                   setIsEditingTime(true);
                 }}
-                className={`flex flex-col items-center bg-[#0B0E14] border border-white/10 relative overflow-hidden group transition-all hover:bg-[#0F1219] hover:border-blue-500/50 cursor-pointer ${g.timerBox}`}
+                className={`flex flex-col items-center bg-surface-0b0e14 border border-white/10 relative overflow-hidden group transition-all hover:bg-surface-0f1219 hover:border-blue-500/50 cursor-pointer ${g.timerBox}`}
                 title="برای ویرایش دستی زمان بازی کلیک کنید"
               >
                 <div className="flex items-center gap-1.5 justify-center w-full">
@@ -1766,7 +1766,7 @@ export default function SystemCard({
                 <span className={`font-mono text-slate-100 py-0.5 animate-pulse group-hover:text-blue-400 ${g.timerVal} transition-colors`}>
                   {formatDuration(metrics.elapsedMs)}
                 </span>
-                <div className="absolute inset-0 bg-[#0E121C] opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-xl">
+                <div className="absolute inset-0 bg-surface-0e121c opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-xl">
                   <span className="text-[9px] text-white bg-blue-600 hover:bg-blue-500 px-3 py-1 rounded-lg font-bold shadow-lg border border-blue-400/40">
                     ✎ ویرایش دستی زمان
                   </span>
@@ -1815,7 +1815,7 @@ export default function SystemCard({
 
                 {/* Mini thin progress line when collapsed */}
                 {!isTimerHovered && !isLimitReached && (
-                  <div className="w-full bg-[#050608] h-1 rounded-full overflow-hidden border border-white/5 opacity-80">
+                  <div className="w-full bg-surface-050608 h-1 rounded-full overflow-hidden border border-white/5 opacity-80">
                     <div 
                       className="bg-emerald-500 h-full transition-all duration-1000"
                       style={{ 
@@ -1866,7 +1866,7 @@ export default function SystemCard({
                       </span>
                     </div>
                     {!isLimitReached && (
-                      <div className="w-full bg-[#050608] h-1.5 rounded-full mt-1.5 overflow-hidden border border-white/5">
+                      <div className="w-full bg-surface-050608 h-1.5 rounded-full mt-1.5 overflow-hidden border border-white/5">
                         <div 
                           className="bg-emerald-500 h-full transition-all duration-1000"
                           style={{ 
@@ -1881,7 +1881,7 @@ export default function SystemCard({
             )}
 
             {/* Live Financial Cost Progress Bar */}
-            <div className={`bg-[#0B0E14]/30 border border-white/5 ${g.financialBoxPadding} ${g.financialBoxSpacing}`}>
+            <div className={`bg-surface-0b0e14/30 border border-white/5 ${g.financialBoxPadding} ${g.financialBoxSpacing}`}>
               <div className="flex justify-between items-center text-slate-400">
                 <span>هزینه زمان بازی:</span>
                 <span className="font-mono text-slate-200 font-semibold">{formatCurrency(metrics.gamePlayCost)}</span>
@@ -1993,13 +1993,13 @@ export default function SystemCard({
             onChange={(e) => onUpdateNote && onUpdateNote(system.id, e.target.value)}
             placeholder="ثبت یادداشت (تلفن مشتری، گزارش خرابی دستگاه، دسته اضافی و...)"
             rows={1}
-            className="w-full text-[11px] px-2.5 py-1.5 bg-[#07090D] hover:bg-[#0B0E14] focus:bg-[#0B0E14] border border-white/5 hover:border-white/10 focus:border-blue-500/30 rounded-xl text-slate-300 placeholder-slate-650 focus:outline-none transition-all resize-none h-10 font-sans leading-normal text-right"
+            className="w-full text-[11px] px-2.5 py-1.5 bg-surface-07090d hover:bg-surface-0b0e14 focus:bg-surface-0b0e14 border border-white/5 hover:border-white/10 focus:border-blue-500/30 rounded-xl text-slate-300 placeholder-slate-650 focus:outline-none transition-all resize-none h-10 font-sans leading-normal text-right"
           />
         </div>
       </div>
 
       {/* Card Footer Actions */}
-      <div className={`bg-[#0B0E14]/50 flex flex-col ${g.footerPadding}`}>
+      <div className={`bg-surface-0b0e14/50 flex flex-col ${g.footerPadding}`}>
         {isActive ? (
           <div className="flex items-center gap-1.5 w-full relative">
             {/* Play / Pause */}
@@ -2040,7 +2040,7 @@ export default function SystemCard({
               <button
                 type="button"
                 onClick={() => setShowMoreMenu(!showMoreMenu)}
-                className={`bg-[#0B0E14] hover:bg-[#151921] border border-white/10 hover:border-amber-500/30 text-slate-200 flex items-center justify-center transition-all cursor-pointer ${g.btnUpper} ${showMoreMenu ? 'border-amber-500/50 bg-[#151921]' : ''}`}
+                className={`bg-surface-0b0e14 hover:bg-surface-151921 border border-white/10 hover:border-amber-500/30 text-slate-200 flex items-center justify-center transition-all cursor-pointer ${g.btnUpper} ${showMoreMenu ? 'border-amber-500/50 bg-surface-151921' : ''}`}
                 title="گزینه‌های بیشتر"
               >
                 <MoreVertical className={g.btnIcon} />
@@ -2049,7 +2049,7 @@ export default function SystemCard({
 
               {/* More Menu Dropdown Content */}
               {showMoreMenu && (
-                <div className="absolute left-0 bottom-full mb-1.5 w-60 bg-[#121620] border border-white/10 rounded-xl shadow-2xl p-1.5 z-50 space-y-1 text-right animate-in fade-in zoom-in-95 duration-100" dir="rtl">
+                <div className="absolute left-0 bottom-full mb-1.5 w-60 bg-surface-121620 border border-white/10 rounded-xl shadow-2xl p-1.5 z-50 space-y-1 text-right animate-in fade-in zoom-in-95 duration-100" dir="rtl">
                   <button
                     type="button"
                     onClick={() => { setShowMoreMenu(false); onAddBuffet(system.id); }}
@@ -2137,7 +2137,7 @@ export default function SystemCard({
             <button
               type="button"
               onClick={() => onChangeStatus(system.id, 'inactive')}
-              className={`bg-[#0B0E14] border border-white/5 hover:border-white/15 hover:text-slate-300 text-slate-400 rounded-xl transition-all active:scale-[0.97] cursor-pointer ${g.btnUpper}`}
+              className={`bg-surface-0b0e14 border border-white/5 hover:border-white/15 hover:text-slate-300 text-slate-400 rounded-xl transition-all active:scale-[0.97] cursor-pointer ${g.btnUpper}`}
             >
               غیرفعال‌سازی
             </button>
@@ -2146,7 +2146,7 @@ export default function SystemCard({
           <button
             type="button"
             onClick={() => onChangeStatus(system.id, 'free')}
-            className={`bg-[#0B0E14] hover:bg-[#151921] border border-white/5 hover:border-white/15 text-slate-200 font-semibold rounded-xl transition-all active:scale-[0.97] flex items-center justify-center cursor-pointer ${g.btnLower}`}
+            className={`bg-surface-0b0e14 hover:bg-surface-151921 border border-white/5 hover:border-white/15 text-slate-200 font-semibold rounded-xl transition-all active:scale-[0.97] flex items-center justify-center cursor-pointer ${g.btnLower}`}
           >
             <CheckCircle className={`text-emerald-400 ${g.btnIcon}`} />
             فعال‌سازی مجدد و بازگشت به مدار
@@ -2157,7 +2157,7 @@ export default function SystemCard({
       {/* Customer Info Edit Modal */}
       {isEditingCustomer && system.activeSession && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 animate-in fade-in duration-150">
-          <div className="bg-[#121620] border border-blue-500/40 rounded-2xl p-5 max-w-sm w-full space-y-4 shadow-2xl text-right animate-in zoom-in-95 duration-150" dir="rtl">
+          <div className="bg-surface-121620 border border-blue-500/40 rounded-2xl p-5 max-w-sm w-full space-y-4 shadow-2xl text-right animate-in zoom-in-95 duration-150" dir="rtl">
             <div className="flex items-center justify-between border-b border-white/10 pb-2.5">
               <div className="flex items-center gap-2 text-blue-400 font-bold text-sm">
                 <User className="w-4 h-4 text-blue-400" />
@@ -2181,7 +2181,7 @@ export default function SystemCard({
                   type="text"
                   value={tempCustomerName}
                   onChange={(e) => setTempCustomerName(e.target.value)}
-                  className="w-full bg-[#080A0F] border border-white/10 focus:border-blue-500 rounded-xl px-3 py-2 text-xs text-white focus:outline-none"
+                  className="w-full bg-surface-080a0f border border-white/10 focus:border-blue-500 rounded-xl px-3 py-2 text-xs text-white focus:outline-none"
                   placeholder="مثال: علی رضایی"
                   autoFocus
                 />
@@ -2197,7 +2197,7 @@ export default function SystemCard({
                     dir="ltr"
                     value={tempCustomerPhone}
                     onChange={(e) => setTempCustomerPhone(e.target.value)}
-                    className="w-full bg-[#080A0F] border border-white/10 focus:border-blue-500 rounded-xl px-3 py-2 pl-9 text-xs text-white font-mono focus:outline-none text-left"
+                    className="w-full bg-surface-080a0f border border-white/10 focus:border-blue-500 rounded-xl px-3 py-2 pl-9 text-xs text-white font-mono focus:outline-none text-left"
                     placeholder="09123456789"
                   />
                   <Phone className="w-4 h-4 text-slate-500 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -2217,7 +2217,7 @@ export default function SystemCard({
                 <button
                   type="button"
                   onClick={() => setIsEditingCustomer(false)}
-                  className="px-4 py-2 bg-[#080A0F] hover:bg-white/10 text-slate-300 text-xs rounded-xl border border-white/10 transition-all cursor-pointer"
+                  className="px-4 py-2 bg-surface-080a0f hover:bg-white/10 text-slate-300 text-xs rounded-xl border border-white/10 transition-all cursor-pointer"
                 >
                   انصراف
                 </button>
@@ -2230,7 +2230,7 @@ export default function SystemCard({
       {/* Confirmation Modal for Controller Count Change */}
       {pendingPlayerCount !== null && system.activeSession && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 animate-in fade-in duration-150">
-          <div className="bg-[#121620] border border-blue-500/40 rounded-2xl p-5 max-w-sm w-full space-y-4 shadow-2xl text-right animate-in zoom-in-95 duration-150" dir="rtl">
+          <div className="bg-surface-121620 border border-blue-500/40 rounded-2xl p-5 max-w-sm w-full space-y-4 shadow-2xl text-right animate-in zoom-in-95 duration-150" dir="rtl">
             <div className="flex items-center gap-2.5 text-blue-400 font-bold text-sm border-b border-white/10 pb-2.5">
               <ArrowRightLeft className="w-4 h-4 text-blue-400" />
               <span>تایید تغییر تعداد دسته</span>
@@ -2263,7 +2263,7 @@ export default function SystemCard({
               <button
                 type="button"
                 onClick={() => setPendingPlayerCount(null)}
-                className="px-4 py-2 bg-[#080A0F] hover:bg-white/10 text-slate-300 text-xs rounded-xl border border-white/10 transition-all cursor-pointer"
+                className="px-4 py-2 bg-surface-080a0f hover:bg-white/10 text-slate-300 text-xs rounded-xl border border-white/10 transition-all cursor-pointer"
               >
                 انصراف
               </button>

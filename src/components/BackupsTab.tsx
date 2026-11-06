@@ -794,7 +794,7 @@ export default function BackupsTab({
     <div className="space-y-6" dir="rtl">
       
       {/* DB Core Header widgets */}
-      <div className="p-5 bg-gradient-to-r from-[#151921] to-[#12161E] border border-white/5 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4 shadow-xl">
+      <div className="p-5 bg-gradient-to-r from-surface-151921 to-surface-12161e border border-white/5 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4 shadow-xl">
         <div className="flex items-center gap-3">
           <div className="p-3 bg-rose-500/10 text-rose-500 rounded-xl border border-rose-500/20">
             <Database className="w-6 h-6 animate-pulse" />
@@ -807,11 +807,11 @@ export default function BackupsTab({
         
         {/* DB capacity counts */}
         <div className="flex gap-4">
-          <div className="px-3.5 py-2 bg-[#0C0F16]/90 border border-white/5 rounded-xl text-center shrink-0">
+          <div className="px-3.5 py-2 bg-surface-0c0f16/90 border border-white/5 rounded-xl text-center shrink-0">
             <span className="text-[9px] text-slate-400 block mb-0.5">کل بکاپ‌های ارسالی</span>
             <span className="text-sm font-extrabold text-blue-400 font-mono">{toPersianDigits(totalBackupsCount)} روز</span>
           </div>
-          <div className="px-3.5 py-2 bg-[#0C0F16]/90 border border-white/5 rounded-xl text-center shrink-0">
+          <div className="px-3.5 py-2 bg-surface-0c0f16/90 border border-white/5 rounded-xl text-center shrink-0">
             <span className="text-[9px] text-slate-400 block mb-0.5">وضعیت ذخیره‌سازی لوکال</span>
             <span className="text-sm font-extrabold text-emerald-400 flex items-center gap-1.5 font-sans justify-center mt-0.5">
               <HardDrive className="w-3.5 h-3.5" />
@@ -822,7 +822,7 @@ export default function BackupsTab({
       </div>
 
       {/* DB Backup File Exporter/Importer Panel */}
-      <div className="p-5 bg-gradient-to-r from-[#131722] to-[#161B26] border border-blue-500/15 rounded-2xl space-y-4 shadow-xl">
+      <div className="p-5 bg-gradient-to-r from-surface-131722 to-surface-161b26 border border-blue-500/15 rounded-2xl space-y-4 shadow-xl">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 border-b border-white/5 pb-3">
           <div className="space-y-1">
             <h3 className="text-xs font-bold text-white flex items-center gap-1.5 uppercase tracking-wider">
@@ -830,18 +830,18 @@ export default function BackupsTab({
               مرکز پشتیبان‌گیری دیسک سخت و تبادل فایل دیتابیس (.db)
             </h3>
             <p className="text-[10px] text-slate-400">
-              تهیه فایل‌های پشتیبان کامل خارج از سیستم جهت محافظت نهایی و بازیابی از پوشه <code className="bg-[#0c0f16] px-1.5 py-0.5 rounded text-blue-400 text-[10px] font-mono">{backupPath}</code>
+              تهیه فایل‌های پشتیبان کامل خارج از سیستم جهت محافظت نهایی و بازیابی از پوشه <code className="bg-surface-0c0f16 px-1.5 py-0.5 rounded text-blue-400 text-[10px] font-mono">{backupPath}</code>
             </p>
           </div>
           
-          <div className="text-[10px] text-slate-300 bg-[#0C0F16]/50 px-3 py-1.5 rounded-lg border border-white/5 flex items-center gap-1.5 select-none font-sans">
+          <div className="text-[10px] text-slate-300 bg-surface-0c0f16/50 px-3 py-1.5 rounded-lg border border-white/5 flex items-center gap-1.5 select-none font-sans">
             <Info className="w-3.5 h-3.5 text-blue-400 shrink-0" />
             <span>پیشنهاد می‌شود فایل‌ها را در پوشه پیش‌فرض تعیین‌شده (<strong className="text-blue-400">{backupPath}</strong>) روی سیستم خود نگهداری کنید.</span>
           </div>
         </div>
 
         {/* Backup Path Configuration Box */}
-        <div className="p-4 bg-[#0B0E14]/80 border border-white/5 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+        <div className="p-4 bg-surface-0b0e14/80 border border-white/5 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
           <div className="space-y-1">
             <span className="text-[10px] text-slate-400 block font-bold">مسیر پیش‌فرض پوشه پشتیبان (بکاپ‌ها):</span>
             {isEditingPath ? (
@@ -850,7 +850,7 @@ export default function BackupsTab({
                   type="text"
                   value={tempPath}
                   onChange={(e) => setTempPath(e.target.value)}
-                  className="px-2.5 py-1 bg-[#151921] border border-white/10 rounded-lg text-white font-mono text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 w-64 text-left"
+                  className="px-2.5 py-1 bg-surface-151921 border border-white/10 rounded-lg text-white font-mono text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 w-64 text-left"
                   dir="ltr"
                   placeholder="./backups"
                 />
@@ -879,7 +879,7 @@ export default function BackupsTab({
               </div>
             ) : (
               <div className="flex items-center gap-1.5 mt-1 font-mono text-[11px] text-blue-400">
-                <code className="bg-[#0B0E14] px-2 py-0.5 rounded border border-white/5">{backupPath}</code>
+                <code className="bg-surface-0b0e14 px-2 py-0.5 rounded border border-white/5">{backupPath}</code>
               </div>
             )}
           </div>
@@ -888,7 +888,7 @@ export default function BackupsTab({
             <button
               type="button"
               onClick={() => setIsEditingPath(true)}
-              className="px-3 py-1.5 bg-[#1C202E] hover:bg-[#232A3E] text-slate-300 hover:text-white border border-white/5 rounded-xl text-[10px] font-bold transition-all cursor-pointer"
+              className="px-3 py-1.5 bg-surface-1c202e hover:bg-surface-232a3e text-slate-300 hover:text-white border border-white/5 rounded-xl text-[10px] font-bold transition-all cursor-pointer"
             >
               تغییر مسیر پوشه پشتیبان
             </button>
@@ -899,7 +899,7 @@ export default function BackupsTab({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           
           {/* Card 1: EXPORT FILE (.db format) */}
-          <div className="p-4 bg-[#0A0D14] border border-white/5 hover:border-blue-500/20 rounded-xl transition-all flex flex-col justify-between space-y-4">
+          <div className="p-4 bg-surface-0a0d14 border border-white/5 hover:border-blue-500/20 rounded-xl transition-all flex flex-col justify-between space-y-4">
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-white flex items-center gap-1.5">
@@ -915,7 +915,7 @@ export default function BackupsTab({
               </p>
 
               {/* DB Format Indicator */}
-              <div className="flex items-center gap-2 p-2 bg-[#121620] border border-blue-500/20 rounded-xl text-[10.5px] font-bold text-blue-400">
+              <div className="flex items-center gap-2 p-2 bg-surface-121620 border border-blue-500/20 rounded-xl text-[10.5px] font-bold text-blue-400">
                 <Database className="w-4 h-4 text-blue-400 shrink-0" />
                 <span>فرمت پشتیبان‌گیری: فایل دیتابیس (.db)</span>
               </div>
@@ -932,7 +932,7 @@ export default function BackupsTab({
           </div>
 
           {/* Card 2: IMPORT FILE (.db format) */}
-          <div className="p-4 bg-[#0A0D14] border border-white/5 hover:border-blue-500/20 rounded-xl transition-all flex flex-col justify-between space-y-4">
+          <div className="p-4 bg-surface-0a0d14 border border-white/5 hover:border-blue-500/20 rounded-xl transition-all flex flex-col justify-between space-y-4">
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-white flex items-center gap-1.5">
@@ -967,7 +967,7 @@ export default function BackupsTab({
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="w-full h-10 bg-[#1D2433] hover:bg-[#2B354C] text-blue-400 hover:text-blue-300 border border-blue-500/30 rounded-xl font-bold text-[11px] flex items-center justify-center gap-2 cursor-pointer transition-all hover:scale-[1.01]"
+                className="w-full h-10 bg-surface-1d2433 hover:bg-surface-2b354c text-blue-400 hover:text-blue-300 border border-blue-500/30 rounded-xl font-bold text-[11px] flex items-center justify-center gap-2 cursor-pointer transition-all hover:scale-[1.01]"
               >
                 <Upload className="w-4 h-4 text-blue-400 animate-pulse" />
                 <span>انتخاب و بارگذاری فایل پشتیبان دیتابیس (.db)</span>
@@ -994,7 +994,7 @@ export default function BackupsTab({
       </div>
 
       {/* Aggregate Reporting dashboard (Daily / Weekly / Monthly toggler) */}
-      <div className="p-5 bg-[#151921] border border-white/5 rounded-2xl space-y-4 shadow-xl">
+      <div className="p-5 bg-surface-151921 border border-white/5 rounded-2xl space-y-4 shadow-xl">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/5 pb-3">
           <div>
             <h3 className="text-xs font-bold text-white flex items-center gap-1.5 uppercase tracking-wider">
@@ -1005,7 +1005,7 @@ export default function BackupsTab({
           </div>
           
           {/* Toggle buttons tab controls */}
-          <div className="flex items-center gap-1 bg-[#090C11] p-1 border border-white/5 rounded-xl">
+          <div className="flex items-center gap-1 bg-surface-090c11 p-1 border border-white/5 rounded-xl">
             <button
               onClick={() => setAggregationRange('daily')}
               className={`px-3 py-1.5 rounded-lg transition-all font-bold text-[10px] cursor-pointer ${
@@ -1048,17 +1048,17 @@ export default function BackupsTab({
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {/* Box 1 */}
-            <div className="p-3 bg-[#0B0E14] border border-white/5 rounded-xl space-y-1">
+            <div className="p-3 bg-surface-0b0e14 border border-white/5 rounded-xl space-y-1">
               <span className="text-[10px] text-slate-400 block font-medium">مجموع کارکرد سیستم‌ها</span>
               <span className="font-mono text-xs font-bold text-blue-400 block">{formatCurrency(activeStats.gameplay)}</span>
             </div>
             {/* Box 2 */}
-            <div className="p-3 bg-[#0B0E14] border border-white/5 rounded-xl space-y-1">
+            <div className="p-3 bg-surface-0b0e14 border border-white/5 rounded-xl space-y-1">
               <span className="text-[10px] text-slate-400 block font-medium">مجموع فروش بوفه</span>
               <span className="font-mono text-xs font-bold text-indigo-400 block">{formatCurrency(activeStats.buffet)}</span>
             </div>
             {/* Box 3 */}
-            <div className="p-3 bg-[#0B0E14] border border-emerald-500/10 rounded-xl space-y-1">
+            <div className="p-3 bg-surface-0b0e14 border border-emerald-500/10 rounded-xl space-y-1">
               <span className="text-[10px] text-slate-400 block font-medium flex items-center gap-1">
                 <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full inline-block"></span>
                 کل فروش ناخالص
@@ -1066,17 +1066,17 @@ export default function BackupsTab({
               <span className="font-mono text-xs font-extrabold text-emerald-400 block">{formatCurrency(activeStats.gross)}</span>
             </div>
             {/* Box 4 */}
-            <div className="p-3 bg-[#0B0E14] border border-white/5 rounded-xl space-y-1">
+            <div className="p-3 bg-surface-0b0e14 border border-white/5 rounded-xl space-y-1">
               <span className="text-[10px] text-slate-400 block font-medium">رقم پرداختی نقدی (دخل)</span>
               <span className="font-mono text-xs font-bold text-white block">{formatCurrency(activeStats.cash)}</span>
             </div>
             {/* Box 5 */}
-            <div className="p-3 bg-[#0B0E14] border border-white/5 rounded-xl space-y-1">
+            <div className="p-3 bg-surface-0b0e14 border border-white/5 rounded-xl space-y-1">
               <span className="text-[10px] text-slate-400 block font-medium">پرداخت با کارتخوان</span>
               <span className="font-mono text-xs font-bold text-white block">{formatCurrency(activeStats.card)}</span>
             </div>
             {/* Box 6 */}
-            <div className="p-3 bg-[#0B0E14] border border-white/5 rounded-xl space-y-1">
+            <div className="p-3 bg-surface-0b0e14 border border-white/5 rounded-xl space-y-1">
               <span className="text-[10px] text-slate-400 block font-medium">کل نسیه دفتری ایجادشده</span>
               <span className="font-mono text-xs font-bold text-amber-500 block">{formatCurrency(activeStats.debt)}</span>
             </div>
@@ -1089,7 +1089,7 @@ export default function BackupsTab({
         
         {/* Right Pane: Archive of closed work days (List to select Date) - Takes 5 cols */}
         <div className="lg:col-span-12 xl:col-span-5 space-y-4">
-          <div className="p-5 bg-[#151921] border border-white/5 rounded-2xl space-y-4 shadow-xl">
+          <div className="p-5 bg-surface-151921 border border-white/5 rounded-2xl space-y-4 shadow-xl">
             <div className="flex items-center justify-between">
               <h3 className="text-xs font-bold text-slate-350 uppercase tracking-wider flex items-center gap-1.5">
                 <Calendar className="w-4 h-4 text-rose-500" />
@@ -1108,7 +1108,7 @@ export default function BackupsTab({
                 placeholder="جستجوی تاریخ هجری شمسی، یادداشت..."
                 value={dateSearchTerm}
                 onChange={(e) => setDateSearchTerm(e.target.value)}
-                className="w-full pr-9 pl-3 py-1.5 bg-[#0B0E14] border border-white/5 rounded-lg text-white placeholder-slate-650 focus:outline-none focus:ring-1 focus:ring-rose-500 text-xs text-right"
+                className="w-full pr-9 pl-3 py-1.5 bg-surface-0b0e14 border border-white/5 rounded-lg text-white placeholder-slate-650 focus:outline-none focus:ring-1 focus:ring-rose-500 text-xs text-right"
               />
             </div>
 
@@ -1129,7 +1129,7 @@ export default function BackupsTab({
                       className={`w-full p-3 rounded-xl border text-right transition-all flex items-center justify-between cursor-pointer group ${
                         isSelected 
                           ? 'bg-rose-500/10 border-rose-500/30 text-rose-300 shadow-lg shadow-rose-950/10' 
-                          : 'bg-[#0B0E14]/40 border-white/5 text-slate-350 hover:border-white/10 hover:bg-white/5'
+                          : 'bg-surface-0b0e14/40 border-white/5 text-slate-350 hover:border-white/10 hover:bg-white/5'
                       }`}
                     >
                       <div className="space-y-1">
@@ -1174,7 +1174,7 @@ export default function BackupsTab({
         {/* Left Pane: Detailed inspection panel for selected back-up day - Takes 7 cols */}
         <div className="lg:col-span-12 xl:col-span-7">
           {selectedBackup ? (
-            <div className="p-5 bg-[#151921] border border-white/5 rounded-2xl space-y-5 shadow-xl animate-in fade-in slide-in-from-left duration-200 text-xs">
+            <div className="p-5 bg-surface-151921 border border-white/5 rounded-2xl space-y-5 shadow-xl animate-in fade-in slide-in-from-left duration-200 text-xs">
               
               {/* Inspection Header */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/5 pb-3">
@@ -1226,27 +1226,27 @@ export default function BackupsTab({
 
               {/* Quick grid stats for this backup day */}
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                <div className="p-3 bg-[#0B0E14] border border-white/5 rounded-xl text-center space-y-1">
+                <div className="p-3 bg-surface-0b0e14 border border-white/5 rounded-xl text-center space-y-1">
                   <span className="text-[10px] text-slate-400 block">سهم بازی پورت سیستم‌ها:</span>
                   <span className="font-mono font-bold text-[11px] text-slate-200 block">{formatCurrency(selectedBackup.totalGameplayRevenue)}</span>
                 </div>
-                <div className="p-3 bg-[#0B0E14] border border-white/5 rounded-xl text-center space-y-1">
+                <div className="p-3 bg-surface-0b0e14 border border-white/5 rounded-xl text-center space-y-1">
                   <span className="text-[10px] text-slate-400 block">فروش بوفه متصل نوبت‌ها:</span>
                   <span className="font-mono font-bold text-[11px] text-slate-200 block">{formatCurrency(selectedBackup.totalSessionBuffetCost)}</span>
                 </div>
-                <div className="p-3 bg-[#0B0E14] border border-white/5 rounded-xl text-center space-y-1">
+                <div className="p-3 bg-surface-0b0e14 border border-white/5 rounded-xl text-center space-y-1">
                   <span className="text-[10px] text-slate-400 block">فروش مستقل بوفه آزاد:</span>
                   <span className="font-mono font-bold text-[11px] text-slate-200 block">{formatCurrency(selectedBackup.totalDirectBuffetSales)}</span>
                 </div>
-                <div className="p-3 bg-[#0B0E14] border border-white/5 rounded-xl text-center space-y-1">
+                <div className="p-3 bg-surface-0b0e14 border border-white/5 rounded-xl text-center space-y-1">
                   <span className="text-[10px] text-slate-400 block">دریافت کارتخوان (POS):</span>
                   <span className="font-mono font-bold text-[11px] text-blue-400 block">{formatCurrency(selectedBackup.paidCardAmount)}</span>
                 </div>
-                <div className="p-3 bg-[#0B0E14] border border-white/5 rounded-xl text-center space-y-1">
+                <div className="p-3 bg-surface-0b0e14 border border-white/5 rounded-xl text-center space-y-1">
                   <span className="text-[10px] text-slate-400 block">دریافت نقدی صندوق:</span>
                   <span className="font-mono font-bold text-[11px] text-emerald-450 block">{formatCurrency(selectedBackup.paidCashAmount)}</span>
                 </div>
-                <div className="p-3 bg-[#1B1813] border border-amber-500/10 rounded-xl text-center space-y-1">
+                <div className="p-3 bg-surface-1b1813 border border-amber-500/10 rounded-xl text-center space-y-1">
                   <span className="text-[10px] text-amber-400 block">مجموع بدهی نسیه دفتری:</span>
                   <span className="font-mono font-bold text-[11px] text-amber-500 block">{formatCurrency(selectedBackup.debtAccumulatedAmount)}</span>
                 </div>
@@ -1263,7 +1263,7 @@ export default function BackupsTab({
                   <div className="overflow-x-auto">
                     <table className="w-full text-right" dir="rtl">
                       <thead>
-                        <tr className="bg-[#0B0E14] text-slate-400 text-[10px] border-b border-white/5">
+                        <tr className="bg-surface-0b0e14 text-slate-400 text-[10px] border-b border-white/5">
                           <th className="px-3 py-2.5">بخش / دستگاه</th>
                           <th className="px-3 py-2.5">مشتری</th>
                           <th className="px-3 py-2.5 text-center">زمان بازی</th>
@@ -1271,7 +1271,7 @@ export default function BackupsTab({
                           <th className="px-3 py-2.5 text-center">فاکتور و چاپ</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-white/5 bg-[#0B0E14]/30">
+                      <tbody className="divide-y divide-white/5 bg-surface-0b0e14/30">
                         {selectedBackup.history.length === 0 && selectedBackup.directSales.length === 0 ? (
                           <tr>
                             <td colSpan={5} className="px-3 py-6 text-center text-slate-550">
@@ -1418,7 +1418,7 @@ export default function BackupsTab({
                     لاگ‌ها و رویدادهای سیستم ذخیره‌شده در این روز کاری ({toPersianDigits(selectedBackup.systemLogs.length)} مورد)
                   </span>
 
-                  <div className="border border-white/5 rounded-xl overflow-hidden bg-[#0B0E14]/30">
+                  <div className="border border-white/5 rounded-xl overflow-hidden bg-surface-0b0e14/30">
                     <div className="max-h-60 overflow-y-auto divide-y divide-white/5 text-[10.5px]">
                       {selectedBackup.systemLogs.map((log) => (
                         <div key={log.id} className="p-2.5 flex items-start justify-between gap-2 hover:bg-white/5 transition-colors">
@@ -1449,7 +1449,7 @@ export default function BackupsTab({
 
             </div>
           ) : (
-            <div className="h-full min-h-[350px] p-6 bg-[#151921]/60 border border-dashed border-white/5 rounded-2xl flex flex-col items-center justify-center text-center space-y-3 shadow-inner">
+            <div className="h-full min-h-[350px] p-6 bg-surface-151921/60 border border-dashed border-white/5 rounded-2xl flex flex-col items-center justify-center text-center space-y-3 shadow-inner">
               <Database className="w-12 h-12 text-slate-700 animate-pulse" />
               <p className="text-sm font-bold text-slate-400">گزینه‌ای جهت تماشا انتخاب نشده است</p>
               <p className="text-xs text-slate-500 max-w-xs leading-relaxed">
@@ -1464,7 +1464,7 @@ export default function BackupsTab({
       {/* Admin Password Verification Modal for Database Import */}
       {pendingRestore && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-          <div className="bg-[#0B0E14] border border-blue-500/30 rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4 text-right dir-rtl animate-in fade-in zoom-in-95 duration-200">
+          <div className="bg-surface-0b0e14 border border-blue-500/30 rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4 text-right dir-rtl animate-in fade-in zoom-in-95 duration-200">
             
             {/* Header */}
             <div className="flex items-start justify-between border-b border-white/10 pb-3">
@@ -1490,7 +1490,7 @@ export default function BackupsTab({
             </div>
 
             {/* Summary Box */}
-            <div className="p-3 bg-[#121620] border border-white/5 rounded-xl space-y-1.5 text-xs text-slate-300">
+            <div className="p-3 bg-surface-121620 border border-white/5 rounded-xl space-y-1.5 text-xs text-slate-300">
               <span className="text-[10px] text-blue-400 font-bold block">📊 خلاصه اطلاعات فایل پشتیبان ({pendingRestore.fileName}):</span>
               <div className="space-y-1 text-[11px] font-sans pt-0.5">
                 {pendingRestore.summaryLines.map((line, idx) => (
@@ -1540,7 +1540,7 @@ export default function BackupsTab({
                       setPasswordModalError('');
                     }}
                     placeholder="رمز مدیریت (پیش‌فرض: 123)..."
-                    className="w-full text-center text-sm font-mono px-4 py-2.5 bg-[#151921] border border-blue-500/30 focus:border-blue-400 rounded-xl text-white outline-none placeholder-slate-500 transition-all shadow-inner"
+                    className="w-full text-center text-sm font-mono px-4 py-2.5 bg-surface-151921 border border-blue-500/30 focus:border-blue-400 rounded-xl text-white outline-none placeholder-slate-500 transition-all shadow-inner"
                   />
                   <Lock className="w-4 h-4 text-slate-500 absolute left-3 top-3 pointer-events-none" />
                 </div>
@@ -1581,7 +1581,7 @@ export default function BackupsTab({
       {/* Custom Confirmation Modal for Restoring Backup to Live Cashier/Reports */}
       {backupToRestore && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="w-full max-w-md bg-[#151921] border border-indigo-500/30 rounded-2xl p-5 sm:p-6 space-y-4 shadow-2xl animate-in zoom-in-95 duration-200 text-right" dir="rtl">
+          <div className="w-full max-w-md bg-surface-151921 border border-indigo-500/30 rounded-2xl p-5 sm:p-6 space-y-4 shadow-2xl animate-in zoom-in-95 duration-200 text-right" dir="rtl">
             
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center text-indigo-400 shrink-0">
@@ -1593,7 +1593,7 @@ export default function BackupsTab({
               </div>
             </div>
 
-            <div className="p-3.5 bg-[#0B0E14] border border-white/5 rounded-xl space-y-2 text-xs">
+            <div className="p-3.5 bg-surface-0b0e14 border border-white/5 rounded-xl space-y-2 text-xs">
               <div className="flex justify-between items-center text-slate-300">
                 <span className="text-slate-400">روز کاری منتخب:</span>
                 <span className="font-bold text-indigo-400 font-sans">
@@ -1682,7 +1682,7 @@ export default function BackupsTab({
       {/* Custom Confirmation Modal for Deleting Backup (Replaces window.confirm) */}
       {backupToDelete && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="w-full max-w-md bg-[#151921] border border-rose-500/30 rounded-2xl p-5 sm:p-6 space-y-4 shadow-2xl animate-in zoom-in-95 duration-200 text-right" dir="rtl">
+          <div className="w-full max-w-md bg-surface-151921 border border-rose-500/30 rounded-2xl p-5 sm:p-6 space-y-4 shadow-2xl animate-in zoom-in-95 duration-200 text-right" dir="rtl">
             
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-rose-400 shrink-0">
@@ -1694,7 +1694,7 @@ export default function BackupsTab({
               </div>
             </div>
 
-            <div className="p-3.5 bg-[#0B0E14] border border-white/5 rounded-xl space-y-2 text-xs">
+            <div className="p-3.5 bg-surface-0b0e14 border border-white/5 rounded-xl space-y-2 text-xs">
               <div className="flex justify-between items-center text-slate-300">
                 <span className="text-slate-400">روز کاری:</span>
                 <span className="font-bold text-rose-400 font-sans">

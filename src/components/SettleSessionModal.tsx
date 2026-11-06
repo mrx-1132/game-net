@@ -397,11 +397,11 @@ export default function SettleSessionModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm" dir="rtl">
       <div 
-        className="w-full max-w-xl bg-[#151921] border border-white/5 rounded-2xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-200"
+        className="w-full max-w-xl bg-surface-151921 border border-white/5 rounded-2xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-200"
         id="settle-session-modal"
       >
         {/* Modal Header */}
-        <div className="flex items-center justify-between p-4 border-b border-white/5 bg-[#0B0E14]">
+        <div className="flex items-center justify-between p-4 border-b border-white/5 bg-surface-0b0e14">
           <h3 className="text-sm font-bold text-white flex items-center gap-2 uppercase tracking-tight">
             <Receipt className="w-5 h-5 text-amber-500" />
             فاکتور نهایی و تسویه حساب پیشرفته - {system.name}
@@ -426,7 +426,7 @@ export default function SettleSessionModal({
           )}
 
           {/* Quick Info Box */}
-          <div className="grid grid-cols-2 gap-4 p-4 bg-[#0B0E14]/60 border border-white/5 rounded-xl">
+          <div className="grid grid-cols-2 gap-4 p-4 bg-surface-0b0e14/60 border border-white/5 rounded-xl">
             <div>
               <span className="text-slate-450 block text-[10px] mb-0.5">نام مشتری:</span>
               <span className="text-white font-bold">{session.customerName}</span>
@@ -446,7 +446,7 @@ export default function SettleSessionModal({
           </div>
 
           {/* Session Note Field */}
-          <div className="p-3 bg-[#0B0E14]/60 border border-white/5 rounded-xl space-y-1.5 text-right" dir="rtl">
+          <div className="p-3 bg-surface-0b0e14/60 border border-white/5 rounded-xl space-y-1.5 text-right" dir="rtl">
             <span className="text-[10px] text-slate-400 font-bold flex items-center gap-1 select-none">
               <span>📝 یادداشت / ملاحظات سیستم (پیوست به سوابق و نمونه فاکتور):</span>
             </span>
@@ -455,7 +455,7 @@ export default function SettleSessionModal({
               value={sessionNote}
               onChange={(e) => setSessionNote(e.target.value)}
               placeholder="ثبت یادداشت یا توضیحات (تلفن مشتری، شماره کارت، گزارش و...)"
-              className="w-full text-xs px-2.5 py-1.5 bg-[#151921] hover:bg-[#1A1F2B] focus:bg-[#1A1F2B] border border-white/10 focus:border-blue-500/50 rounded-lg text-slate-200 placeholder-slate-500 focus:outline-none transition-all"
+              className="w-full text-xs px-2.5 py-1.5 bg-surface-151921 hover:bg-surface-1a1f2b focus:bg-surface-1a1f2b border border-white/10 focus:border-blue-500/50 rounded-lg text-slate-200 placeholder-slate-500 focus:outline-none transition-all"
             />
           </div>
 
@@ -465,7 +465,7 @@ export default function SettleSessionModal({
               <Calculator className="w-3.5 h-3.5 text-amber-500" />
               ریز هزینه‌های گیم‌پلی
             </h4>
-            <div className="p-4 bg-[#0B0E14] border border-white/5 rounded-xl space-y-2.5">
+            <div className="p-4 bg-surface-0b0e14 border border-white/5 rounded-xl space-y-2.5">
               {(() => {
                 const segs = getGameplaySegments(session, systemRates, elapsedMs);
                 if (segs.length > 0) {
@@ -531,9 +531,9 @@ export default function SettleSessionModal({
                 </h4>
                 <span className="text-[9px] text-amber-400/80">برای حذف خوراکی اشتباهی روی آیکون سطل زباله کلیک کنید</span>
               </div>
-              <div className="p-3 bg-[#0B0E14] border border-white/5 rounded-xl space-y-2">
+              <div className="p-3 bg-surface-0b0e14 border border-white/5 rounded-xl space-y-2">
                 {session.buffetItems.map((item, idx) => (
-                  <div key={idx} className="flex justify-between items-center text-slate-300 py-1 px-2.5 bg-[#151921]/60 rounded-lg border border-white/5">
+                  <div key={idx} className="flex justify-between items-center text-slate-300 py-1 px-2.5 bg-surface-151921/60 rounded-lg border border-white/5">
                     <div className="flex items-center gap-2">
                       {onRemoveBuffetItem && (
                         <button
@@ -572,9 +572,9 @@ export default function SettleSessionModal({
                 </h4>
                 <span className="text-[9px] text-amber-400/80">برای حذف موارد اشتباهی روی آیکون سطل زباله کلیک کنید</span>
               </div>
-              <div className="p-3 bg-[#0B0E14] border border-white/5 rounded-xl space-y-2">
+              <div className="p-3 bg-surface-0b0e14 border border-white/5 rounded-xl space-y-2">
                 {session.extraServices.map((item, idx) => (
-                  <div key={idx} className="flex justify-between items-center text-slate-300 py-1 px-2.5 bg-[#151921]/60 rounded-lg border border-white/5">
+                  <div key={idx} className="flex justify-between items-center text-slate-300 py-1 px-2.5 bg-surface-151921/60 rounded-lg border border-white/5">
                     <div className="flex items-center gap-2">
                       {onRemoveExtraServiceItem && (
                         <button
@@ -616,7 +616,7 @@ export default function SettleSessionModal({
                 className={`py-2 px-2.5 rounded-xl border text-center flex flex-col items-center justify-center gap-0.5 cursor-pointer transition-all ${
                   roundingOffset === 0
                     ? 'border-amber-500/50 bg-amber-500/10 font-bold text-amber-400 shadow-lg shadow-amber-500/5'
-                    : 'border-white/5 bg-[#0B0E14]/50 text-slate-400 hover:border-white/10 hover:text-white'
+                    : 'border-white/5 bg-surface-0b0e14/50 text-slate-400 hover:border-white/10 hover:text-white'
                 }`}
               >
                 <span className="text-[11px] font-bold">بدون تغییر (واقعی)</span>
@@ -629,7 +629,7 @@ export default function SettleSessionModal({
                 className={`py-2 px-2.5 rounded-xl border text-center flex flex-col items-center justify-center gap-0.5 cursor-pointer transition-all ${
                   roundingOffset === (Math.round(totalCost / 1000) * 1000) - totalCost && roundingOffset !== 0
                     ? 'border-amber-500/50 bg-amber-500/10 font-bold text-amber-400 shadow-lg shadow-amber-500/5'
-                    : 'border-white/5 bg-[#0B0E14]/50 text-slate-400 hover:border-white/10 hover:text-white'
+                    : 'border-white/5 bg-surface-0b0e14/50 text-slate-400 hover:border-white/10 hover:text-white'
                 }`}
               >
                 <span className="text-[11px] font-bold">نزدیک‌ترین 1,000</span>
@@ -642,7 +642,7 @@ export default function SettleSessionModal({
                 className={`py-2 px-2.5 rounded-xl border text-center flex flex-col items-center justify-center gap-0.5 cursor-pointer transition-all ${
                   roundingOffset < 0
                     ? 'border-rose-500/50 bg-rose-500/10 font-bold text-rose-400 shadow-lg shadow-rose-500/5'
-                    : 'border-white/5 bg-[#0B0E14]/50 text-slate-400 hover:border-white/10 hover:text-white'
+                    : 'border-white/5 bg-surface-0b0e14/50 text-slate-400 hover:border-white/10 hover:text-white'
                 }`}
               >
                 <span className="text-[11px] font-bold">📉 گرد به پایین (1,000- تومان)</span>
@@ -657,7 +657,7 @@ export default function SettleSessionModal({
                 className={`py-2 px-2.5 rounded-xl border text-center flex flex-col items-center justify-center gap-0.5 cursor-pointer transition-all ${
                   roundingOffset > 0
                     ? 'border-emerald-500/50 bg-emerald-500/10 font-bold text-emerald-400 shadow-lg shadow-emerald-500/5'
-                    : 'border-white/5 bg-[#0B0E14]/50 text-slate-400 hover:border-white/10 hover:text-white'
+                    : 'border-white/5 bg-surface-0b0e14/50 text-slate-400 hover:border-white/10 hover:text-white'
                 }`}
               >
                 <span className="text-[11px] font-bold">📈 گرد به بالا (1,000+ تومان)</span>
@@ -669,7 +669,7 @@ export default function SettleSessionModal({
           </div>
 
           {/* Total Payable Box */}
-          <div className="p-4 bg-[#0B0E14] border border-dashed border-white/10 rounded-2xl space-y-2">
+          <div className="p-4 bg-surface-0b0e14 border border-dashed border-white/10 rounded-2xl space-y-2">
             <div className="flex justify-between items-center text-xs">
               <span className="text-slate-400 font-medium">مجموع کل فاکتور:</span>
               <span className="font-mono font-bold text-white">{formatCurrency(finalTotalCost)}</span>
@@ -710,7 +710,7 @@ export default function SettleSessionModal({
           </div>
 
           {/* Dedicated Bill Splitting Section (بخش مجزای محاسبه دنگ / تقسیم بر) */}
-          <div className="p-3.5 bg-[#151921]/80 border border-emerald-500/25 rounded-2xl space-y-3 text-right" dir="rtl" id="split-bill-section">
+          <div className="p-3.5 bg-surface-151921/80 border border-emerald-500/25 rounded-2xl space-y-3 text-right" dir="rtl" id="split-bill-section">
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/5 pb-2">
               <div className="flex items-center gap-2">
                 <div className="w-7 h-7 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center">
@@ -735,7 +735,7 @@ export default function SettleSessionModal({
 
             <div className="flex flex-wrap items-center justify-between gap-2">
               <span className="text-[10px] font-bold text-slate-300">تعداد نفرات برای تقسیم حساب:</span>
-              <div className="flex items-center gap-1.5 bg-[#0B0E14] p-1 border border-white/10 rounded-xl">
+              <div className="flex items-center gap-1.5 bg-surface-0b0e14 p-1 border border-white/10 rounded-xl">
                 {(cashDivisors || [2, 3, 4, 5]).map((divisor) => (
                   <button
                     key={divisor}
@@ -762,7 +762,7 @@ export default function SettleSessionModal({
                       setCashDivision(val);
                     }}
                     placeholder="تعداد"
-                    className="w-12 h-7 bg-[#151921] border border-emerald-500/40 rounded-lg text-center text-xs font-mono text-emerald-300 focus:outline-none focus:border-emerald-400 font-bold"
+                    className="w-12 h-7 bg-surface-151921 border border-emerald-500/40 rounded-lg text-center text-xs font-mono text-emerald-300 focus:outline-none focus:border-emerald-400 font-bold"
                     title="تعداد نفرات جهت تقسیم حساب"
                   />
                 </div>
@@ -788,7 +788,7 @@ export default function SettleSessionModal({
                 </div>
               </div>
             ) : (
-              <div className="text-[9.5px] text-slate-500 text-center py-1 bg-[#0B0E14]/40 rounded-lg border border-white/5">
+              <div className="text-[9.5px] text-slate-500 text-center py-1 bg-surface-0b0e14/40 rounded-lg border border-white/5">
                 💡 جهت برآورد سهم پرداختی هر بازیکن، روی کلید‌های (÷۲، ÷۳ و...) یا تعداد سفارشی کلیک کنید.
               </div>
             )}
@@ -806,7 +806,7 @@ export default function SettleSessionModal({
                 className={`py-2 px-3 rounded-xl border text-center flex flex-col items-center justify-center gap-1 cursor-pointer transition-all ${
                   paymentMethod === 'card'
                     ? 'border-blue-500/50 bg-blue-500/10 font-bold text-blue-400 shadow-lg shadow-blue-500/5'
-                    : 'border-white/5 bg-[#0B0E14]/50 text-slate-400 hover:border-white/10 hover:text-white'
+                    : 'border-white/5 bg-surface-0b0e14/50 text-slate-400 hover:border-white/10 hover:text-white'
                 }`}
               >
                 <span className="text-xs font-bold">💳 کارتخوان</span>
@@ -819,7 +819,7 @@ export default function SettleSessionModal({
                 className={`py-2 px-3 rounded-xl border text-center flex flex-col items-center justify-center gap-1 cursor-pointer transition-all ${
                   paymentMethod === 'cash'
                     ? 'border-emerald-500/50 bg-emerald-500/10 font-bold text-emerald-400 shadow-lg shadow-emerald-500/5'
-                    : 'border-white/5 bg-[#0B0E14]/50 text-slate-400 hover:border-white/10 hover:text-white'
+                    : 'border-white/5 bg-surface-0b0e14/50 text-slate-400 hover:border-white/10 hover:text-white'
                 }`}
               >
                 <span className="text-xs font-bold">💵 پول نقد</span>
@@ -832,7 +832,7 @@ export default function SettleSessionModal({
                 className={`py-2 px-3 rounded-xl border text-center flex flex-col items-center justify-center gap-1 cursor-pointer transition-all ${
                   paymentMethod === 'mixed'
                     ? 'border-indigo-500/50 bg-indigo-500/10 font-bold text-indigo-400 shadow-lg shadow-indigo-500/5'
-                    : 'border-white/5 bg-[#0B0E14]/50 text-slate-400 hover:border-white/10 hover:text-white'
+                    : 'border-white/5 bg-surface-0b0e14/50 text-slate-400 hover:border-white/10 hover:text-white'
                 }`}
               >
                 <span className="text-xs font-bold">🔀 پرداخت ترکیبی</span>
@@ -850,10 +850,10 @@ export default function SettleSessionModal({
                 }}
                 className={`py-2 px-3 rounded-xl border text-center flex flex-col items-center justify-center gap-1 cursor-pointer transition-all ${
                   !canRegisterDebt
-                    ? 'opacity-60 border-white/5 bg-[#0B0E14]/30'
+                    ? 'opacity-60 border-white/5 bg-surface-0b0e14/30'
                     : paymentMethod === 'debt'
                     ? 'border-amber-500/50 bg-amber-500/10 font-bold text-amber-400 shadow-lg shadow-amber-500/5'
-                    : 'border-white/5 bg-[#0B0E14]/50 text-slate-400 hover:border-white/10 hover:text-white'
+                    : 'border-white/5 bg-surface-0b0e14/50 text-slate-400 hover:border-white/10 hover:text-white'
                 }`}
               >
                 <span className="text-xs font-bold">📝 ثبت نسیه</span>
@@ -877,7 +877,7 @@ export default function SettleSessionModal({
 
           {/* Card Reader Selection */}
           {(paymentMethod === 'card' || paymentMethod === 'mixed') && (
-            <div className="p-3.5 bg-[#151921]/60 border border-white/5 rounded-xl space-y-2 animate-in fade-in slide-in-from-top-1 duration-200 text-right">
+            <div className="p-3.5 bg-surface-151921/60 border border-white/5 rounded-xl space-y-2 animate-in fade-in slide-in-from-top-1 duration-200 text-right">
               <label className="text-[10px] text-slate-400 block font-bold uppercase tracking-wider">
                 🔌 انتخاب دستگاه کارتخوان بانکی (POS)
               </label>
@@ -890,7 +890,7 @@ export default function SettleSessionModal({
                   <select
                     value={selectedCardReaderId}
                     onChange={(e) => setSelectedCardReaderId(e.target.value)}
-                    className="w-full text-xs px-3 py-2 bg-[#0B0E14] border border-white/10 rounded-lg text-white font-semibold cursor-pointer focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full text-xs px-3 py-2 bg-surface-0b0e14 border border-white/10 rounded-lg text-white font-semibold cursor-pointer focus:outline-none focus:ring-1 focus:ring-blue-500"
                     style={{ direction: 'rtl' }}
                   >
                     {cardReaders.map((pos) => (
@@ -969,7 +969,7 @@ export default function SettleSessionModal({
                         placeholder="0"
                         value={mixedCardAmount}
                         onChange={(e) => setMixedCardAmount(e.target.value)}
-                        className="w-full px-2 py-1.5 pl-12 bg-[#0B0E14] border border-blue-500/25 rounded-lg text-blue-300 font-mono text-center focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        className="w-full px-2 py-1.5 pl-12 bg-surface-0b0e14 border border-blue-500/25 rounded-lg text-blue-300 font-mono text-center focus:outline-none focus:ring-1 focus:ring-blue-500"
                       />
                       <span className="absolute left-2 top-2 text-[8px] text-slate-500">تومان</span>
                     </div>
@@ -1000,7 +1000,7 @@ export default function SettleSessionModal({
                         placeholder="0"
                         value={mixedCashAmount}
                         onChange={(e) => setMixedCashAmount(e.target.value)}
-                        className="w-full px-2 py-1.5 pl-12 bg-[#0B0E14] border border-emerald-500/25 rounded-lg text-emerald-300 font-mono text-center focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                        className="w-full px-2 py-1.5 pl-12 bg-surface-0b0e14 border border-emerald-500/25 rounded-lg text-emerald-300 font-mono text-center focus:outline-none focus:ring-1 focus:ring-emerald-500"
                       />
                       <span className="absolute left-2 top-2 text-[8px] text-slate-500">تومان</span>
                     </div>
@@ -1031,7 +1031,7 @@ export default function SettleSessionModal({
                         placeholder="0"
                         value={mixedDebtAmount}
                         onChange={(e) => setMixedDebtAmount(e.target.value)}
-                        className="w-full px-2 py-1.5 pl-12 bg-[#0B0E14] border border-amber-500/25 rounded-lg text-amber-300 font-mono text-center focus:outline-none focus:ring-1 focus:ring-amber-500"
+                        className="w-full px-2 py-1.5 pl-12 bg-surface-0b0e14 border border-amber-500/25 rounded-lg text-amber-300 font-mono text-center focus:outline-none focus:ring-1 focus:ring-amber-500"
                       />
                       <span className="absolute left-2 top-2 text-[8px] text-slate-500">تومان</span>
                     </div>
@@ -1100,7 +1100,7 @@ export default function SettleSessionModal({
                       <select
                         value={splitDebtors[0]?.selectedDebtorId || ''}
                         onChange={(e) => updateDebtorItem(splitDebtors[0]?.id, { selectedDebtorId: e.target.value })}
-                        className="w-full px-3 py-2 bg-[#0B0E14] border border-white/10 rounded-lg text-slate-205 focus:outline-none text-xs"
+                        className="w-full px-3 py-2 bg-surface-0b0e14 border border-white/10 rounded-lg text-slate-205 focus:outline-none text-xs"
                       >
                         <option value="">-- انتخاب مشتری از دفتر نسیه --</option>
                         {debtors.map((d) => {
@@ -1127,7 +1127,7 @@ export default function SettleSessionModal({
                             placeholder="نام بدهکار"
                             value={splitDebtors[0]?.newName || ''}
                             onChange={(e) => updateDebtorItem(splitDebtors[0]?.id, { newName: e.target.value })}
-                            className="w-full px-3 py-2 bg-[#0B0E14] border border-white/10 rounded-lg text-white focus:outline-none text-xs"
+                            className="w-full px-3 py-2 bg-surface-0b0e14 border border-white/10 rounded-lg text-white focus:outline-none text-xs"
                           />
                         </div>
                         <div>
@@ -1141,7 +1141,7 @@ export default function SettleSessionModal({
                               placeholder="مثل: 09121111111 (اختیاری)"
                               value={splitDebtors[0]?.newPhone || ''}
                               onChange={(e) => updateDebtorItem(splitDebtors[0]?.id, { newPhone: e.target.value })}
-                              className="w-full pr-9 pl-3 py-2 bg-[#0B0E14] border border-white/10 rounded-lg text-white placeholder-slate-600 focus:outline-none text-[11px] text-left"
+                              className="w-full pr-9 pl-3 py-2 bg-surface-0b0e14 border border-white/10 rounded-lg text-white placeholder-slate-600 focus:outline-none text-[11px] text-left"
                               dir="ltr"
                             />
                           </div>
@@ -1154,7 +1154,7 @@ export default function SettleSessionModal({
                 // Multi-debtor splitting layout
                 <div className="space-y-4">
                   {/* Top utility row: Equal split & Add debtor */}
-                  <div className="flex justify-between items-center bg-[#0B0E14]/40 p-2 rounded-lg border border-white/5">
+                  <div className="flex justify-between items-center bg-surface-0b0e14/40 p-2 rounded-lg border border-white/5">
                     <span className="text-[10px] font-bold text-amber-300">👥 لیست تقسیم سهم‌های نسیه</span>
                     <div className="flex gap-2">
                       <button
@@ -1181,7 +1181,7 @@ export default function SettleSessionModal({
                   <div className="space-y-3 max-h-[300px] overflow-y-auto pr-1">
                     {splitDebtors.map((item, index) => {
                       return (
-                        <div key={item.id} className="p-3 bg-[#0B0E14]/30 border border-white/5 rounded-xl space-y-3 relative">
+                        <div key={item.id} className="p-3 bg-surface-0b0e14/30 border border-white/5 rounded-xl space-y-3 relative">
                           {/* Row Header */}
                           <div className="flex justify-between items-center border-b border-white/5 pb-1.5">
                             <span className="text-[11px] font-bold text-slate-300 flex items-center gap-1.5">
@@ -1215,7 +1215,7 @@ export default function SettleSessionModal({
                                     const val = Math.min(activeDebtAmount, Math.max(0, Number(e.target.value)));
                                     updateDebtorItem(item.id, { amount: val });
                                   }}
-                                  className="w-full text-left pl-14 pr-3 py-1.5 bg-[#0B0E14] border border-white/10 rounded-lg text-white font-mono text-xs focus:outline-none"
+                                  className="w-full text-left pl-14 pr-3 py-1.5 bg-surface-0b0e14 border border-white/10 rounded-lg text-white font-mono text-xs focus:outline-none"
                                 />
                                 <span className="absolute left-2.5 top-2 text-[8px] text-slate-500">تومان</span>
                               </div>
@@ -1229,7 +1229,7 @@ export default function SettleSessionModal({
                             {/* Existing or new toggle */}
                             <div>
                               <label className="text-[10px] text-slate-400 block mb-1">نوع حساب بدهکاری:</label>
-                              <div className="flex gap-2 p-1 bg-[#0B0E14] rounded-lg border border-white/5">
+                              <div className="flex gap-2 p-1 bg-surface-0b0e14 rounded-lg border border-white/5">
                                 <button
                                   type="button"
                                   onClick={() => updateDebtorItem(item.id, { isNew: false })}
@@ -1262,7 +1262,7 @@ export default function SettleSessionModal({
                               <select
                                 value={item.selectedDebtorId || ''}
                                 onChange={(e) => updateDebtorItem(item.id, { selectedDebtorId: e.target.value })}
-                                className="w-full px-2.5 py-1.5 bg-[#0B0E14] border border-white/10 rounded-lg text-slate-205 focus:outline-none text-[11px]"
+                                className="w-full px-2.5 py-1.5 bg-surface-0b0e14 border border-white/10 rounded-lg text-slate-205 focus:outline-none text-[11px]"
                               >
                                 <option value="">-- انتخاب مشتری بدهکار --</option>
                                 {debtors.map((d) => {
@@ -1287,7 +1287,7 @@ export default function SettleSessionModal({
                                   placeholder="نام بدهکار جدید"
                                   value={item.newName || ''}
                                   onChange={(e) => updateDebtorItem(item.id, { newName: e.target.value })}
-                                  className="w-full px-2.5 py-1.5 bg-[#0B0E14] border border-white/10 rounded-lg text-white focus:outline-none text-xs"
+                                  className="w-full px-2.5 py-1.5 bg-surface-0b0e14 border border-white/10 rounded-lg text-white focus:outline-none text-xs"
                                 />
                               </div>
                               <div className="relative">
@@ -1299,7 +1299,7 @@ export default function SettleSessionModal({
                                   placeholder="تلفن (اختیاری)"
                                   value={item.newPhone || ''}
                                   onChange={(e) => updateDebtorItem(item.id, { newPhone: e.target.value })}
-                                  className="w-full pr-7 pl-2 py-1.5 bg-[#0B0E14] border border-white/10 rounded-lg text-white placeholder-slate-600 focus:outline-none text-[11px] text-left"
+                                  className="w-full pr-7 pl-2 py-1.5 bg-surface-0b0e14 border border-white/10 rounded-lg text-white placeholder-slate-600 focus:outline-none text-[11px] text-left"
                                   dir="ltr"
                                 />
                               </div>
@@ -1361,7 +1361,7 @@ export default function SettleSessionModal({
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-3 bg-[#0B0E14] hover:bg-white/5 text-slate-300 font-bold rounded-xl border border-white/10 transition-all cursor-pointer"
+              className="px-5 py-3 bg-surface-0b0e14 hover:bg-white/5 text-slate-300 font-bold rounded-xl border border-white/10 transition-all cursor-pointer"
             >
               بازگشت به برنامه
             </button>

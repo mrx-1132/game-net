@@ -31,10 +31,10 @@ export default function StartSessionModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm" dir="rtl">
       <div 
-         className="w-full max-w-sm bg-[#151921] border border-white/5 rounded-2xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-200"
+         className="w-full max-w-sm bg-surface-151921 border border-white/5 rounded-2xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-200"
          id="start-session-modal"
       >
-        <div className="flex items-center justify-between p-4 border-b border-white/5 bg-[#0B0E14]">
+        <div className="flex items-center justify-between p-4 border-b border-white/5 bg-surface-0b0e14">
           <h3 className="text-sm font-bold text-white flex items-center gap-2 uppercase tracking-tight">
             <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
             شروع جلسه بازی - {system.name}
@@ -80,7 +80,7 @@ export default function StartSessionModal({
                   key={num}
                   type="button"
                   onClick={() => setPlayersCount(num)}
-                  className="py-3 rounded-xl border border-white/5 text-slate-400 hover:border-white/10 hover:text-white bg-[#0B0E14]/50 transition-all flex flex-col items-center justify-center gap-0.5 cursor-pointer"
+                  className="py-3 rounded-xl border border-white/5 text-slate-400 hover:border-white/10 hover:text-white bg-surface-0b0e14/50 transition-all flex flex-col items-center justify-center gap-0.5 cursor-pointer"
                 >
                   <span className="text-base font-black font-mono">{num}</span>
                   <span className="text-[9px] font-normal font-sans">
@@ -105,7 +105,7 @@ export default function StartSessionModal({
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-3 bg-[#0B0E14] hover:bg-white/5 text-slate-300 font-semibold rounded-xl border border-white/10 transition-all cursor-pointer text-xs"
+              className="px-5 py-3 bg-surface-0b0e14 hover:bg-white/5 text-slate-300 font-semibold rounded-xl border border-white/10 transition-all cursor-pointer text-xs"
             >
               انصراف
             </button>

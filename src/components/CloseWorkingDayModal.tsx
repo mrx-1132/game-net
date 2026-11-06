@@ -133,7 +133,7 @@ export default function CloseWorkingDayModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" dir="rtl">
       <div 
-        className="w-full max-w-lg bg-[#0F1219] border border-white/10 rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col scale-100 transition-all"
+        className="w-full max-w-lg bg-surface-0f1219 border border-white/10 rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col scale-100 transition-all"
         id="close-working-day-modal"
       >
         
@@ -175,7 +175,7 @@ export default function CloseWorkingDayModal({
             </div>
 
             {/* Date Configuration Section */}
-            <div className="p-4 bg-[#0B0E14] border border-white/5 rounded-xl space-y-3">
+            <div className="p-4 bg-surface-0b0e14 border border-white/5 rounded-xl space-y-3">
               <span className="text-[10px] text-slate-300 font-bold block flex items-center gap-1.5">
                 <Calendar className="w-3.5 h-3.5 text-rose-450 text-rose-400" />
                 تعیین تاریخ روز کاری جهت بایگانی:
@@ -214,7 +214,7 @@ export default function CloseWorkingDayModal({
                   </div>
                 </div>
               ) : (
-                <div className="flex items-center justify-between p-2.5 bg-[#151921] rounded-xl border border-white/5">
+                <div className="flex items-center justify-between p-2.5 bg-surface-151921 rounded-xl border border-white/5">
                   <span className="text-[10px] text-slate-400">تاریخ روز کاری جاری:</span>
                   <span className="text-xs font-extrabold font-mono text-slate-200 bg-white/5 px-2.5 py-1 rounded-lg">
                     {toPersianDigits(selectedDatePersian)}
@@ -238,22 +238,22 @@ export default function CloseWorkingDayModal({
               <>
                 {/* Quick counters bar */}
                 <div className="grid grid-cols-3 gap-2.5 pb-1">
-                  <div className="p-2.5 bg-[#0B0E14] border border-white/5 rounded-xl text-center">
+                  <div className="p-2.5 bg-surface-0b0e14 border border-white/5 rounded-xl text-center">
                     <span className="text-[9.5px] text-slate-400 block mb-0.5">فاکتورهای کنسول</span>
                     <span className="text-xs font-bold font-mono text-blue-400">{toPersianDigits(totalSessionsCount)} نوبت</span>
                   </div>
-                  <div className="p-2.5 bg-[#0B0E14] border border-white/5 rounded-xl text-center">
+                  <div className="p-2.5 bg-surface-0b0e14 border border-white/5 rounded-xl text-center">
                     <span className="text-[9.5px] text-slate-400 block mb-0.5">فروش بوفه</span>
                     <span className="text-xs font-bold font-mono text-indigo-400">{toPersianDigits(totalSalesCount)} خرید</span>
                   </div>
-                  <div className="p-2.5 bg-[#0B0E14] border border-white/5 rounded-xl text-center">
+                  <div className="p-2.5 bg-surface-0b0e14 border border-white/5 rounded-xl text-center">
                     <span className="text-[9.5px] text-slate-400 block mb-0.5">رویدادها و لاگ‌ها</span>
                     <span className="text-xs font-bold font-mono text-amber-400">{toPersianDigits(systemLogs.length)} رویداد</span>
                   </div>
                 </div>
 
                 {/* Financial Summary Frame */}
-                <div className="p-4 bg-[#0B0E14] border border-white/10 rounded-xl space-y-3">
+                <div className="p-4 bg-surface-0b0e14 border border-white/10 rounded-xl space-y-3">
                   <span className="text-[10px] text-rose-400 font-bold tracking-wider uppercase block border-b border-white/5 pb-1.5 flex items-center justify-between">
                     <span>تراز مالی عملکرد شیفت و صندوق جاری</span>
                     <span className="bg-rose-500/10 text-rose-300 font-mono text-[9px] px-1.5 py-0.5 rounded uppercase">
@@ -322,7 +322,7 @@ export default function CloseWorkingDayModal({
                 </div>
               </>
             ) : (
-              <div className="p-6 bg-[#0B0E14] border border-white/5 rounded-xl text-center space-y-3 shadow-inner">
+              <div className="p-6 bg-surface-0b0e14 border border-white/5 rounded-xl text-center space-y-3 shadow-inner">
                 <div className="w-12 h-12 bg-rose-500/10 text-rose-500 rounded-full flex items-center justify-center mx-auto border border-rose-500/20">
                   <Lock className="w-6 h-6 animate-pulse" />
                 </div>
@@ -360,7 +360,7 @@ export default function CloseWorkingDayModal({
                 placeholder="توضیحاتی درباره تراز دخل، کارهای خاص یا تغییر صندوقدار را در اینجا بنویسید..."
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                className="w-full h-18 p-2.5 bg-[#0B0E14] border border-white/10 rounded-xl text-xs text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-rose-500 text-right font-sans resize-none"
+                className="w-full h-18 p-2.5 bg-surface-0b0e14 border border-white/10 rounded-xl text-xs text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-rose-500 text-right font-sans resize-none"
               />
             </div>
 
@@ -369,7 +369,7 @@ export default function CloseWorkingDayModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="py-2.5 px-4 bg-slate-805 hover:bg-[#1C2333]/90 text-sm font-bold text-slate-300 border border-white/5 rounded-xl cursor-pointer transition-all text-center"
+                className="py-2.5 px-4 bg-slate-805 hover:bg-surface-1c2333/90 text-sm font-bold text-slate-300 border border-white/5 rounded-xl cursor-pointer transition-all text-center"
               >
                 انصراف و لغو
               </button>

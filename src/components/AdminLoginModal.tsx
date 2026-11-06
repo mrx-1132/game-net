@@ -77,10 +77,10 @@ export default function AdminLoginModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" dir="rtl">
       <div 
-        className="w-full max-w-sm bg-[#151921] border border-white/5 rounded-2xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-200 text-xs"
+        className="w-full max-w-sm bg-surface-151921 border border-white/5 rounded-2xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-200 text-xs"
         id="admin-login-modal"
       >
-        <div className="flex items-center justify-between p-4 border-b border-white/5 bg-[#0B0E14]">
+        <div className="flex items-center justify-between p-4 border-b border-white/5 bg-surface-0b0e14">
           <h3 className="text-xs font-bold text-white flex items-center gap-2 uppercase tracking-tight">
             <Lock className="w-4 h-4 text-blue-500 animate-pulse" />
             <span>{isMandatory ? 'احراز هویت اجباری اپراتور / مدیریت' : 'ورود مدیر سیستم / اپراتور شیفت'}</span>
@@ -126,7 +126,7 @@ export default function AdminLoginModal({
               placeholder="نام کاربری مدیریت یا اپراتور"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-3 py-2 bg-[#0B0E14] border border-white/10 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs font-mono"
+              className="w-full px-3 py-2 bg-surface-0b0e14 border border-white/10 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs font-mono"
             />
           </div>
 
@@ -141,7 +141,7 @@ export default function AdminLoginModal({
               placeholder="رمز عبور"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 bg-[#0B0E14] border border-white/10 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs font-mono"
+              className="w-full px-3 py-2 bg-surface-0b0e14 border border-white/10 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs font-mono"
             />
           </div>
 
@@ -157,7 +157,7 @@ export default function AdminLoginModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2.5 bg-[#0B0E14] hover:bg-white/5 text-slate-400 font-semibold rounded-xl border border-white/10 transition-all cursor-pointer"
+                className="px-4 py-2.5 bg-surface-0b0e14 hover:bg-white/5 text-slate-400 font-semibold rounded-xl border border-white/10 transition-all cursor-pointer"
               >
                 انصراف
               </button>

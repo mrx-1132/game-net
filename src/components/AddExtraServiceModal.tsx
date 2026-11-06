@@ -202,11 +202,11 @@ export default function AddExtraServiceModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm" dir="rtl">
       <div 
-        className="w-full max-w-lg bg-[#151921] border border-white/5 rounded-2xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-200 text-right"
+        className="w-full max-w-lg bg-surface-151921 border border-white/5 rounded-2xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-200 text-right"
         id="add-extra-service-modal"
       >
         {/* Modal Header */}
-        <div className="flex items-center justify-between p-4 border-b border-white/5 bg-[#0B0E14]">
+        <div className="flex items-center justify-between p-4 border-b border-white/5 bg-surface-0b0e14">
           <h3 className="text-sm font-bold text-white flex items-center gap-2 uppercase tracking-tight font-sans">
             <Sparkles className="w-5 h-5 text-amber-400" />
             ثبت خدمات جانبی و جریمه خسارت - {system.name}
@@ -229,13 +229,13 @@ export default function AddExtraServiceModal({
 
             {/* Currently attached services */}
             {session.extraServices && session.extraServices.length > 0 && (
-              <div className="space-y-2 bg-[#0B0E14]/80 p-3 rounded-xl border border-amber-500/20">
+              <div className="space-y-2 bg-surface-0b0e14/80 p-3 rounded-xl border border-amber-500/20">
                 <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider block">
                   ✨ خدمات و تجهیزات فعال روی این حساب ({session.extraServices.length})
                 </span>
                 <div className="space-y-1.5 max-h-36 overflow-y-auto pr-1">
                   {session.extraServices.map((eItem) => (
-                    <div key={eItem.id} className="flex items-center justify-between bg-[#151921] px-2.5 py-1.5 rounded-lg border border-white/5 text-xs text-slate-200">
+                    <div key={eItem.id} className="flex items-center justify-between bg-surface-151921 px-2.5 py-1.5 rounded-lg border border-white/5 text-xs text-slate-200">
                       <div className="flex items-center gap-2">
                         {onRemoveAttachedItem && (
                           <button
@@ -261,7 +261,7 @@ export default function AddExtraServiceModal({
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
                 🛠️ دسته‌بندی خدمات و تجهیزات کلوب
               </span>
-              <div className="flex flex-wrap items-center gap-1.5 bg-[#0B0E14]/60 p-1 border border-white/5 rounded-xl">
+              <div className="flex flex-wrap items-center gap-1.5 bg-surface-0b0e14/60 p-1 border border-white/5 rounded-xl">
                 <button
                   type="button"
                   onClick={() => setActiveCategory('all')}
@@ -318,8 +318,8 @@ export default function AddExtraServiceModal({
                     key={p.id}
                     className={`p-3 rounded-xl border transition-all flex items-center justify-between ${
                       count > 0 
-                        ? 'bg-[#1D2029]/70 border-amber-500/30' 
-                        : 'bg-[#0B0E14]/40 border-white/5 hover:border-white/10'
+                        ? 'bg-surface-1d2029/70 border-amber-500/30' 
+                        : 'bg-surface-0b0e14/40 border-white/5 hover:border-white/10'
                     }`}
                   >
                     <div className="flex items-center gap-3">
@@ -361,7 +361,7 @@ export default function AddExtraServiceModal({
             <div className="h-px bg-white/5"></div>
 
             {/* Custom Extra Charge Section */}
-            <div className="space-y-3 bg-[#0B0E14]/30 border border-white/5 p-4 rounded-xl">
+            <div className="space-y-3 bg-surface-0b0e14/30 border border-white/5 p-4 rounded-xl">
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
                 ✍️ ثبت خدمت یا هزینه اختصاصی (دلخواه)
               </span>
@@ -374,7 +374,7 @@ export default function AddExtraServiceModal({
                     value={customName}
                     onChange={(e) => setCustomName(e.target.value)}
                     placeholder="مثال: اجاره پچ اضافی بازی"
-                    className="w-full bg-[#050608] border border-white/10 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-650 focus:outline-none focus:border-blue-500 font-sans"
+                    className="w-full bg-surface-050608 border border-white/10 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-650 focus:outline-none focus:border-blue-500 font-sans"
                   />
                 </div>
 
@@ -387,7 +387,7 @@ export default function AddExtraServiceModal({
                     placeholder="مثال: 15000"
                     min="0"
                     dir="ltr"
-                    className="w-full bg-[#050608] border border-white/10 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-650 focus:outline-none focus:border-blue-500 font-mono text-right"
+                    className="w-full bg-surface-050608 border border-white/10 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-650 focus:outline-none focus:border-blue-500 font-mono text-right"
                   />
                 </div>
               </div>
@@ -401,7 +401,7 @@ export default function AddExtraServiceModal({
                       value={customQty}
                       onChange={(e) => setCustomQty(e.target.value)}
                       min="1"
-                      className="w-full bg-[#050608] border border-white/10 rounded-lg px-2 py-1 text-center text-xs font-mono text-white focus:outline-none focus:border-blue-500"
+                      className="w-full bg-surface-050608 border border-white/10 rounded-lg px-2 py-1 text-center text-xs font-mono text-white focus:outline-none focus:border-blue-500"
                     />
                   </div>
                 </div>
@@ -416,7 +416,7 @@ export default function AddExtraServiceModal({
           </div>
 
           {/* Modal Footer / Summary Action Block */}
-          <div className="p-4 border-t border-white/5 bg-[#0B0E14] flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="p-4 border-t border-white/5 bg-surface-0b0e14 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-right">
               <HelpCircle className="w-4 h-4 text-slate-500 hidden md:block" />
               <div className="space-y-0.5">

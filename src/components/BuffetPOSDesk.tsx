@@ -252,7 +252,7 @@ export default function BuffetPOSDesk({
   const total = getCartTotal();
 
   return (
-    <div className="bg-[#151921] border border-white/5 rounded-2xl p-5 shadow-2xl relative" dir="rtl">
+    <div className="bg-surface-151921 border border-white/5 rounded-2xl p-5 shadow-2xl relative" dir="rtl">
       
       {/* Decorative tag */}
       <div className="absolute top-4 left-4 flex items-center gap-1.5 px-3 py-1 bg-blue-600/10 text-blue-400 border border-blue-500/20 text-[10px] font-black rounded-lg">
@@ -288,12 +288,12 @@ export default function BuffetPOSDesk({
                 placeholder="جستجوی سریع محصول در بوفه..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pr-8 pl-3 py-2 bg-[#0B0E14] border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs"
+                className="w-full pr-8 pl-3 py-2 bg-surface-0b0e14 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs"
               />
             </div>
 
             {/* Sub-category pills */}
-            <div className="flex items-center gap-1.5 bg-[#090C11] p-1 border border-white/5 rounded-xl shrink-0">
+            <div className="flex items-center gap-1.5 bg-surface-090c11 p-1 border border-white/5 rounded-xl shrink-0">
               <button
                 type="button"
                 onClick={() => setActiveCategory('all')}
@@ -353,7 +353,7 @@ export default function BuffetPOSDesk({
                     className={`p-3 rounded-xl border text-right flex flex-col justify-between h-[100px] transition-all cursor-pointer ${
                       countIn > 0 
                         ? 'bg-blue-600/10 border-blue-500/40 shadow-md shadow-blue-500/5' 
-                        : 'bg-[#0B0E14]/50 border-white/5 hover:border-white/15'
+                        : 'bg-surface-0b0e14/50 border-white/5 hover:border-white/15'
                     } ${isOutOfStock ? 'opacity-40 select-none cursor-not-allowed' : ''}`}
                     title={isOutOfStock ? "اتمام موجودی" : item.name}
                   >
@@ -420,7 +420,7 @@ export default function BuffetPOSDesk({
               <span className="text-xs font-bold text-slate-400 block mb-2">سبد خرید فعلی بوفه:</span>
               
               {Object.keys(cart).length === 0 ? (
-                <div className="py-8 bg-[#0B0E14]/30 border border-dashed border-white/5 rounded-xl text-center text-slate-500 text-xs">
+                <div className="py-8 bg-surface-0b0e14/30 border border-dashed border-white/5 rounded-xl text-center text-slate-500 text-xs">
                   کالاهای درخواستی را از لیست روبرو انتخاب کنید.
                 </div>
               ) : (
@@ -429,14 +429,14 @@ export default function BuffetPOSDesk({
                     const item = buffetItems.find(p => p.id === itemId);
                     if (!item) return null;
                     return (
-                      <div key={itemId} className="flex justify-between items-center p-2 bg-[#0B0E14] border border-white/5 rounded-xl text-xs">
+                      <div key={itemId} className="flex justify-between items-center p-2 bg-surface-0b0e14 border border-white/5 rounded-xl text-xs">
                         <div className="space-y-0.5">
                           <span className="font-bold text-white block">{item.name}</span>
                           <span className="text-slate-400 text-[10px] font-mono">فی: {formatCurrency(item.price)}</span>
                         </div>
 
                         <div className="flex items-center gap-3">
-                          <div className="flex items-center gap-1.5 bg-[#151921] p-0.5 border border-white/5 rounded-lg">
+                          <div className="flex items-center gap-1.5 bg-surface-151921 p-0.5 border border-white/5 rounded-lg">
                             <button
                               type="button"
                               onClick={() => handleUpdateQty(itemId, false)}
@@ -474,7 +474,7 @@ export default function BuffetPOSDesk({
             <div className="space-y-2">
               <span className="text-xs font-bold text-slate-400 block">مشخصات خریدار فاکتور:</span>
               
-              <div className="grid grid-cols-2 gap-2 bg-[#0B0E14] p-1 border border-white/5 rounded-xl text-[11px]">
+              <div className="grid grid-cols-2 gap-2 bg-surface-0b0e14 p-1 border border-white/5 rounded-xl text-[11px]">
                 <button
                   type="button"
                   onClick={() => {
@@ -507,7 +507,7 @@ export default function BuffetPOSDesk({
                     type="text"
                     value={customCustomerName}
                     onChange={(e) => setCustomCustomerName(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#0B0E14] border border-white/5 rounded-xl text-white focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs"
+                    className="w-full px-3 py-2 bg-surface-0b0e14 border border-white/5 rounded-xl text-white focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs"
                     placeholder="خریدار بوفه"
                   />
                 </div>
@@ -520,7 +520,7 @@ export default function BuffetPOSDesk({
                     <button
                       type="button"
                       onClick={() => setIsDebtorDropdownOpen(!isDebtorDropdownOpen)}
-                      className="w-full px-3 py-2 bg-[#0B0E14] border border-white/5 rounded-xl text-white flex justify-between items-center text-xs text-right cursor-pointer"
+                      className="w-full px-3 py-2 bg-surface-0b0e14 border border-white/5 rounded-xl text-white flex justify-between items-center text-xs text-right cursor-pointer"
                     >
                       <span>
                         {activeDebtor ? `${activeDebtor.name} (${activeDebtor.phone})` : '-- مشتری بدهکاری را انتخاب نمایید --'}
@@ -529,13 +529,13 @@ export default function BuffetPOSDesk({
                     </button>
 
                     {isDebtorDropdownOpen && (
-                      <div className="absolute z-50 left-0 right-0 mt-1 bg-[#10131B] border border-white/10 rounded-xl shadow-2xl p-2.5 space-y-2">
+                      <div className="absolute z-50 left-0 right-0 mt-1 bg-surface-10131b border border-white/10 rounded-xl shadow-2xl p-2.5 space-y-2">
                         <input
                           type="text"
                           placeholder="جستجو با اسم یا شماره موبایل..."
                           value={debtorSearch}
                           onChange={(e) => setDebtorSearch(e.target.value)}
-                          className="w-full px-2.5 py-1.5 bg-[#0B0E14] border border-white/5 rounded-lg text-white text-[11px] focus:outline-none"
+                          className="w-full px-2.5 py-1.5 bg-surface-0b0e14 border border-white/5 rounded-lg text-white text-[11px] focus:outline-none"
                         />
                         <div className="max-h-[140px] overflow-y-auto space-y-1">
                           {filteredDebtors.length === 0 ? (
@@ -574,7 +574,7 @@ export default function BuffetPOSDesk({
                   type="button"
                   onClick={() => setPayMethod('cash')}
                   className={`py-2 px-1 rounded-xl transition-all flex flex-col items-center gap-1 cursor-pointer ${
-                    payMethod === 'cash' ? 'bg-emerald-600/10 text-emerald-400 border border-emerald-500/20 shadow' : 'bg-[#0B0E14] text-slate-400 border border-transparent'
+                    payMethod === 'cash' ? 'bg-emerald-600/10 text-emerald-400 border border-emerald-500/20 shadow' : 'bg-surface-0b0e14 text-slate-400 border border-transparent'
                   }`}
                 >
                   <CircleDollarSign className="w-4 h-4" />
@@ -585,7 +585,7 @@ export default function BuffetPOSDesk({
                   type="button"
                   onClick={() => setPayMethod('card')}
                   className={`py-2 px-1 rounded-xl transition-all flex flex-col items-center gap-1 cursor-pointer ${
-                    payMethod === 'card' ? 'bg-blue-600/10 text-blue-400 border border-blue-500/20 shadow' : 'bg-[#0B0E14] text-slate-400 border border-transparent'
+                    payMethod === 'card' ? 'bg-blue-600/10 text-blue-400 border border-blue-500/20 shadow' : 'bg-surface-0b0e14 text-slate-400 border border-transparent'
                   }`}
                 >
                   <CreditCard className="w-4 h-4" />
@@ -597,7 +597,7 @@ export default function BuffetPOSDesk({
                     type="button"
                     onClick={() => setPayMethod('debt')}
                     className={`py-2 px-1 rounded-xl transition-all flex flex-col items-center gap-1 cursor-pointer ${
-                      payMethod === 'debt' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20 shadow' : 'bg-[#0B0E14] text-slate-400 border border-transparent'
+                      payMethod === 'debt' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20 shadow' : 'bg-surface-0b0e14 text-slate-400 border border-transparent'
                     }`}
                   >
                     <BookOpen className="w-4 h-4" />
@@ -614,7 +614,7 @@ export default function BuffetPOSDesk({
                     setDebtAmountInput('');
                   }}
                   className={`py-2 px-1 rounded-xl transition-all flex flex-col items-center gap-1 cursor-pointer ${
-                    payMethod === 'mixed' ? 'bg-purple-600/10 text-purple-400 border border-purple-500/20 shadow' : 'bg-[#0B0E14] text-slate-400 border border-transparent'
+                    payMethod === 'mixed' ? 'bg-purple-600/10 text-purple-400 border border-purple-500/20 shadow' : 'bg-surface-0b0e14 text-slate-400 border border-transparent'
                   }`}
                 >
                   <RefreshCw className="w-4 h-4" />
@@ -628,7 +628,7 @@ export default function BuffetPOSDesk({
                     <span className="text-[10px] text-slate-300 font-bold">تسویه کاملاً نقدی ({formatCurrency(total)})</span>
 
                     {/* Division Calculator */}
-                    <div className="flex items-center gap-1 bg-[#0B0E14] p-1 border border-emerald-500/30 rounded-lg">
+                    <div className="flex items-center gap-1 bg-surface-0b0e14 p-1 border border-emerald-500/30 rounded-lg">
                       <div className="flex items-center gap-0.5 px-1 text-[9px] text-emerald-400 font-bold border-l border-white/10">
                         <Calculator className="w-3 h-3 text-emerald-400 shrink-0" />
                         <span>تقسیم:</span>
@@ -658,7 +658,7 @@ export default function BuffetPOSDesk({
                             setCashDivision(val);
                           }}
                           placeholder="تعداد"
-                          className="w-10 h-5 bg-[#151921] border border-emerald-500/40 rounded text-center text-[10px] font-mono text-emerald-300 focus:outline-none focus:border-emerald-400"
+                          className="w-10 h-5 bg-surface-151921 border border-emerald-500/40 rounded text-center text-[10px] font-mono text-emerald-300 focus:outline-none focus:border-emerald-400"
                           title="تعداد نفرات جهت تقسیم"
                         />
                       </div>
@@ -666,7 +666,7 @@ export default function BuffetPOSDesk({
                   </div>
 
                   {cashDivision > 1 && (
-                    <div className="p-2 bg-[#0B0E14] border border-emerald-500/30 rounded-lg flex items-center justify-between text-emerald-300 text-[10px] font-semibold animate-in zoom-in-95 duration-150">
+                    <div className="p-2 bg-surface-0b0e14 border border-emerald-500/30 rounded-lg flex items-center justify-between text-emerald-300 text-[10px] font-semibold animate-in zoom-in-95 duration-150">
                       <div className="flex items-center gap-1.5">
                         <span className="text-slate-400">سهم هر نفر (تقسیم بر {cashDivision} نفر):</span>
                         <button
@@ -687,7 +687,7 @@ export default function BuffetPOSDesk({
 
               {/* Card Reader Selection */}
               {(payMethod === 'card' || payMethod === 'mixed') && (
-                <div className="p-3 bg-[#0B0E14]/30 border border-white/5 rounded-xl space-y-1.5 mt-2 text-right">
+                <div className="p-3 bg-surface-0b0e14/30 border border-white/5 rounded-xl space-y-1.5 mt-2 text-right">
                   <label className="text-[9px] text-slate-400 block font-bold uppercase tracking-wider">
                     🔌 انتخاب دستگاه کارتخوان بانکی (POS):
                   </label>
@@ -699,7 +699,7 @@ export default function BuffetPOSDesk({
                     <select
                       value={selectedCardReaderId}
                       onChange={(e) => setSelectedCardReaderId(e.target.value)}
-                      className="w-full text-[10px] px-2.5 py-1.5 bg-[#0B0E14] border border-white/5 rounded-lg text-white font-semibold cursor-pointer focus:outline-none"
+                      className="w-full text-[10px] px-2.5 py-1.5 bg-surface-0b0e14 border border-white/5 rounded-lg text-white font-semibold cursor-pointer focus:outline-none"
                       style={{ direction: 'rtl' }}
                     >
                       {cardReaders.map((pos) => (
@@ -714,7 +714,7 @@ export default function BuffetPOSDesk({
 
               {/* Mixed settlement values input drawer */}
               {payMethod === 'mixed' && (
-                <div className="p-3 bg-[#0B0E14]/40 border border-white/5 rounded-xl text-[11px] space-y-3 mt-2 animate-in slide-in-from-top-1">
+                <div className="p-3 bg-surface-0b0e14/40 border border-white/5 rounded-xl text-[11px] space-y-3 mt-2 animate-in slide-in-from-top-1">
                   <span className="text-slate-400 font-bold block">تقسیم تفصیلی مبالغ ترکیبی:</span>
                   
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
@@ -726,7 +726,7 @@ export default function BuffetPOSDesk({
                         placeholder="0"
                         value={cashAmount}
                         onChange={(e) => setCashAmount(e.target.value)}
-                        className="w-full px-2 py-1 bg-[#151921] border border-white/5 rounded text-white font-mono text-center"
+                        className="w-full px-2 py-1 bg-surface-151921 border border-white/5 rounded text-white font-mono text-center"
                       />
                       {cashAmount && !isNaN(Number(cashAmount)) && Number(cashAmount) > 0 && (
                         <span className="text-[9px] text-emerald-400 block font-mono text-center">
@@ -742,7 +742,7 @@ export default function BuffetPOSDesk({
                         placeholder="0"
                         value={cardAmount}
                         onChange={(e) => setCardAmount(e.target.value)}
-                        className="w-full px-2 py-1 bg-[#151921] border border-white/5 rounded text-white font-mono text-center"
+                        className="w-full px-2 py-1 bg-surface-151921 border border-white/5 rounded text-white font-mono text-center"
                       />
                       {cardAmount && !isNaN(Number(cardAmount)) && Number(cardAmount) > 0 && (
                         <span className="text-[9px] text-blue-400 block font-mono text-center">
@@ -759,7 +759,7 @@ export default function BuffetPOSDesk({
                           placeholder="0"
                           value={debtAmountInput}
                           onChange={(e) => setDebtAmountInput(e.target.value)}
-                          className="w-full px-2 py-1 bg-[#12161E] border border-white/10 rounded text-amber-400 font-mono text-center"
+                          className="w-full px-2 py-1 bg-surface-12161e border border-white/10 rounded text-amber-400 font-mono text-center"
                         />
                         {debtAmountInput && !isNaN(Number(debtAmountInput)) && Number(debtAmountInput) > 0 && (
                           <span className="text-[9px] text-amber-500 block font-mono text-center">
@@ -774,7 +774,7 @@ export default function BuffetPOSDesk({
                           type="text"
                           disabled
                           placeholder="غیرفعال"
-                          className="w-full px-2 py-1 bg-[#0A0D14] border border-transparent rounded text-center text-slate-650 cursor-not-allowed"
+                          className="w-full px-2 py-1 bg-surface-0a0d14 border border-transparent rounded text-center text-slate-650 cursor-not-allowed"
                         />
                       </div>
                     )}

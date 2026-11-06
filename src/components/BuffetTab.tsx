@@ -225,7 +225,7 @@ export default function BuffetTab({
       <div className="space-y-6">
         
         {/* Top Add New Product Section */}
-        <div className="p-5 bg-[#151921] border border-white/5 rounded-2xl space-y-4 shadow-xl">
+        <div className="p-5 bg-surface-151921 border border-white/5 rounded-2xl space-y-4 shadow-xl">
           <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
             <Archive className="w-4 h-4 text-blue-400" />
             افزودن خوراکی یا جنس جدید به بوفه
@@ -249,7 +249,7 @@ export default function BuffetTab({
                 value={newItemName}
                 onChange={(e) => setNewItemName(e.target.value)}
                 required
-                className="w-full px-3 py-2 bg-[#0B0E14] border border-white/10 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 bg-surface-0b0e14 border border-white/10 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
 
@@ -263,7 +263,7 @@ export default function BuffetTab({
                 value={newItemPrice}
                 onChange={(e) => setNewItemPrice(e.target.value)}
                 required
-                className="w-full px-3 py-2 bg-[#0B0E14] border border-white/10 rounded-lg text-white placeholder-slate-500 font-mono text-center focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 bg-surface-0b0e14 border border-white/10 rounded-lg text-white placeholder-slate-500 font-mono text-center focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
               />
               {newItemPrice && !isNaN(Number(newItemPrice)) && (
                 <span className="text-[9px] text-[#2563EB] block font-mono font-bold mt-1 text-center">
@@ -282,7 +282,7 @@ export default function BuffetTab({
                 value={newItemCost}
                 onChange={(e) => setNewItemCost(e.target.value)}
                 required
-                className="w-full px-3 py-2 bg-[#0B0E14] border border-white/10 rounded-lg text-white placeholder-slate-500 font-mono text-center focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 bg-surface-0b0e14 border border-white/10 rounded-lg text-white placeholder-slate-500 font-mono text-center focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
               />
               {newItemCost && !isNaN(Number(newItemCost)) && (
                 <span className="text-[9px] text-emerald-400 block font-mono font-bold mt-1 text-center">
@@ -298,7 +298,7 @@ export default function BuffetTab({
                 placeholder="بی‌نهایت"
                 value={newItemStock}
                 onChange={(e) => setNewItemStock(e.target.value)}
-                className="w-full px-2 py-2 bg-[#0B0E14] border border-white/10 rounded-lg text-white placeholder-slate-600 font-mono text-center focus:outline-none"
+                className="w-full px-2 py-2 bg-surface-0b0e14 border border-white/10 rounded-lg text-white placeholder-slate-600 font-mono text-center focus:outline-none"
               />
             </div>
 
@@ -307,7 +307,7 @@ export default function BuffetTab({
               <select
                 value={newItemCategory}
                 onChange={(e) => setNewItemCategory(e.target.value as any)}
-                className="w-full px-3 py-2 bg-[#0B0E14] border border-white/10 rounded-lg text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs cursor-pointer"
+                className="w-full px-3 py-2 bg-surface-0b0e14 border border-white/10 rounded-lg text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs cursor-pointer"
               >
                 <option value="fridge">🧊 یخچال</option>
                 <option value="cafe">☕ کافه</option>
@@ -323,7 +323,7 @@ export default function BuffetTab({
                 placeholder="0"
                 value={newItemPriority}
                 onChange={(e) => setNewItemPriority(e.target.value)}
-                className="w-full px-2 py-2 bg-[#0B0E14] border border-white/10 rounded-lg text-white placeholder-slate-600 font-mono text-center focus:outline-none"
+                className="w-full px-2 py-2 bg-surface-0b0e14 border border-white/10 rounded-lg text-white placeholder-slate-600 font-mono text-center focus:outline-none"
               />
             </div>
 
@@ -357,13 +357,13 @@ export default function BuffetTab({
                 placeholder="جستجوی کالا در قفسه بوفه..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pr-8 pl-3 py-1.5 bg-[#151921] border border-white/10 rounded-lg text-white placeholder-slate-550 focus:outline-none text-xs"
+                className="w-full pr-8 pl-3 py-1.5 bg-surface-151921 border border-white/10 rounded-lg text-white placeholder-slate-550 focus:outline-none text-xs"
               />
             </div>
           </div>
 
           {/* Category Sub-tabs */}
-          <div className="flex flex-wrap items-center gap-1.5 bg-[#0B0E14]/40 p-1 border border-white/5 rounded-xl">
+          <div className="flex flex-wrap items-center gap-1.5 bg-surface-0b0e14/40 p-1 border border-white/5 rounded-xl">
             <button
               type="button"
               onClick={() => setActiveCategoryTab('all')}
@@ -424,7 +424,7 @@ export default function BuffetTab({
                   return (
                     <div 
                       key={item.id}
-                      className="p-3.5 rounded-xl border border-blue-500/70 bg-[#121620] space-y-3 shadow-xl ring-1 ring-blue-500/30 animate-in fade-in duration-150"
+                      className="p-3.5 rounded-xl border border-blue-500/70 bg-surface-121620 space-y-3 shadow-xl ring-1 ring-blue-500/30 animate-in fade-in duration-150"
                     >
                       <div className="flex items-center justify-between border-b border-white/10 pb-2">
                         <span className="text-[11px] font-bold text-blue-400 flex items-center gap-1.5">
@@ -456,7 +456,7 @@ export default function BuffetTab({
                             value={editName}
                             onChange={(e) => setEditName(e.target.value)}
                             required
-                            className="w-full px-2.5 py-1.5 bg-[#080A0F] border border-white/15 rounded-lg text-white text-xs font-medium focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                            className="w-full px-2.5 py-1.5 bg-surface-080a0f border border-white/15 rounded-lg text-white text-xs font-medium focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                           />
                         </div>
 
@@ -476,7 +476,7 @@ export default function BuffetTab({
                             value={editPrice}
                             onChange={(e) => setEditPrice(e.target.value)}
                             required
-                            className="w-full px-2.5 py-1.5 bg-[#080A0F] border border-blue-500/60 rounded-lg text-blue-300 font-mono text-xs font-bold focus:outline-none focus:ring-1 focus:ring-blue-500"
+                            className="w-full px-2.5 py-1.5 bg-surface-080a0f border border-blue-500/60 rounded-lg text-blue-300 font-mono text-xs font-bold focus:outline-none focus:ring-1 focus:ring-blue-500"
                           />
                           {/* Quick Price Adjust Buttons */}
                           <div className="flex items-center gap-1 mt-1.5 flex-wrap">
@@ -505,7 +505,7 @@ export default function BuffetTab({
                               value={editCost}
                               onChange={(e) => setEditCost(e.target.value)}
                               placeholder="اختیاری"
-                              className="w-full px-2.5 py-1.5 bg-[#080A0F] border border-white/15 rounded-lg text-white font-mono text-xs focus:outline-none focus:border-blue-500"
+                              className="w-full px-2.5 py-1.5 bg-surface-080a0f border border-white/15 rounded-lg text-white font-mono text-xs focus:outline-none focus:border-blue-500"
                             />
                           </div>
 
@@ -516,7 +516,7 @@ export default function BuffetTab({
                               value={editStock}
                               onChange={(e) => setEditStock(e.target.value)}
                               placeholder="نامحدود"
-                              className="w-full px-2.5 py-1.5 bg-[#080A0F] border border-white/15 rounded-lg text-white font-mono text-xs focus:outline-none focus:border-blue-500"
+                              className="w-full px-2.5 py-1.5 bg-surface-080a0f border border-white/15 rounded-lg text-white font-mono text-xs focus:outline-none focus:border-blue-500"
                             />
                           </div>
                         </div>
@@ -526,7 +526,7 @@ export default function BuffetTab({
                           <select
                             value={editCategory}
                             onChange={(e) => setEditCategory(e.target.value as any)}
-                            className="w-full px-2.5 py-1.5 bg-[#080A0F] border border-white/15 rounded-lg text-slate-200 text-xs focus:outline-none cursor-pointer"
+                            className="w-full px-2.5 py-1.5 bg-surface-080a0f border border-white/15 rounded-lg text-slate-200 text-xs focus:outline-none cursor-pointer"
                           >
                             <option value="fridge">🧊 یخچال</option>
                             <option value="cafe">☕ کافه</option>
@@ -547,7 +547,7 @@ export default function BuffetTab({
                         <button
                           type="button"
                           onClick={handleCancelEdit}
-                          className="px-3 py-1.5 bg-[#080A0F] hover:bg-white/10 text-slate-300 text-xs rounded-lg border border-white/15 transition-all cursor-pointer"
+                          className="px-3 py-1.5 bg-surface-080a0f hover:bg-white/10 text-slate-300 text-xs rounded-lg border border-white/15 transition-all cursor-pointer"
                         >
                           انصراف
                         </button>
@@ -559,7 +559,7 @@ export default function BuffetTab({
                 return (
                   <div 
                     key={item.id}
-                    className="p-3.5 rounded-xl border bg-[#151921] border-white/10 hover:border-blue-500/30 flex flex-col justify-between transition-all"
+                    className="p-3.5 rounded-xl border bg-surface-151921 border-white/10 hover:border-blue-500/30 flex flex-col justify-between transition-all"
                   >
                     <div className="space-y-2">
                       <div className="flex items-start justify-between gap-1.5">
@@ -575,7 +575,7 @@ export default function BuffetTab({
                               ⭐️ {item.priority}
                             </span>
                           ) : null}
-                          <span className="text-[8px] px-1.5 py-0.5 rounded shrink-0 font-bold border border-white/5 bg-[#0B0E14] text-slate-400">
+                          <span className="text-[8px] px-1.5 py-0.5 rounded shrink-0 font-bold border border-white/5 bg-surface-0b0e14 text-slate-400">
                             {item.category === 'cafe' ? (
                               <span className="text-amber-400">☕ کافه</span>
                             ) : item.category === 'snack' ? (
@@ -636,7 +636,7 @@ export default function BuffetTab({
                       </div>
 
                       {onUpdateBuffetItemPriority && (
-                        <div className="flex items-center gap-1 bg-[#0B0E14] border border-white/10 rounded-lg p-0.5 text-slate-400" title="اولویت نمایش">
+                        <div className="flex items-center gap-1 bg-surface-0b0e14 border border-white/10 rounded-lg p-0.5 text-slate-400" title="اولویت نمایش">
                           <button
                             type="button"
                             onClick={() => onUpdateBuffetItemPriority(item.id, Math.max(0, (item.priority || 0) - 1))}
@@ -676,7 +676,7 @@ export default function BuffetTab({
       {/* Sensitive Password Modal for Buffet Tab */}
       {sensitiveAuthModal && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-[9999] animate-fade-in" style={{ direction: 'rtl' }}>
-          <div className="bg-[#121620] border border-amber-500/40 max-w-md w-full rounded-2xl overflow-hidden shadow-2xl p-6 space-y-5 relative">
+          <div className="bg-surface-121620 border border-amber-500/40 max-w-md w-full rounded-2xl overflow-hidden shadow-2xl p-6 space-y-5 relative">
             <div className="flex items-center justify-between border-b border-white/10 pb-3">
               <div className="flex items-center gap-2 text-amber-400 font-bold text-sm">
                 <Lock className="w-5 h-5 text-amber-400 shrink-0" />
@@ -722,7 +722,7 @@ export default function BuffetTab({
                       setAuthPassword(e.target.value);
                       setAuthError('');
                     }}
-                    className="w-full bg-[#080A0F] border border-white/10 focus:border-amber-500 rounded-xl px-3 py-2.5 pl-10 text-xs text-white font-mono focus:outline-none"
+                    className="w-full bg-surface-080a0f border border-white/10 focus:border-amber-500 rounded-xl px-3 py-2.5 pl-10 text-xs text-white font-mono focus:outline-none"
                     placeholder="رمز عبور را وارد کنید..."
                     autoFocus
                   />
@@ -751,7 +751,7 @@ export default function BuffetTab({
                     setAuthPassword('');
                     setAuthError('');
                   }}
-                  className="px-4 py-2.5 bg-[#080A0F] hover:bg-white/10 text-slate-300 text-xs rounded-xl border border-white/10 transition-all cursor-pointer font-bold"
+                  className="px-4 py-2.5 bg-surface-080a0f hover:bg-white/10 text-slate-300 text-xs rounded-xl border border-white/10 transition-all cursor-pointer font-bold"
                 >
                   انصراف
                 </button>

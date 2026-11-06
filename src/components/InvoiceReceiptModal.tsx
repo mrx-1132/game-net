@@ -157,10 +157,10 @@ export default function InvoiceReceiptModal({
         }
       `}} />
 
-      <div className="bg-[#0D111A] border border-white/10 rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150 my-auto text-right text-xs">
+      <div className="bg-surface-0d111a border border-white/10 rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150 my-auto text-right text-xs">
         
         {/* Modal Top Bar */}
-        <div className="flex items-center justify-between p-4 border-b border-white/10 bg-[#07090E] no-print">
+        <div className="flex items-center justify-between p-4 border-b border-white/10 bg-surface-07090e no-print">
           <div className="flex items-center gap-2">
             <div className="p-2 bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded-xl">
               <Receipt className="w-5 h-5" />
@@ -173,7 +173,7 @@ export default function InvoiceReceiptModal({
 
           <div className="flex items-center gap-2">
             {/* Format toggle */}
-            <div className="flex bg-[#151921] p-0.5 border border-white/10 rounded-lg text-[10px]">
+            <div className="flex bg-surface-151921 p-0.5 border border-white/10 rounded-lg text-[10px]">
               <button
                 type="button"
                 onClick={() => setPrintFormat('thermal')}
@@ -205,11 +205,11 @@ export default function InvoiceReceiptModal({
         </div>
 
         {/* Printable & Scrollable Invoice Preview Area */}
-        <div className="p-5 max-h-[75vh] overflow-y-auto bg-[#070A0F]">
+        <div className="p-5 max-h-[75vh] overflow-y-auto bg-surface-070a0f">
           
           <div
             id="printable-invoice-receipt"
-            className={`mx-auto bg-white text-slate-900 rounded-xl shadow-2xl p-5 border border-slate-200 transition-all font-sans ${
+            className={`theme-keep mx-auto bg-white text-slate-900 rounded-xl shadow-2xl p-5 border border-slate-200 transition-all font-sans ${
               printFormat === 'thermal' ? 'max-w-[340px] text-[11px]' : 'max-w-[500px] text-xs'
             }`}
           >
@@ -419,12 +419,12 @@ export default function InvoiceReceiptModal({
         </div>
 
         {/* Modal Action Buttons */}
-        <div className="p-4 bg-[#07090E] border-t border-white/10 flex flex-wrap items-center justify-between gap-3 no-print">
+        <div className="p-4 bg-surface-07090e border-t border-white/10 flex flex-wrap items-center justify-between gap-3 no-print">
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={handleCopyText}
-              className="px-3.5 py-2 bg-[#151921] hover:bg-[#1e2430] text-slate-300 hover:text-white rounded-xl text-xs font-bold transition-all border border-white/10 flex items-center gap-1.5 cursor-pointer"
+              className="px-3.5 py-2 bg-surface-151921 hover:bg-surface-1e2430 text-slate-300 hover:text-white rounded-xl text-xs font-bold transition-all border border-white/10 flex items-center gap-1.5 cursor-pointer"
             >
               {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4 text-slate-400" />}
               <span>{copied ? 'متن فاکتور کپی شد' : 'کپی متن خلاصه فاکتور'}</span>

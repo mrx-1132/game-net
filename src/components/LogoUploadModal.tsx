@@ -110,9 +110,9 @@ export default function LogoUploadModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" dir="rtl">
-      <div className="w-full max-w-md bg-[#151921] border border-white/10 rounded-2xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-150 text-right text-xs">
+      <div className="w-full max-w-md bg-surface-151921 border border-white/10 rounded-2xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-150 text-right text-xs">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-white/5 bg-[#0B0E14]">
+        <div className="flex items-center justify-between p-4 border-b border-white/5 bg-surface-0b0e14">
           <h3 className="text-sm font-bold text-white flex items-center gap-2">
             <Image className="w-4 h-4 text-blue-400" />
             <span>تغییر و بارگذاری لوگوی سامانه</span>
@@ -136,10 +136,10 @@ export default function LogoUploadModal({
           ) : (
             <>
               {/* Preview Box with exact frame matching standard logo */}
-              <div className="p-4 bg-[#0B0E14] border border-white/5 rounded-xl flex flex-col items-center justify-center gap-3">
+              <div className="p-4 bg-surface-0b0e14 border border-white/5 rounded-xl flex flex-col items-center justify-center gap-3">
                 <span className="text-[10.5px] text-slate-400 font-medium">پیش‌نمایش در ابعاد استاندارد هدر:</span>
                 
-                <div className="flex items-center gap-3 p-3 bg-[#0F1219] rounded-xl border border-white/10">
+                <div className="flex items-center gap-3 p-3 bg-surface-0f1219 rounded-xl border border-white/10">
                   {previewUrl ? (
                     <div className="w-11 h-11 rounded-xl overflow-hidden bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-900/30 shrink-0 border border-white/10">
                       <img
@@ -225,7 +225,7 @@ export default function LogoUploadModal({
         </div>
 
         {/* Footer */}
-        <div className="p-4 bg-[#0B0E14] border-t border-white/5 flex gap-2 justify-end">
+        <div className="p-4 bg-surface-0b0e14 border-t border-white/5 flex gap-2 justify-end">
           {userRole === 'admin' && (
             <button
               type="button"

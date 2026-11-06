@@ -364,7 +364,7 @@ export default function GroupSettleModal({
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50 overflow-y-auto" dir="rtl">
-      <div className="bg-[#0F1219] border border-white/10 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden my-8">
+      <div className="bg-surface-0f1219 border border-white/10 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden my-8">
         
         {/* Header decoration */}
         <div className="bg-gradient-to-r from-blue-600 to-indigo-700/80 p-5 px-6 flex items-center justify-between text-white relative">
@@ -395,7 +395,7 @@ export default function GroupSettleModal({
           )}
 
           {/* Unified customer/payer name input */}
-          <div className="p-4 bg-[#14121a] border border-indigo-500/10 rounded-2xl space-y-2">
+          <div className="p-4 bg-surface-14121a border border-indigo-500/10 rounded-2xl space-y-2">
             <label className="text-[11px] text-indigo-305 font-bold flex items-center gap-1.5 justify-start">
               <User className="w-4 h-4 text-indigo-400" />
               <span>نام نهایی ثبت‌کننده فاکتور کل گروه (مثال: یوسفی)</span>
@@ -405,7 +405,7 @@ export default function GroupSettleModal({
                 type="text"
                 value={unifiedCustomerName}
                 onChange={(e) => setUnifiedCustomerName(e.target.value)}
-                className="w-full bg-[#050608] border border-white/10 focus:border-indigo-500 rounded-xl p-2.5 pr-3 text-white font-bold text-xs text-right placeholder-slate-600 focus:outline-none"
+                className="w-full bg-surface-050608 border border-white/10 focus:border-indigo-500 rounded-xl p-2.5 pr-3 text-white font-bold text-xs text-right placeholder-slate-600 focus:outline-none"
                 placeholder="در صورت وارد کردن نام، تمام سانس‌های این گروه با این نام ذخیره می‌شوند"
               />
             </div>
@@ -416,7 +416,7 @@ export default function GroupSettleModal({
             <div className="text-[11px] text-slate-400 font-bold block">ریز جزئیات دستگاه‌های انتخاب شده:</div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-48 overflow-y-auto pr-1">
               {systemCalculations.map((calc) => (
-                <div key={calc.id} className="p-3 bg-[#151921]/60 border border-white/5 rounded-xl flex items-center justify-between text-xs transition-hover hover:border-white/10">
+                <div key={calc.id} className="p-3 bg-surface-151921/60 border border-white/5 rounded-xl flex items-center justify-between text-xs transition-hover hover:border-white/10">
                   <div className="space-y-0.5">
                     <span className="font-bold text-white text-xs">{calc.name}</span>
                     <div className="text-[9px] text-slate-400 font-mono">({calc.type}) • {calc.durationMinutes} دقیقه بازی</div>
@@ -438,7 +438,7 @@ export default function GroupSettleModal({
           </div>
 
           {/* Settle summary calculations */}
-          <div className="p-4 bg-[#151921] border border-white/5 rounded-2xl space-y-3">
+          <div className="p-4 bg-surface-151921 border border-white/5 rounded-2xl space-y-3">
             <div className="flex flex-wrap justify-between items-center gap-2 text-xs">
               <span className="text-slate-400 font-medium">مجموع کل صورت‌حساب گروه:</span>
               <span className="font-mono font-bold text-white text-sm">{formatCurrency(finalTotalCost)}</span>
@@ -480,7 +480,7 @@ export default function GroupSettleModal({
                 className={`py-2 px-2.5 rounded-xl border text-center flex flex-col items-center justify-center gap-0.5 cursor-pointer transition-all ${
                   roundingOffset === 0
                     ? 'border-amber-500/50 bg-amber-500/10 font-bold text-amber-400 shadow-lg shadow-amber-500/5'
-                    : 'border-white/5 bg-[#0B0E14]/50 text-slate-400 hover:border-white/10 hover:text-white'
+                    : 'border-white/5 bg-surface-0b0e14/50 text-slate-400 hover:border-white/10 hover:text-white'
                 }`}
               >
                 <span className="text-[11px] font-bold">بدون تغییر (واقعی)</span>
@@ -493,7 +493,7 @@ export default function GroupSettleModal({
                 className={`py-2 px-2.5 rounded-xl border text-center flex flex-col items-center justify-center gap-0.5 cursor-pointer transition-all ${
                   roundingOffset === (Math.round(cleanTotalCostSum / 1000) * 1000) - cleanTotalCostSum && roundingOffset !== 0
                     ? 'border-amber-500/50 bg-amber-500/10 font-bold text-amber-400 shadow-lg shadow-amber-500/5'
-                    : 'border-white/5 bg-[#0B0E14]/50 text-slate-400 hover:border-white/10 hover:text-white'
+                    : 'border-white/5 bg-surface-0b0e14/50 text-slate-400 hover:border-white/10 hover:text-white'
                 }`}
               >
                 <span className="text-[11px] font-bold">نزدیک‌ترین 1,000</span>
@@ -506,7 +506,7 @@ export default function GroupSettleModal({
                 className={`py-2 px-2.5 rounded-xl border text-center flex flex-col items-center justify-center gap-0.5 cursor-pointer transition-all ${
                   roundingOffset < 0
                     ? 'border-rose-500/50 bg-rose-500/10 font-bold text-rose-400 shadow-lg shadow-rose-500/5'
-                    : 'border-white/5 bg-[#0B0E14]/50 text-slate-400 hover:border-white/10 hover:text-white'
+                    : 'border-white/5 bg-surface-0b0e14/50 text-slate-400 hover:border-white/10 hover:text-white'
                 }`}
               >
                 <span className="text-[11px] font-bold">📉 گرد به پایین (1,000- تومان)</span>
@@ -521,7 +521,7 @@ export default function GroupSettleModal({
                 className={`py-2 px-2.5 rounded-xl border text-center flex flex-col items-center justify-center gap-0.5 cursor-pointer transition-all ${
                   roundingOffset > 0
                     ? 'border-emerald-500/50 bg-emerald-500/10 font-bold text-emerald-400 shadow-lg shadow-emerald-500/5'
-                    : 'border-white/5 bg-[#0B0E14]/50 text-slate-400 hover:border-white/10 hover:text-white'
+                    : 'border-white/5 bg-surface-0b0e14/50 text-slate-400 hover:border-white/10 hover:text-white'
                 }`}
               >
                 <span className="text-[11px] font-bold">📈 گرد به بالا (1,000+ تومان)</span>
@@ -535,7 +535,7 @@ export default function GroupSettleModal({
           {/* Mode Tabs */}
           <div className="space-y-1.5">
             <label className="text-[11px] text-slate-400 font-bold block">مکانیسم دریافت هزینه و روش تسویه گروهی:</label>
-            <div className="grid grid-cols-4 gap-1.5 bg-[#0B0E14] border border-white/5 p-1 rounded-xl">
+            <div className="grid grid-cols-4 gap-1.5 bg-surface-0b0e14 border border-white/5 p-1 rounded-xl">
               {(['card', 'cash', 'debt', 'mixed'] as const).map((method) => {
                 const isDebtMethod = method === 'debt';
                 return (
@@ -576,7 +576,7 @@ export default function GroupSettleModal({
                   </div>
 
                   {/* Division Calculator */}
-                  <div className="flex items-center gap-1 bg-[#0B0E14] p-1 border border-emerald-500/30 rounded-lg">
+                  <div className="flex items-center gap-1 bg-surface-0b0e14 p-1 border border-emerald-500/30 rounded-lg">
                     <div className="flex items-center gap-1 px-1 text-[10px] text-emerald-400 font-bold border-l border-white/10">
                       <Calculator className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                       <span>تقسیم بر:</span>
@@ -606,7 +606,7 @@ export default function GroupSettleModal({
                           setCashDivision(val);
                         }}
                         placeholder="تعداد"
-                        className="w-11 h-6 bg-[#151921] border border-emerald-500/40 rounded text-center text-xs font-mono text-emerald-300 focus:outline-none focus:border-emerald-400"
+                        className="w-11 h-6 bg-surface-151921 border border-emerald-500/40 rounded text-center text-xs font-mono text-emerald-300 focus:outline-none focus:border-emerald-400"
                         title="تعداد نفرات جهت تقسیم"
                       />
                     </div>
@@ -614,7 +614,7 @@ export default function GroupSettleModal({
                 </div>
 
                 {cashDivision > 1 && (
-                  <div className="p-2.5 bg-[#0B0E14] border border-emerald-500/30 rounded-lg flex items-center justify-between text-emerald-300 text-xs font-semibold animate-in zoom-in-95 duration-150">
+                  <div className="p-2.5 bg-surface-0b0e14 border border-emerald-500/30 rounded-lg flex items-center justify-between text-emerald-300 text-xs font-semibold animate-in zoom-in-95 duration-150">
                     <div className="flex items-center gap-2">
                       <span className="text-[10px] text-slate-400">سهم هر نفر (تقسیم بر {cashDivision} نفر):</span>
                       <button
@@ -636,7 +636,7 @@ export default function GroupSettleModal({
 
           {/* Card Reader Selection */}
           {(paymentMethod === 'card' || paymentMethod === 'mixed') && (
-            <div className="p-3 bg-[#0B0E14] border border-white/5 rounded-xl space-y-2 text-right">
+            <div className="p-3 bg-surface-0b0e14 border border-white/5 rounded-xl space-y-2 text-right">
               <label className="text-[10px] text-slate-405 block font-bold uppercase tracking-wider">
                 🔌 انتخاب دستگاه کارتخوان بانکی (POS)
               </label>
@@ -649,7 +649,7 @@ export default function GroupSettleModal({
                   <select
                     value={selectedCardReaderId}
                     onChange={(e) => setSelectedCardReaderId(e.target.value)}
-                    className="w-full text-xs px-3 py-2 bg-[#050608] border border-white/10 rounded-lg text-white font-semibold cursor-pointer focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full text-xs px-3 py-2 bg-surface-050608 border border-white/10 rounded-lg text-white font-semibold cursor-pointer focus:outline-none focus:ring-1 focus:ring-blue-500"
                     style={{ direction: 'rtl' }}
                   >
                     {cardReaders.map((pos) => (
@@ -665,7 +665,7 @@ export default function GroupSettleModal({
 
           {/* SECTION: Mixed Payment Details inputs */}
           {paymentMethod === 'mixed' && (
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4.5 bg-[#0B0E14] border border-white/5 rounded-2xl text-xs space-y-2 sm:space-y-0">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4.5 bg-surface-0b0e14 border border-white/5 rounded-2xl text-xs space-y-2 sm:space-y-0">
               <div className="space-y-1.5">
                 <label className="text-[10px] text-slate-400 block font-bold">پرداخت با کارت‌خوان (تومان):</label>
                 <input
@@ -673,7 +673,7 @@ export default function GroupSettleModal({
                   dir="ltr"
                   value={mixedCardAmount}
                   onChange={(e) => setMixedCardAmount(e.target.value)}
-                  className="w-full bg-[#050608] border border-white/10 focus:border-blue-500 rounded-lg p-2 text-white font-mono"
+                  className="w-full bg-surface-050608 border border-white/10 focus:border-blue-500 rounded-lg p-2 text-white font-mono"
                   placeholder="0"
                 />
               </div>
@@ -685,7 +685,7 @@ export default function GroupSettleModal({
                   dir="ltr"
                   value={mixedCashAmount}
                   onChange={(e) => setMixedCashAmount(e.target.value)}
-                  className="w-full bg-[#050608] border border-white/10 focus:border-blue-500 rounded-lg p-2 text-white font-mono"
+                  className="w-full bg-surface-050608 border border-white/10 focus:border-blue-500 rounded-lg p-2 text-white font-mono"
                   placeholder="0"
                 />
               </div>
@@ -697,7 +697,7 @@ export default function GroupSettleModal({
                   dir="ltr"
                   value={mixedDebtAmount}
                   onChange={(e) => setMixedDebtAmount(e.target.value)}
-                  className="w-full bg-[#050608] border border-white/10 focus:border-blue-500 rounded-lg p-2 text-white font-mono"
+                  className="w-full bg-surface-050608 border border-white/10 focus:border-blue-500 rounded-lg p-2 text-white font-mono"
                   placeholder="0"
                 />
               </div>
@@ -706,7 +706,7 @@ export default function GroupSettleModal({
 
           {/* SECTION: Debt / Credit Ledger configuration */}
           {activeDebtAmount > 0 && (
-            <div className="p-4.5 bg-[#1C161D] border border-fuchsia-900/20 rounded-2xl space-y-4 text-xs">
+            <div className="p-4.5 bg-surface-1c161d border border-fuchsia-900/20 rounded-2xl space-y-4 text-xs">
               <div className="flex items-center justify-between border-b border-white/5 pb-2">
                 <div className="flex items-center gap-2">
                   <Users className="w-4 h-4 text-amber-500" />
@@ -751,7 +751,7 @@ export default function GroupSettleModal({
                       <select
                         value={debtCustomerId}
                         onChange={(e) => setDebtCustomerId(e.target.value)}
-                        className="w-full bg-[#050608] border border-white/10 focus:border-blue-500 rounded-lg p-2.5 text-white"
+                        className="w-full bg-surface-050608 border border-white/10 focus:border-blue-500 rounded-lg p-2.5 text-white"
                       >
                         <option value="">-- انتخاب مشتری --</option>
                         {debtors.map((d) => {
@@ -778,7 +778,7 @@ export default function GroupSettleModal({
                             type="text"
                             value={newCustomerName}
                             onChange={(e) => setNewCustomerName(e.target.value)}
-                            className="w-full bg-[#050608] border border-white/10 focus:border-blue-500 rounded-lg p-2 pr-9 text-white text-xs"
+                            className="w-full bg-surface-050608 border border-white/10 focus:border-blue-500 rounded-lg p-2 pr-9 text-white text-xs"
                             placeholder="نام و نام خانوادگی"
                           />
                         </div>
@@ -792,7 +792,7 @@ export default function GroupSettleModal({
                             type="text"
                             value={newCustomerPhone}
                             onChange={(e) => setNewCustomerPhone(e.target.value)}
-                            className="w-full bg-[#050608] border border-white/10 focus:border-blue-500 rounded-lg p-2 pr-9 text-white font-mono text-xs"
+                            className="w-full bg-surface-050608 border border-white/10 focus:border-blue-500 rounded-lg p-2 pr-9 text-white font-mono text-xs"
                             placeholder="مثال: 09121234567"
                           />
                         </div>
@@ -821,7 +821,7 @@ export default function GroupSettleModal({
                         <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
                           <div className="md:col-span-3">
                             <span className="text-[10px] text-slate-450 block mb-1">نوع مشتری:</span>
-                            <div className="flex gap-1 bg-[#050608] p-0.5 rounded-lg border border-white/10">
+                            <div className="flex gap-1 bg-surface-050608 p-0.5 rounded-lg border border-white/10">
                               <button
                                 type="button"
                                 onClick={() => updateSplitDebtorField(row.id, { isNew: false })}
@@ -850,7 +850,7 @@ export default function GroupSettleModal({
                                 <select
                                   value={row.selectedDebtorId}
                                   onChange={(e) => updateSplitDebtorField(row.id, { selectedDebtorId: e.target.value })}
-                                  className="w-full bg-[#050608] border border-white/10 focus:border-indigo-500 rounded-lg p-1.5 text-white text-[11px]"
+                                  className="w-full bg-surface-050608 border border-white/10 focus:border-indigo-500 rounded-lg p-1.5 text-white text-[11px]"
                                 >
                                   <option value="">-- انتخاب --</option>
                                   {debtors.map((d) => {
@@ -875,7 +875,7 @@ export default function GroupSettleModal({
                                     type="text"
                                     value={row.newName}
                                     onChange={(e) => updateSplitDebtorField(row.id, { newName: e.target.value })}
-                                    className="w-full bg-[#050608] border border-white/10 focus:border-indigo-500 rounded-lg p-1 text-white text-[11px]"
+                                    className="w-full bg-surface-050608 border border-white/10 focus:border-indigo-500 rounded-lg p-1 text-white text-[11px]"
                                     placeholder="نام جدید"
                                   />
                                 </div>
@@ -885,7 +885,7 @@ export default function GroupSettleModal({
                                     type="text"
                                     value={row.newPhone}
                                     onChange={(e) => updateSplitDebtorField(row.id, { newPhone: e.target.value })}
-                                    className="w-full bg-[#050608] border border-white/10 focus:border-indigo-500 rounded-lg p-1 text-white text-[11px] font-mono"
+                                    className="w-full bg-surface-050608 border border-white/10 focus:border-indigo-500 rounded-lg p-1 text-white text-[11px] font-mono"
                                     placeholder="شماره (اختیاری)"
                                   />
                                 </div>
@@ -900,7 +900,7 @@ export default function GroupSettleModal({
                               dir="ltr"
                               value={row.amount || ''}
                               onChange={(e) => updateSplitDebtorField(row.id, { amount: Math.max(0, parseInt(e.target.value, 10) || 0) })}
-                              className="w-full bg-[#050608] border border-white/10 focus:border-indigo-500 rounded-lg p-1.5 text-white font-mono text-center text-[11px]"
+                              className="w-full bg-surface-050608 border border-white/10 focus:border-indigo-500 rounded-lg p-1.5 text-white font-mono text-center text-[11px]"
                               placeholder="مبلغ"
                             />
                           </div>

@@ -71,11 +71,11 @@ export default function TransferSessionModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm" dir="rtl">
       <div 
-        className="w-full max-w-lg bg-[#151921] border border-white/5 rounded-2xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-200"
+        className="w-full max-w-lg bg-surface-151921 border border-white/5 rounded-2xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-200"
         id="transfer-session-modal"
       >
         {/* Modal Header */}
-        <div className="flex items-center justify-between p-4 border-b border-white/5 bg-[#0B0E14]">
+        <div className="flex items-center justify-between p-4 border-b border-white/5 bg-surface-0b0e14">
           <h3 className="text-sm font-bold text-white flex items-center gap-2 uppercase tracking-tight">
             <ArrowRightLeft className="w-5 h-5 text-indigo-400" />
             انتقال یا جابجایی صورت‌حساب به سیستم دیگر
@@ -92,7 +92,7 @@ export default function TransferSessionModal({
         {/* Modal Body */}
         <form onSubmit={handleTransferSubmit} className="p-6 space-y-5">
           {/* Active Session Info Box */}
-          <div className="p-4 bg-[#0B0E14]/60 border border-white/5 rounded-xl space-y-3">
+          <div className="p-4 bg-surface-0b0e14/60 border border-white/5 rounded-xl space-y-3">
             <div className="text-[11px] font-black text-slate-400 border-b border-white/5 pb-2">
               مشخصات جلسه فعلی در دستگاه {sourceSystem.name}
             </div>
@@ -129,7 +129,7 @@ export default function TransferSessionModal({
               </label>
 
               {/* Category Tabs */}
-              <div className="flex bg-[#0B0E14] p-0.5 border border-white/5 rounded-lg text-[10px]">
+              <div className="flex bg-surface-0b0e14 p-0.5 border border-white/5 rounded-lg text-[10px]">
                 <button
                   type="button"
                   onClick={() => setFilterTab('all')}
@@ -182,8 +182,8 @@ export default function TransferSessionModal({
                             ? 'border-amber-500 bg-amber-500/15 shadow-lg shadow-amber-500/10'
                             : 'border-indigo-500 bg-indigo-600/10 shadow-lg shadow-indigo-500/5'
                           : isActive
-                          ? 'border-amber-500/20 bg-[#16120b] hover:border-amber-500/40'
-                          : 'border-white/5 bg-[#0B0E14] hover:border-white/10 hover:bg-[#11151f]'
+                          ? 'border-amber-500/20 bg-surface-16120b hover:border-amber-500/40'
+                          : 'border-white/5 bg-surface-0b0e14 hover:border-white/10 hover:bg-surface-11151f'
                       }`}
                     >
                       {isSelected && (
@@ -262,7 +262,7 @@ export default function TransferSessionModal({
           )}
 
           {!showSwapConfirm && (
-            <p className="text-[10px] text-slate-500 leading-relaxed bg-[#0B0E14]/40 p-3 border border-white/5 rounded-xl">
+            <p className="text-[10px] text-slate-500 leading-relaxed bg-surface-0b0e14/40 p-3 border border-white/5 rounded-xl">
               نکته: پس از انتقال یا جابجایی، تمام بوفه‌ها و هزینه بازی تا این لحظه محاسبه و قفل شده و به صورت‌حساب سیستم جدید الحاق می‌شوند. ادامه بازی روی سیستم جدید با نرخ مصوب آن محاسبه خواهد شد.
             </p>
           )}
@@ -273,7 +273,7 @@ export default function TransferSessionModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2.5 bg-[#1b202e] hover:bg-[#232a3d] text-slate-300 hover:text-white rounded-xl transition-all cursor-pointer font-bold text-xs"
+                className="px-4 py-2.5 bg-surface-1b202e hover:bg-surface-232a3d text-slate-300 hover:text-white rounded-xl transition-all cursor-pointer font-bold text-xs"
               >
                 لغو عملیات
               </button>

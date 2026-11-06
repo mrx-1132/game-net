@@ -536,7 +536,7 @@ export default function ReportsTab({
       {/* High-Level KPIs */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Earnings Card 1 */}
-        <div className="p-5 bg-[#151921] border border-white/5 rounded-2xl flex items-center justify-between shadow-xl">
+        <div className="p-5 bg-surface-151921 border border-white/5 rounded-2xl flex items-center justify-between shadow-xl">
           <div className="space-y-1">
             <span className="text-slate-400 text-xs block font-medium">کل کارکرد بوفه و بازی امروز</span>
             <span className="text-xl font-bold text-emerald-400 font-mono">
@@ -549,7 +549,7 @@ export default function ReportsTab({
         </div>
 
         {/* Earnings Card 2 */}
-        <div className="p-5 bg-[#151921] border border-white/5 rounded-2xl flex items-center justify-between shadow-xl">
+        <div className="p-5 bg-surface-151921 border border-white/5 rounded-2xl flex items-center justify-between shadow-xl">
           <div className="space-y-1">
             <span className="text-slate-400 text-xs block font-medium">درآمد ناخالص 7 روز اخیر (شامل بکاپ‌ها)</span>
             <span className="text-xl font-bold text-white font-mono">
@@ -562,7 +562,7 @@ export default function ReportsTab({
         </div>
 
         {/* Earnings Card 3 */}
-        <div className="p-5 bg-[#151921] border border-white/5 rounded-2xl flex items-center justify-between shadow-xl">
+        <div className="p-5 bg-surface-151921 border border-white/5 rounded-2xl flex items-center justify-between shadow-xl">
           <div className="space-y-1">
             <span className="text-slate-400 text-xs block font-medium">درآمد 30 روز اخیر (ماهانه)</span>
             <span className="text-xl font-bold text-white font-mono">
@@ -575,7 +575,7 @@ export default function ReportsTab({
         </div>
 
         {/* Earnings Card 4 */}
-        <div className="p-5 bg-[#151921] border border-white/5 rounded-2xl flex items-center justify-between shadow-xl">
+        <div className="p-5 bg-surface-151921 border border-white/5 rounded-2xl flex items-center justify-between shadow-xl">
           <div className="space-y-1">
             <span className="text-slate-400 text-xs block font-medium">برآیند کل درآمد امسال (یک سال اخیر)</span>
             <span className="text-xl font-bold text-amber-400 font-mono">
@@ -592,7 +592,7 @@ export default function ReportsTab({
         
         {/* Right side block: Handcrafted Visual Analytics (Takes 5 cols) */}
         <div className="lg:col-span-12 xl:col-span-5 space-y-6">
-          <div className="p-5 bg-[#151921] border border-white/5 rounded-2xl space-y-5 shadow-xl">
+          <div className="p-5 bg-surface-151921 border border-white/5 rounded-2xl space-y-5 shadow-xl">
             <div className="space-y-1">
               <h3 className="text-sm font-bold text-white uppercase tracking-wider">آنالیز سهم کانال‌های درآمد</h3>
               <p className="text-[10px] text-slate-400">
@@ -615,7 +615,7 @@ export default function ReportsTab({
                       </span>
                     </div>
                     {/* Progress tracking slot */}
-                    <div className="w-full bg-[#0B0E14] rounded-full h-3.5 overflow-hidden p-0.5 border border-white/5">
+                    <div className="w-full bg-surface-0b0e14 rounded-full h-3.5 overflow-hidden p-0.5 border border-white/5">
                       <div 
                         className={`h-full rounded-full transition-all duration-1000 ${item.colorClass}`}
                         style={{ width: `${Math.max(3, progressWidthPct)}%` }}
@@ -666,7 +666,7 @@ export default function ReportsTab({
               
               <div className="h-px bg-white/5 my-2"></div>
               
-              <div className="flex justify-between items-center text-xs font-bold bg-[#0B0E14] p-2.5 rounded-lg border border-white/50">
+              <div className="flex justify-between items-center text-xs font-bold bg-surface-0b0e14 p-2.5 rounded-lg border border-white/50">
                 <span className="text-slate-300">مجموع محاسباتی بازه جاری:</span>
                 <span className="text-blue-400 font-mono text-sm">{formatCurrency(totalGrossRevenueFiltered)}</span>
               </div>
@@ -680,11 +680,11 @@ export default function ReportsTab({
                 ) : (
                   <div className="space-y-1.5">
                     {cardReaderBreakdown.map((pos) => (
-                      <div key={pos.id} className="flex justify-between items-center text-[10px] bg-[#0B0E14]/50 hover:bg-[#0B0E14] px-2.5 py-1.5 rounded-lg border border-white/5 text-slate-400 transition-all">
+                      <div key={pos.id} className="flex justify-between items-center text-[10px] bg-surface-0b0e14/50 hover:bg-surface-0b0e14 px-2.5 py-1.5 rounded-lg border border-white/5 text-slate-400 transition-all">
                         <span className="flex items-center gap-1.5 text-slate-300 font-medium">
                           <span>🔌</span>
                           <span>{pos.name}</span>
-                          <span className="text-[9px] bg-[#151921] text-slate-400 px-1.5 py-0.5 rounded font-sans">
+                          <span className="text-[9px] bg-surface-151921 text-slate-400 px-1.5 py-0.5 rounded font-sans">
                             {pos.count} تراکنش
                           </span>
                         </span>
@@ -702,7 +702,7 @@ export default function ReportsTab({
         <div className="lg:col-span-12 xl:col-span-7 space-y-4">
           
           {/* Filtering row controls section */}
-          <div className="p-4 bg-[#151921] border border-white/5 rounded-2xl flex flex-col gap-3 shadow-xl">
+          <div className="p-4 bg-surface-151921 border border-white/5 rounded-2xl flex flex-col gap-3 shadow-xl">
             
             {/* Top row: Direct Backup Selector Dropdown & Quick Modes */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/5 pb-3">
@@ -717,7 +717,7 @@ export default function ReportsTab({
                       setDateFilter('all');
                     }
                   }}
-                  className="bg-[#0B0E14] text-white border border-white/10 rounded-xl px-3 py-1.5 text-xs font-bold focus:outline-none focus:border-blue-500 cursor-pointer"
+                  className="bg-surface-0b0e14 text-white border border-white/10 rounded-xl px-3 py-1.5 text-xs font-bold focus:outline-none focus:border-blue-500 cursor-pointer"
                 >
                   <option value="all">📂 کلیه سوابق (شیفت جاری + بکاپ‌ها)</option>
                   {dailyBackups.map((b, idx) => (
@@ -748,7 +748,7 @@ export default function ReportsTab({
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
               
               {/* Quick date selectors */}
-              <div className="flex flex-wrap items-center gap-1 bg-[#0B0E14] p-1 border border-white/5 rounded-xl text-[11px] w-full md:w-auto">
+              <div className="flex flex-wrap items-center gap-1 bg-surface-0b0e14 p-1 border border-white/5 rounded-xl text-[11px] w-full md:w-auto">
                 <button
                   type="button"
                   onClick={() => {
@@ -756,7 +756,7 @@ export default function ReportsTab({
                     setDateFilter('today');
                   }}
                   className={`px-3 py-1.5 rounded-lg transition-all font-semibold shrink-0 cursor-pointer ${
-                    selectedBackupId === 'all' && dateFilter === 'today' ? 'bg-[#151921] text-white border border-white/10 shadow-sm' : 'text-slate-400 hover:text-slate-200'
+                    selectedBackupId === 'all' && dateFilter === 'today' ? 'bg-surface-151921 text-white border border-white/10 shadow-sm' : 'text-slate-400 hover:text-slate-200'
                   }`}
                 >
                   امروز
@@ -768,7 +768,7 @@ export default function ReportsTab({
                     setDateFilter('yesterday');
                   }}
                   className={`px-3 py-1.5 rounded-lg transition-all font-semibold shrink-0 cursor-pointer ${
-                    selectedBackupId === 'all' && dateFilter === 'yesterday' ? 'bg-[#151921] text-white border border-white/10 shadow-sm' : 'text-slate-400 hover:text-slate-200'
+                    selectedBackupId === 'all' && dateFilter === 'yesterday' ? 'bg-surface-151921 text-white border border-white/10 shadow-sm' : 'text-slate-400 hover:text-slate-200'
                   }`}
                 >
                   دیروز
@@ -780,7 +780,7 @@ export default function ReportsTab({
                     setDateFilter('week');
                   }}
                   className={`px-3 py-1.5 rounded-lg transition-all font-semibold shrink-0 cursor-pointer ${
-                    selectedBackupId === 'all' && dateFilter === 'week' ? 'bg-[#151921] text-white border border-white/10 shadow-sm' : 'text-slate-400 hover:text-slate-200'
+                    selectedBackupId === 'all' && dateFilter === 'week' ? 'bg-surface-151921 text-white border border-white/10 shadow-sm' : 'text-slate-400 hover:text-slate-200'
                   }`}
                 >
                   7 روز اخیر
@@ -792,7 +792,7 @@ export default function ReportsTab({
                     setDateFilter('month');
                   }}
                   className={`px-3 py-1.5 rounded-lg transition-all font-semibold shrink-0 cursor-pointer ${
-                    selectedBackupId === 'all' && dateFilter === 'month' ? 'bg-[#151921] text-white border border-white/10 shadow-sm' : 'text-slate-400 hover:text-slate-200'
+                    selectedBackupId === 'all' && dateFilter === 'month' ? 'bg-surface-151921 text-white border border-white/10 shadow-sm' : 'text-slate-400 hover:text-slate-200'
                   }`}
                 >
                   30 روز اخیر (ماهانه)
@@ -804,7 +804,7 @@ export default function ReportsTab({
                     setDateFilter('year');
                   }}
                   className={`px-3 py-1.5 rounded-lg transition-all font-semibold shrink-0 cursor-pointer ${
-                    selectedBackupId === 'all' && dateFilter === 'year' ? 'bg-[#151921] text-white border border-white/10 shadow-sm' : 'text-slate-400 hover:text-slate-200'
+                    selectedBackupId === 'all' && dateFilter === 'year' ? 'bg-surface-151921 text-white border border-white/10 shadow-sm' : 'text-slate-400 hover:text-slate-200'
                   }`}
                 >
                   365 روز اخیر (سالانه)
@@ -816,7 +816,7 @@ export default function ReportsTab({
                     setDateFilter('all');
                   }}
                   className={`px-3 py-1.5 rounded-lg transition-all font-semibold shrink-0 cursor-pointer ${
-                    selectedBackupId === 'all' && dateFilter === 'all' ? 'bg-[#151921] text-white border border-white/10 shadow-sm' : 'text-slate-400 hover:text-slate-200'
+                    selectedBackupId === 'all' && dateFilter === 'all' ? 'bg-surface-151921 text-white border border-white/10 shadow-sm' : 'text-slate-400 hover:text-slate-200'
                   }`}
                 >
                   همه تاریخ‌ها
@@ -834,7 +834,7 @@ export default function ReportsTab({
                         setDateFilter('custom');
                       }
                     }}
-                    className={`bg-[#151921] text-[10px] text-slate-300 border rounded-lg px-2 py-1 outline-none transition-all cursor-pointer font-sans ${
+                    className={`bg-surface-151921 text-[10px] text-slate-300 border rounded-lg px-2 py-1 outline-none transition-all cursor-pointer font-sans ${
                       dateFilter === 'custom' ? 'border-blue-500 text-blue-300 ring-1 ring-blue-500/20' : 'border-white/10 hover:border-white/20'
                     }`}
                     title="انتخاب روز خاص تقویمی"
@@ -865,7 +865,7 @@ export default function ReportsTab({
                   placeholder="جستجو نام، دستگاه یا تاریخ..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="w-full pr-9 pl-3 py-2 bg-[#0B0E14] border border-white/5 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs text-right animate-none"
+                  className="w-full pr-9 pl-3 py-2 bg-surface-0b0e14 border border-white/5 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs text-right animate-none"
                 />
               </div>
 
@@ -874,7 +874,7 @@ export default function ReportsTab({
           </div>
 
           {/* Settle Logs details table list */}
-          <div className="p-5 bg-[#151921] border border-white/5 rounded-2xl space-y-4 shadow-xl">
+          <div className="p-5 bg-surface-151921 border border-white/5 rounded-2xl space-y-4 shadow-xl">
             <div className="flex items-center justify-between">
               <h3 className="text-xs font-bold text-slate-350 uppercase tracking-wider flex items-center gap-1.5">
                 <CircleDollarSign className="w-4 h-4 text-emerald-400" />
@@ -895,7 +895,7 @@ export default function ReportsTab({
               <div className="overflow-x-auto">
                 <table className="w-full text-right min-w-[500px]" dir="rtl">
                   <thead>
-                    <tr className="bg-[#0B0E14] font-semibold text-slate-400 border-b border-white/5 text-[10px]">
+                    <tr className="bg-surface-0b0e14 font-semibold text-slate-400 border-b border-white/5 text-[10px]">
                       <th className="px-4 py-3">عنوان فیزیکی دستگاه / خرید</th>
                       <th className="px-4 py-3">نام مشتری / توضیحات</th>
                       <th className="px-4 py-3 text-center">مدت زمان بازی</th>
@@ -904,7 +904,7 @@ export default function ReportsTab({
                       <th className="px-3 py-3 text-center">فاکتور</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-white/5 bg-[#0B0E14]/20">
+                  <tbody className="divide-y divide-white/5 bg-surface-0b0e14/20">
                     {displayItems.length === 0 ? (
                       <tr>
                         <td colSpan={6} className="px-4 py-12 text-center text-slate-400 space-y-2">

@@ -94,6 +94,11 @@ export default function App() {
     localStorage.setItem('gamenet_theme', nextTheme);
   };
 
+  // کلاس تم روی <html> هم بنشیند تا مودال‌ها و پس‌زمینه صفحه هم هم‌رنگ شوند
+  useEffect(() => {
+    document.documentElement.classList.toggle('light', theme === 'light');
+  }, [theme]);
+
   // Layout mode switcher state
   const [layoutMode, setLayoutMode] = useState<'grid' | 'list'>(() => getStoredLocal('layoutMode', 'grid'));
 
@@ -2398,10 +2403,10 @@ export default function App() {
 
   return (
     <LicensingPortal theme={theme} adminPassword={adminPassword} adminUsername={adminUsername}>
-      <div className={`min-h-screen bg-[#0B0E14] text-[#F7FAFC] flex flex-col font-sans selection:bg-blue-500/30 selection:text-white antialiased ${theme === 'light' ? 'light' : ''}`} dir="rtl">
+      <div className={`min-h-screen bg-surface-0b0e14 text-fg flex flex-col font-sans selection:bg-blue-500/30 selection:text-white antialiased ${theme === 'light' ? 'light' : ''}`} dir="rtl">
       
       {/* Dynamic Top Status Strip Bar */}
-      <header className="bg-[#0F1219]/90 border-b border-white/5 shrink-0 sticky top-0 z-40 shadow-xl shadow-black/20 backdrop-blur-md">
+      <header className="bg-surface-0f1219/90 border-b border-white/5 shrink-0 sticky top-0 z-40 shadow-xl shadow-black/20 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
           
           {/* Main Logo section */}
@@ -2515,6 +2520,16 @@ export default function App() {
               </div>
             )}
 
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-amber-300 transition-colors cursor-pointer"
+              title={theme === 'dark' ? 'حالت روشن' : 'حالت تیره'}
+              aria-label={theme === 'dark' ? 'تغییر به حالت روشن' : 'تغییر به حالت تیره'}
+            >
+              {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4 text-indigo-500" />}
+            </button>
+
             <div className="hidden md:flex flex-col text-left items-end justify-center">
               <span className="text-white text-base sm:text-xl font-black font-mono tracking-wide leading-none">{headerTime.toLocaleTimeString('fa-IR')}</span>
               <span className="text-zinc-300 text-base sm:text-xl font-black font-mono tracking-wide leading-none mt-1 select-none" dir="ltr">
@@ -2529,7 +2544,7 @@ export default function App() {
               <Flame className="w-4 h-4 fill-rose-500/10" />
               <span>{countActiveSystems} فعال</span>
 
-              <div className="absolute right-1/2 translate-x-1/2 top-full mt-2 w-48 opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 bg-[#0F1219]/95 border border-white/10 rounded-xl p-3 shadow-2xl z-55 text-right text-slate-300 font-sans cursor-default normal-case tracking-normal">
+              <div className="absolute right-1/2 translate-x-1/2 top-full mt-2 w-48 opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 bg-surface-0f1219/95 border border-white/10 rounded-xl p-3 shadow-2xl z-55 text-right text-slate-300 font-sans cursor-default normal-case tracking-normal">
                 <div className="text-[10px] text-rose-400 font-bold border-b border-white/5 pb-1 mb-1.5">دستگاه‌های فعال:</div>
                 {systems.filter(s => s.status === 'active').length > 0 ? (
                   <ul className="space-y-1">
@@ -2552,7 +2567,7 @@ export default function App() {
               <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0 inline-block animate-pulse"></span>
               <span>{countFreeSystems} دستگاه آزاد</span>
 
-              <div className="absolute right-1/2 translate-x-1/2 top-full mt-2 w-48 opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 bg-[#0F1219]/95 border border-white/10 rounded-xl p-3 shadow-2xl z-55 text-right text-slate-300 font-sans cursor-default normal-case tracking-normal">
+              <div className="absolute right-1/2 translate-x-1/2 top-full mt-2 w-48 opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 bg-surface-0f1219/95 border border-white/10 rounded-xl p-3 shadow-2xl z-55 text-right text-slate-300 font-sans cursor-default normal-case tracking-normal">
                 <div className="text-[10px] text-emerald-400 font-bold border-b border-white/5 pb-1 mb-1.5">دستگاه‌های آزاد:</div>
                 {systems.filter(s => s.status === 'free').length > 0 ? (
                   <ul className="space-y-1">
@@ -2577,7 +2592,7 @@ export default function App() {
       </header>
 
       {/* Primary Tabbed Navigation Row */}
-      <nav className="bg-[#0F1219]/60 border-b border-white/5 text-sm shrink-0 backdrop-blur-md">
+      <nav className="bg-surface-0f1219/60 border-b border-white/5 text-sm shrink-0 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-1 sm:gap-3 overflow-x-auto py-2 scrollbar-none">
             
@@ -2735,7 +2750,7 @@ export default function App() {
             )}
 
             {/* Dashboard Sub-Header / Layout & Statistics Toolbar */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-[#151921] border border-white/5 rounded-2xl p-4 shadow-lg" dir="rtl">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-surface-151921 border border-white/5 rounded-2xl p-4 shadow-lg" dir="rtl">
               <div className="flex flex-wrap items-center gap-2 sm:gap-3 justify-center sm:justify-start">
                 <span className="text-xs text-slate-400 font-bold ml-1">بخش دستگاه‌ها:</span>
                 
@@ -2743,7 +2758,7 @@ export default function App() {
                   <button 
                     type="button"
                     onClick={() => setShowLogsModal(true)}
-                    className="px-3.5 py-1.5 bg-[#0B0E14] hover:bg-slate-800/60 border border-amber-500/30 hover:border-amber-500/60 rounded-xl text-[11px] font-bold text-amber-300 hover:text-amber-200 cursor-pointer flex items-center gap-1.5 transition-all shadow-md shadow-amber-950/10"
+                    className="px-3.5 py-1.5 bg-surface-0b0e14 hover:bg-slate-800/60 border border-amber-500/30 hover:border-amber-500/60 rounded-xl text-[11px] font-bold text-amber-300 hover:text-amber-200 cursor-pointer flex items-center gap-1.5 transition-all shadow-md shadow-amber-950/10"
                     title="مشاهده ثبت و لاگ تمام رویدادهای سیستم"
                   >
                     <FileText className="w-3.5 h-3.5 text-amber-400" />
@@ -2769,7 +2784,7 @@ export default function App() {
                     className={`px-3 py-1.5 rounded-xl transition-all font-bold text-[10px] flex items-center gap-1.5 cursor-pointer border ${
                       selectedGroupSystemIds.length > 0
                         ? 'bg-indigo-600/20 text-indigo-400 border-indigo-500/40 shadow-lg shadow-indigo-950/20'
-                        : 'bg-[#0B0E14] hover:bg-white/5 text-slate-350 border-white/5 hover:text-white'
+                        : 'bg-surface-0b0e14 hover:bg-white/5 text-slate-350 border-white/5 hover:text-white'
                     }`}
                     id="toggle-group-settle-dropdown-btn"
                   >
@@ -2785,7 +2800,7 @@ export default function App() {
 
                   {/* Dropdown menu */}
                   {showGroupSelectDropdown && (
-                    <div className="absolute left-0 sm:right-0 sm:left-auto top-full mt-2 w-80 bg-[#0F1219]/98 border border-white/10 rounded-2xl p-4 shadow-2xl z-55 text-right font-sans font-normal cursor-default normal-case tracking-normal space-y-3 max-h-[80vh] overflow-y-auto">
+                    <div className="absolute left-0 sm:right-0 sm:left-auto top-full mt-2 w-80 bg-surface-0f1219/98 border border-white/10 rounded-2xl p-4 shadow-2xl z-55 text-right font-sans font-normal cursor-default normal-case tracking-normal space-y-3 max-h-[80vh] overflow-y-auto">
                       <div className="flex items-center justify-between border-b border-white/5 pb-2">
                         <span className="text-[11px] text-zinc-305 font-bold flex items-center gap-1.5">
                           <Users className="w-3.5 h-3.5 text-indigo-400" />
@@ -2817,7 +2832,7 @@ export default function App() {
                             onClick={() => {
                               setSelectedGroupSystemIds([]);
                             }}
-                            className="px-2 py-1 text-[8.5px] font-black bg-[#151921] hover:bg-slate-800 text-slate-400 border border-white/5 rounded-lg cursor-pointer transition-all"
+                            className="px-2 py-1 text-[8.5px] font-black bg-surface-151921 hover:bg-slate-800 text-slate-400 border border-white/5 rounded-lg cursor-pointer transition-all"
                           >
                             پاک‌کردن انتخاب‌ها
                           </button>
@@ -2841,7 +2856,7 @@ export default function App() {
                                         prev.includes(s.id) ? prev.filter(x => x !== s.id) : [...prev, s.id]
                                       );
                                     }}
-                                    className="rounded bg-[#0B0E14] border-white/10 text-indigo-500 focus:ring-0 focus:ring-offset-0 w-3.5 h-3.5 cursor-pointer"
+                                    className="rounded bg-surface-0b0e14 border-white/10 text-indigo-500 focus:ring-0 focus:ring-offset-0 w-3.5 h-3.5 cursor-pointer"
                                   />
                                   <span className="font-bold text-slate-300">{s.name} <span className="text-slate-500 font-normal">({s.type})</span></span>
                                 </label>
@@ -2898,7 +2913,7 @@ export default function App() {
                   className={`px-3 py-1.5 rounded-xl transition-all font-bold text-[10px] flex items-center gap-1.5 cursor-pointer border ${
                     isBuffetPOSOpen
                       ? 'bg-amber-600/20 text-amber-400 border-amber-500/40 shadow-lg shadow-amber-950/20'
-                      : 'bg-[#0B0E14] hover:bg-white/5 text-slate-350 border-white/5 hover:text-white'
+                      : 'bg-surface-0b0e14 hover:bg-white/5 text-slate-350 border-white/5 hover:text-white'
                   }`}
                   id="toggle-buffet-pos-btn"
                 >
@@ -2951,7 +2966,7 @@ export default function App() {
                 )}
 
                 {/* Layout switcher buttons group */}
-                <div className="flex items-center gap-1 bg-[#090C11] p-1 border border-white/5 rounded-xl">
+                <div className="flex items-center gap-1 bg-surface-090c11 p-1 border border-white/5 rounded-xl">
                   <span className="text-slate-500 text-[9px] font-bold px-2">نمایش:</span>
                   <button
                     type="button"
@@ -3206,7 +3221,7 @@ export default function App() {
       </main>
 
       {/* FOOTER credit and legal indicators lines */}
-      <footer className="bg-[#0F1219]/80 border-t border-white/5 text-slate-500 py-4 shrink-0 mt-auto text-xs text-center select-none">
+      <footer className="bg-surface-0f1219/80 border-t border-white/5 text-slate-500 py-4 shrink-0 mt-auto text-xs text-center select-none">
         <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-2.5">
           <p className="font-medium font-sans tracking-wide text-slate-400" dir="ltr">Developed by AT Team © 2026</p>
           <p className="text-[10px] font-mono tracking-wide text-slate-600">
@@ -3330,8 +3345,8 @@ export default function App() {
 
       {/* Custom interactive Confirmation Modal */}
       {confirmState.isOpen && (
-        <div className="fixed inset-0 bg-[#06070a]/80 backdrop-blur-sm flex items-center justify-center p-4 z-[9999] animate-fade-in" style={{ direction: 'rtl' }}>
-          <div className="bg-[#121620] border border-red-500/20 max-w-md w-full rounded-2xl overflow-hidden shadow-2xl p-6 space-y-5 relative">
+        <div className="fixed inset-0 bg-surface-06070a/80 backdrop-blur-sm flex items-center justify-center p-4 z-[9999] animate-fade-in" style={{ direction: 'rtl' }}>
+          <div className="bg-surface-121620 border border-red-500/20 max-w-md w-full rounded-2xl overflow-hidden shadow-2xl p-6 space-y-5 relative">
             <div className="flex items-center gap-3 border-b border-white/5 pb-3">
               <div className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center text-red-500">
                 <AlertTriangle className="w-5 h-5 animate-pulse" />
@@ -3350,7 +3365,7 @@ export default function App() {
               <button
                 type="button"
                 onClick={() => setConfirmState(prev => ({ ...prev, isOpen: false }))}
-                className="px-4 py-2 bg-[#1b202e] hover:bg-[#232a3d] text-slate-300 hover:text-white rounded-xl transition-all cursor-pointer font-bold text-xs"
+                className="px-4 py-2 bg-surface-1b202e hover:bg-surface-232a3d text-slate-300 hover:text-white rounded-xl transition-all cursor-pointer font-bold text-xs"
               >
                 انصراف
               </button>
@@ -3368,8 +3383,8 @@ export default function App() {
 
       {/* Auto Logout Dialog Notification */}
       {showAutoLogoutBanner && (
-        <div className="fixed inset-0 bg-[#06070a]/80 backdrop-blur-sm flex items-center justify-center p-4 z-[9999] animate-fade-in" style={{ direction: 'rtl' }}>
-          <div className="bg-[#121620] border border-blue-500/20 max-w-md w-full rounded-2xl overflow-hidden shadow-2xl p-6 space-y-5 relative text-right">
+        <div className="fixed inset-0 bg-surface-06070a/80 backdrop-blur-sm flex items-center justify-center p-4 z-[9999] animate-fade-in" style={{ direction: 'rtl' }}>
+          <div className="bg-surface-121620 border border-blue-500/20 max-w-md w-full rounded-2xl overflow-hidden shadow-2xl p-6 space-y-5 relative text-right">
             <div className="flex items-center gap-3 border-b border-white/5 pb-3">
               <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500">
                 <AlertTriangle className="w-5 h-5 animate-pulse" />

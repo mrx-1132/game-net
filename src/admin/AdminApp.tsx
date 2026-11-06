@@ -452,8 +452,8 @@ export default function AdminApp() {
   // -------------------------------------------------------------
   if (!adminToken) {
     return (
-      <div className="min-h-screen bg-[#07090e] text-slate-100 flex flex-col justify-center items-center p-4" dir="rtl">
-        <div className="w-full max-w-md bg-[#0e121a] border border-amber-500/20 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-black/80 space-y-6 relative overflow-hidden">
+      <div className="min-h-screen bg-surface-07090e text-slate-100 flex flex-col justify-center items-center p-4" dir="rtl">
+        <div className="w-full max-w-md bg-surface-0e121a border border-amber-500/20 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-black/80 space-y-6 relative overflow-hidden">
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 via-indigo-500 to-amber-500" />
 
           {/* Logo & Header */}
@@ -466,7 +466,7 @@ export default function AdminApp() {
           </div>
 
           {/* Server Connection Status Pill */}
-          <div className="bg-[#141923] border border-white/5 rounded-2xl p-3 flex items-center justify-between text-xs">
+          <div className="bg-surface-141923 border border-white/5 rounded-2xl p-3 flex items-center justify-between text-xs">
             <div className="flex items-center gap-2">
               <span className={`w-2.5 h-2.5 rounded-full ${serverPingStatus === 'online' ? 'bg-emerald-400 animate-pulse' : serverPingStatus === 'checking' ? 'bg-amber-400 animate-spin' : 'bg-rose-500'}`} />
               <span className="text-[11px] text-slate-300 font-mono font-bold truncate max-w-[200px]" dir="ltr">
@@ -483,7 +483,7 @@ export default function AdminApp() {
           </div>
 
           {showServerConfig && (
-            <div className="bg-[#121622] border border-amber-500/30 rounded-2xl p-3.5 space-y-2 text-xs">
+            <div className="bg-surface-121622 border border-amber-500/30 rounded-2xl p-3.5 space-y-2 text-xs">
               <label className="text-[10px] text-slate-300 font-bold block">آدرس سرور لایسنس (Base URL):</label>
               <div className="flex gap-2">
                 <input
@@ -492,7 +492,7 @@ export default function AdminApp() {
                   value={serverUrl}
                   onChange={(e) => setServerUrl(e.target.value)}
                   placeholder="https://..."
-                  className="flex-1 px-3 py-1.5 bg-[#080a0f] border border-white/10 rounded-xl text-xs font-mono text-white text-left focus:ring-1 focus:ring-amber-500"
+                  className="flex-1 px-3 py-1.5 bg-surface-080a0f border border-white/10 rounded-xl text-xs font-mono text-white text-left focus:ring-1 focus:ring-amber-500"
                 />
                 <button
                   type="button"
@@ -524,7 +524,7 @@ export default function AdminApp() {
                   required
                   value={adminUsername}
                   onChange={(e) => setAdminUsername(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-[#080a0f] border border-white/10 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500 text-xs text-left"
+                  className="w-full px-3.5 py-2.5 bg-surface-080a0f border border-white/10 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500 text-xs text-left"
                 />
               </div>
             </div>
@@ -540,7 +540,7 @@ export default function AdminApp() {
                   value={adminPassword}
                   onChange={(e) => setAdminPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full px-3.5 py-2.5 bg-[#080a0f] border border-white/10 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500 text-xs text-left"
+                  className="w-full px-3.5 py-2.5 bg-surface-080a0f border border-white/10 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500 text-xs text-left"
                 />
               </div>
             </div>
@@ -583,9 +583,9 @@ export default function AdminApp() {
   // VIEW: Admin Main Dashboard
   // -------------------------------------------------------------
   return (
-    <div className="min-h-screen bg-[#07090e] text-slate-100 flex flex-col font-sans" dir="rtl">
+    <div className="min-h-screen bg-surface-07090e text-slate-100 flex flex-col font-sans" dir="rtl">
       {/* Top Navbar */}
-      <header className="bg-[#0c0f16]/95 backdrop-blur-md border-b border-white/5 sticky top-0 z-40 px-4 sm:px-8 py-3 flex items-center justify-between">
+      <header className="bg-surface-0c0f16/95 backdrop-blur-md border-b border-white/5 sticky top-0 z-40 px-4 sm:px-8 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 shadow-md">
             <Shield className="w-5 h-5" />
@@ -603,7 +603,7 @@ export default function AdminApp() {
 
         {/* Server status & Actions */}
         <div className="flex items-center gap-3">
-          <div className="hidden sm:flex items-center gap-2 bg-[#121622] px-3 py-1.5 rounded-xl border border-white/5 text-xs">
+          <div className="hidden sm:flex items-center gap-2 bg-surface-121622 px-3 py-1.5 rounded-xl border border-white/5 text-xs">
             <span className={`w-2 h-2 rounded-full ${serverPingStatus === 'online' ? 'bg-emerald-400' : 'bg-rose-500'}`} />
             <span className="text-[11px] text-slate-300 font-mono">{serverInfo?.database || 'PostgreSQL'}</span>
           </div>
@@ -611,7 +611,7 @@ export default function AdminApp() {
           <button
             type="button"
             onClick={handleDownloadBackup}
-            className="px-3 py-1.5 bg-[#121622] hover:bg-[#1a2030] text-emerald-300 rounded-xl border border-white/10 text-xs font-bold flex items-center gap-1.5 cursor-pointer"
+            className="px-3 py-1.5 bg-surface-121622 hover:bg-surface-1a2030 text-emerald-300 rounded-xl border border-white/10 text-xs font-bold flex items-center gap-1.5 cursor-pointer"
             title="دانلود بکاپ کامل برای انتقال به سرور جدید"
           >
             <Download className="w-3.5 h-3.5" />
@@ -621,7 +621,7 @@ export default function AdminApp() {
           <button
             type="button"
             onClick={() => restoreInputRef.current?.click()}
-            className="px-3 py-1.5 bg-[#121622] hover:bg-[#1a2030] text-amber-300 rounded-xl border border-white/10 text-xs font-bold flex items-center gap-1.5 cursor-pointer"
+            className="px-3 py-1.5 bg-surface-121622 hover:bg-surface-1a2030 text-amber-300 rounded-xl border border-white/10 text-xs font-bold flex items-center gap-1.5 cursor-pointer"
             title="بازیابی از فایل بکاپ (جایگزینی کامل)"
           >
             <Upload className="w-3.5 h-3.5" />
@@ -633,7 +633,7 @@ export default function AdminApp() {
             type="button"
             onClick={loadLicenses}
             disabled={isLoadingLicenses}
-            className="p-2 bg-[#121622] hover:bg-[#1a2030] text-slate-300 rounded-xl border border-white/10 transition-colors cursor-pointer"
+            className="p-2 bg-surface-121622 hover:bg-surface-1a2030 text-slate-300 rounded-xl border border-white/10 transition-colors cursor-pointer"
             title="بروزرسانی داده‌ها"
           >
             <RefreshCw className={`w-4 h-4 ${isLoadingLicenses ? 'animate-spin text-amber-400' : ''}`} />
@@ -679,29 +679,29 @@ export default function AdminApp() {
 
         {/* Stats Row */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-[#0e121a] border border-white/5 rounded-2xl p-4 space-y-1">
+          <div className="bg-surface-0e121a border border-white/5 rounded-2xl p-4 space-y-1">
             <span className="text-[11px] text-slate-400 font-bold block">کل لایسنس‌های صادر شده</span>
             <span className="text-2xl font-black text-white font-mono">{toPersianDigits(stats.total)}</span>
           </div>
 
-          <div className="bg-[#0e121a] border border-emerald-500/20 rounded-2xl p-4 space-y-1">
+          <div className="bg-surface-0e121a border border-emerald-500/20 rounded-2xl p-4 space-y-1">
             <span className="text-[11px] text-emerald-400 font-bold block">اشتراک‌های فعال و معتبر</span>
             <span className="text-2xl font-black text-emerald-400 font-mono">{toPersianDigits(stats.active)}</span>
           </div>
 
-          <div className="bg-[#0e121a] border border-rose-500/20 rounded-2xl p-4 space-y-1">
+          <div className="bg-surface-0e121a border border-rose-500/20 rounded-2xl p-4 space-y-1">
             <span className="text-[11px] text-rose-400 font-bold block">اشتراک‌های منقضی شده</span>
             <span className="text-2xl font-black text-rose-400 font-mono">{toPersianDigits(stats.expired)}</span>
           </div>
 
-          <div className="bg-[#0e121a] border border-amber-500/20 rounded-2xl p-4 space-y-1">
+          <div className="bg-surface-0e121a border border-amber-500/20 rounded-2xl p-4 space-y-1">
             <span className="text-[11px] text-amber-400 font-bold block">مسدود / معلق (Suspended)</span>
             <span className="text-2xl font-black text-amber-400 font-mono">{toPersianDigits(stats.suspended)}</span>
           </div>
         </div>
 
         {/* Action & Filter Toolbar */}
-        <div className="bg-[#0e121a] border border-white/5 rounded-2xl p-4 flex flex-col sm:flex-row gap-3 items-center justify-between">
+        <div className="bg-surface-0e121a border border-white/5 rounded-2xl p-4 flex flex-col sm:flex-row gap-3 items-center justify-between">
           <div className="flex flex-1 items-center gap-3 w-full sm:w-auto">
             <div className="relative flex-1 max-w-md">
               <Search className="w-4 h-4 absolute right-3 top-3 text-slate-500" />
@@ -710,11 +710,11 @@ export default function AdminApp() {
                 placeholder="جستجو بر اساس نام گیم‌نت، خریدار، یوزرنیم، موبایل..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pr-9 pl-3 py-2 bg-[#06080d] border border-white/10 rounded-xl text-xs text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                className="w-full pr-9 pl-3 py-2 bg-surface-06080d border border-white/10 rounded-xl text-xs text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-amber-500"
               />
             </div>
 
-            <div className="flex items-center gap-1 bg-[#06080d] p-1 rounded-xl border border-white/10 text-xs">
+            <div className="flex items-center gap-1 bg-surface-06080d p-1 rounded-xl border border-white/10 text-xs">
               <button
                 type="button"
                 onClick={() => setStatusFilter('all')}
@@ -757,15 +757,15 @@ export default function AdminApp() {
         </div>
 
         {/* Licenses Table Card */}
-        <div className="bg-[#0e121a] border border-white/5 rounded-2xl overflow-hidden shadow-xl">
-          <div className="p-3.5 bg-[#121622] border-b border-white/5 flex items-center justify-between text-xs font-bold text-slate-300">
+        <div className="bg-surface-0e121a border border-white/5 rounded-2xl overflow-hidden shadow-xl">
+          <div className="p-3.5 bg-surface-121622 border-b border-white/5 flex items-center justify-between text-xs font-bold text-slate-300">
             <span>لیست لایسنس‌ها ({toPersianDigits(filteredLicenses.length)} مورد)</span>
             {isLoadingLicenses && <span className="text-[11px] text-amber-400 animate-pulse">در حال فراخوانی از Railway...</span>}
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full text-right text-xs">
-              <thead className="bg-[#07090e] text-slate-400 text-[10px] border-b border-white/5 uppercase">
+              <thead className="bg-surface-07090e text-slate-400 text-[10px] border-b border-white/5 uppercase">
                 <tr>
                   <th className="p-3.5">نام گیم‌نت / خریدار</th>
                   <th className="p-3.5">نام کاربری (Login)</th>
@@ -919,7 +919,7 @@ export default function AdminApp() {
       {/* ------------------------------------------------------------- */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4" dir="rtl">
-          <div className="w-full max-w-lg bg-[#0e121a] border border-white/10 rounded-3xl p-6 space-y-4 shadow-2xl relative animate-in zoom-in-95 duration-150">
+          <div className="w-full max-w-lg bg-surface-0e121a border border-white/10 rounded-3xl p-6 space-y-4 shadow-2xl relative animate-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between border-b border-white/5 pb-3">
               <h3 className="text-sm font-black text-white flex items-center gap-2">
                 <Plus className="w-4 h-4 text-amber-400" />
@@ -940,7 +940,7 @@ export default function AdminApp() {
                     placeholder="مثال: گیم‌نت الماس"
                     value={newBusinessName}
                     onChange={(e) => setNewBusinessName(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#06080d] border border-white/10 rounded-xl text-white focus:ring-1 focus:ring-amber-500 text-xs"
+                    className="w-full px-3 py-2 bg-surface-06080d border border-white/10 rounded-xl text-white focus:ring-1 focus:ring-amber-500 text-xs"
                   />
                 </div>
 
@@ -951,7 +951,7 @@ export default function AdminApp() {
                     placeholder="مثال: آقای سهرابی"
                     value={newOwnerName}
                     onChange={(e) => setNewOwnerName(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#06080d] border border-white/10 rounded-xl text-white focus:ring-1 focus:ring-amber-500 text-xs"
+                    className="w-full px-3 py-2 bg-surface-06080d border border-white/10 rounded-xl text-white focus:ring-1 focus:ring-amber-500 text-xs"
                   />
                 </div>
 
@@ -963,7 +963,7 @@ export default function AdminApp() {
                     placeholder="09121234567"
                     value={newPhone}
                     onChange={(e) => setNewPhone(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#06080d] border border-white/10 rounded-xl text-white focus:ring-1 focus:ring-amber-500 text-xs font-mono text-left"
+                    className="w-full px-3 py-2 bg-surface-06080d border border-white/10 rounded-xl text-white focus:ring-1 focus:ring-amber-500 text-xs font-mono text-left"
                   />
                 </div>
 
@@ -976,7 +976,7 @@ export default function AdminApp() {
                     placeholder="diamond_gamenet"
                     value={newUsername}
                     onChange={(e) => setNewUsername(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#06080d] border border-white/10 rounded-xl text-amber-300 focus:ring-1 focus:ring-amber-500 text-xs font-mono text-left"
+                    className="w-full px-3 py-2 bg-surface-06080d border border-white/10 rounded-xl text-amber-300 focus:ring-1 focus:ring-amber-500 text-xs font-mono text-left"
                   />
                 </div>
 
@@ -989,7 +989,7 @@ export default function AdminApp() {
                     placeholder="pass1234"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#06080d] border border-white/10 rounded-xl text-white focus:ring-1 focus:ring-amber-500 text-xs font-mono text-left"
+                    className="w-full px-3 py-2 bg-surface-06080d border border-white/10 rounded-xl text-white focus:ring-1 focus:ring-amber-500 text-xs font-mono text-left"
                   />
                 </div>
 
@@ -998,7 +998,7 @@ export default function AdminApp() {
                   <select
                     value={newSubType}
                     onChange={(e) => setNewSubType(e.target.value as any)}
-                    className="w-full px-3 py-2 bg-[#06080d] border border-white/10 rounded-xl text-white focus:ring-1 focus:ring-amber-500 text-xs"
+                    className="w-full px-3 py-2 bg-surface-06080d border border-white/10 rounded-xl text-white focus:ring-1 focus:ring-amber-500 text-xs"
                   >
                     <option value="6months">اشتراک ۶ ماهه (۱۸۰ روز)</option>
                     <option value="12months">اشتراک یک ساله (۳۶۵ روز)</option>
@@ -1015,7 +1015,7 @@ export default function AdminApp() {
                       min="1"
                       value={newCustomDays}
                       onChange={(e) => setNewCustomDays(Number(e.target.value) || 30)}
-                      className="w-full px-3 py-2 bg-[#06080d] border border-white/10 rounded-xl text-white focus:ring-1 focus:ring-amber-500 text-xs font-mono"
+                      className="w-full px-3 py-2 bg-surface-06080d border border-white/10 rounded-xl text-white focus:ring-1 focus:ring-amber-500 text-xs font-mono"
                     />
                   </div>
                 )}
@@ -1025,7 +1025,7 @@ export default function AdminApp() {
                   <select
                     value={newInitialStatus}
                     onChange={(e) => setNewInitialStatus(e.target.value as any)}
-                    className="w-full px-3 py-2 bg-[#06080d] border border-white/10 rounded-xl text-white focus:ring-1 focus:ring-amber-500 text-xs"
+                    className="w-full px-3 py-2 bg-surface-06080d border border-white/10 rounded-xl text-white focus:ring-1 focus:ring-amber-500 text-xs"
                   >
                     <option value="active">فعال (Active)</option>
                     <option value="suspended">مسدود اولیه (Suspended)</option>
@@ -1040,7 +1040,7 @@ export default function AdminApp() {
                     max="20"
                     value={newMaxDevices}
                     onChange={(e) => setNewMaxDevices(Math.max(1, Math.min(20, Number(e.target.value) || 1)))}
-                    className="w-full px-3 py-2 bg-[#06080d] border border-white/10 rounded-xl text-white focus:ring-1 focus:ring-amber-500 text-xs font-mono"
+                    className="w-full px-3 py-2 bg-surface-06080d border border-white/10 rounded-xl text-white focus:ring-1 focus:ring-amber-500 text-xs font-mono"
                   />
                 </div>
 
@@ -1076,7 +1076,7 @@ export default function AdminApp() {
       {/* ------------------------------------------------------------- */}
       {showEditModal && editingLicense && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4" dir="rtl">
-          <div className="w-full max-w-md bg-[#0e121a] border border-white/10 rounded-3xl p-6 space-y-4 shadow-2xl relative animate-in zoom-in-95 duration-150">
+          <div className="w-full max-w-md bg-surface-0e121a border border-white/10 rounded-3xl p-6 space-y-4 shadow-2xl relative animate-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between border-b border-white/5 pb-3">
               <h3 className="text-sm font-black text-white flex items-center gap-2">
                 <Edit3 className="w-4 h-4 text-indigo-400" />
@@ -1095,7 +1095,7 @@ export default function AdminApp() {
                   required
                   value={editBusinessName}
                   onChange={(e) => setEditBusinessName(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#06080d] border border-white/10 rounded-xl text-white text-xs"
+                  className="w-full px-3 py-2 bg-surface-06080d border border-white/10 rounded-xl text-white text-xs"
                 />
               </div>
 
@@ -1105,7 +1105,7 @@ export default function AdminApp() {
                   type="text"
                   value={editOwnerName}
                   onChange={(e) => setEditOwnerName(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#06080d] border border-white/10 rounded-xl text-white text-xs"
+                  className="w-full px-3 py-2 bg-surface-06080d border border-white/10 rounded-xl text-white text-xs"
                 />
               </div>
 
@@ -1116,7 +1116,7 @@ export default function AdminApp() {
                   dir="ltr"
                   value={editPhone}
                   onChange={(e) => setEditPhone(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#06080d] border border-white/10 rounded-xl text-white text-xs font-mono text-left"
+                  className="w-full px-3 py-2 bg-surface-06080d border border-white/10 rounded-xl text-white text-xs font-mono text-left"
                 />
               </div>
 
@@ -1128,7 +1128,7 @@ export default function AdminApp() {
                   placeholder="در صورت عدم تغییر، خالی بگذارید"
                   value={editNewPassword}
                   onChange={(e) => setEditNewPassword(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#06080d] border border-white/10 rounded-xl text-white text-xs font-mono text-left"
+                  className="w-full px-3 py-2 bg-surface-06080d border border-white/10 rounded-xl text-white text-xs font-mono text-left"
                 />
               </div>
 
@@ -1139,7 +1139,7 @@ export default function AdminApp() {
                   dir="ltr"
                   value={editEndDateISO}
                   onChange={(e) => setEditEndDateISO(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#06080d] border border-white/10 rounded-xl text-white text-xs font-mono text-left"
+                  className="w-full px-3 py-2 bg-surface-06080d border border-white/10 rounded-xl text-white text-xs font-mono text-left"
                 />
               </div>
 
@@ -1148,7 +1148,7 @@ export default function AdminApp() {
                 <select
                   value={editStatus}
                   onChange={(e) => setEditStatus(e.target.value as any)}
-                  className="w-full px-3 py-2 bg-[#06080d] border border-white/10 rounded-xl text-white text-xs"
+                  className="w-full px-3 py-2 bg-surface-06080d border border-white/10 rounded-xl text-white text-xs"
                 >
                   <option value="active">فعال (Active)</option>
                   <option value="suspended">مسدود شده (Suspended)</option>
@@ -1163,7 +1163,7 @@ export default function AdminApp() {
                   max="20"
                   value={editMaxDevices}
                   onChange={(e) => setEditMaxDevices(Math.max(1, Math.min(20, Number(e.target.value) || 1)))}
-                  className="w-full px-3 py-2 bg-[#06080d] border border-white/10 rounded-xl text-white focus:ring-1 focus:ring-amber-500 text-xs font-mono"
+                  className="w-full px-3 py-2 bg-surface-06080d border border-white/10 rounded-xl text-white focus:ring-1 focus:ring-amber-500 text-xs font-mono"
                 />
               </div>
 
@@ -1198,7 +1198,7 @@ export default function AdminApp() {
       {/* ------------------------------------------------------------- */}
       {showExtendModal && extendingLicense && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4" dir="rtl">
-          <div className="w-full max-w-sm bg-[#0e121a] border border-white/10 rounded-3xl p-6 space-y-4 shadow-2xl relative animate-in zoom-in-95 duration-150">
+          <div className="w-full max-w-sm bg-surface-0e121a border border-white/10 rounded-3xl p-6 space-y-4 shadow-2xl relative animate-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between border-b border-white/5 pb-3">
               <h3 className="text-sm font-black text-white flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-emerald-400" />
@@ -1225,28 +1225,28 @@ export default function AdminApp() {
                   <button
                     type="button"
                     onClick={() => setExtendDaysToAdd(30)}
-                    className={`py-2 px-3 rounded-xl border text-center font-bold transition-all cursor-pointer ${extendDaysToAdd === 30 ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : 'bg-[#06080d] text-slate-400 border-white/10'}`}
+                    className={`py-2 px-3 rounded-xl border text-center font-bold transition-all cursor-pointer ${extendDaysToAdd === 30 ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : 'bg-surface-06080d text-slate-400 border-white/10'}`}
                   >
                     ۱ ماهه (+۳۰ روز)
                   </button>
                   <button
                     type="button"
                     onClick={() => setExtendDaysToAdd(90)}
-                    className={`py-2 px-3 rounded-xl border text-center font-bold transition-all cursor-pointer ${extendDaysToAdd === 90 ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : 'bg-[#06080d] text-slate-400 border-white/10'}`}
+                    className={`py-2 px-3 rounded-xl border text-center font-bold transition-all cursor-pointer ${extendDaysToAdd === 90 ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : 'bg-surface-06080d text-slate-400 border-white/10'}`}
                   >
                     ۳ ماهه (+۹۰ روز)
                   </button>
                   <button
                     type="button"
                     onClick={() => setExtendDaysToAdd(180)}
-                    className={`py-2 px-3 rounded-xl border text-center font-bold transition-all cursor-pointer ${extendDaysToAdd === 180 ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : 'bg-[#06080d] text-slate-400 border-white/10'}`}
+                    className={`py-2 px-3 rounded-xl border text-center font-bold transition-all cursor-pointer ${extendDaysToAdd === 180 ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : 'bg-surface-06080d text-slate-400 border-white/10'}`}
                   >
                     ۶ ماهه (+۱۸۰ روز)
                   </button>
                   <button
                     type="button"
                     onClick={() => setExtendDaysToAdd(365)}
-                    className={`py-2 px-3 rounded-xl border text-center font-bold transition-all cursor-pointer ${extendDaysToAdd === 365 ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : 'bg-[#06080d] text-slate-400 border-white/10'}`}
+                    className={`py-2 px-3 rounded-xl border text-center font-bold transition-all cursor-pointer ${extendDaysToAdd === 365 ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : 'bg-surface-06080d text-slate-400 border-white/10'}`}
                   >
                     ۱ ساله (+۳۶۵ روز)
                   </button>
@@ -1278,7 +1278,7 @@ export default function AdminApp() {
       {/* ------------------------------------------------------------- */}
       {deleteConfirmLicense && (
         <div className="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-4" dir="rtl">
-          <div className="w-full max-w-sm bg-[#0e121a] border border-rose-500/30 rounded-3xl p-6 space-y-4 shadow-2xl relative animate-in zoom-in-95 duration-150">
+          <div className="w-full max-w-sm bg-surface-0e121a border border-rose-500/30 rounded-3xl p-6 space-y-4 shadow-2xl relative animate-in zoom-in-95 duration-150">
             <div className="w-12 h-12 mx-auto rounded-2xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400">
               <Trash2 className="w-6 h-6" />
             </div>
@@ -1325,7 +1325,7 @@ export default function AdminApp() {
       )}
       {devicesLicense && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4" dir="rtl">
-          <div className="w-full max-w-lg bg-[#0f131c] border border-white/10 rounded-2xl p-5 space-y-4 shadow-2xl">
+          <div className="w-full max-w-lg bg-surface-0f131c border border-white/10 rounded-2xl p-5 space-y-4 shadow-2xl">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-black text-white flex items-center gap-2">
                 <Laptop className="w-4 h-4 text-amber-400" />

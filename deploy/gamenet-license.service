@@ -1,0 +1,31 @@
+[Unit]
+Description=GameNet License Server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=gamenet
+Group=gamenet
+WorkingDirectory=/opt/gamenet-license
+EnvironmentFile=/etc/gamenet-license.env
+ExecStart=/usr/bin/node server/index.mjs
+Restart=always
+RestartSec=3
+# محدودیت منابع (برای سرور ۲ گیگ رم کافی است)
+MemoryMax=400M
+Environment=NODE_OPTIONS=--max-old-space-size=256
+# سخت‌سازی
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/gamenet-license
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+
+[Install]
+WantedBy=multi-user.target

@@ -513,7 +513,7 @@ export default function SpecialServicesTab() {
     <div className="space-y-6" dir="rtl">
       
       {/* Top Welcome Title & Subtabs Menu */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#0F1219]/40 border border-white/5 rounded-2xl p-5">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-surface-0f1219/40 border border-white/5 rounded-2xl p-5">
         <div>
           <div className="flex items-center gap-2">
             <div className="p-1.5 bg-indigo-500/10 text-indigo-400 rounded-lg">
@@ -574,7 +574,7 @@ export default function SpecialServicesTab() {
       </div>
 
       {/* Control Actions & Search bar */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-[#0B0E14]/40 border border-white/5 rounded-2xl p-4">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-surface-0b0e14/40 border border-white/5 rounded-2xl p-4">
         
         {/* Search */}
         <div className="relative w-full sm:w-80">
@@ -588,7 +588,7 @@ export default function SpecialServicesTab() {
             }
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-3 pr-9 py-2 bg-[#06080C] border border-white/5 rounded-xl text-xs text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 transition-all font-sans"
+            className="w-full pl-3 pr-9 py-2 bg-surface-06080c border border-white/5 rounded-xl text-xs text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 transition-all font-sans"
           />
           <Search className="w-4 h-4 text-slate-500 absolute right-3 top-2.5" />
         </div>
@@ -645,10 +645,10 @@ export default function SpecialServicesTab() {
               .map((res) => (
                 <div 
                   key={res.id} 
-                  className={`bg-[#0F1219]/50 border rounded-2xl p-5 space-y-4 transition-all relative overflow-hidden ${
+                  className={`bg-surface-0f1219/50 border rounded-2xl p-5 space-y-4 transition-all relative overflow-hidden ${
                     res.status === 'active' ? 'border-emerald-500/30 shadow-lg shadow-emerald-950/5' :
                     res.status === 'cancelled' ? 'border-white/5 opacity-50' :
-                    res.status === 'completed' ? 'border-blue-500/20 bg-[#0F1219]/25' :
+                    res.status === 'completed' ? 'border-blue-500/20 bg-surface-0f1219/25' :
                     'border-white/5 hover:border-white/10'
                   }`}
                 >
@@ -750,7 +750,7 @@ export default function SpecialServicesTab() {
               ))}
 
             {reservations.length === 0 && (
-              <div className="col-span-full py-12 text-center text-zinc-500 bg-[#0F1219]/20 border border-dashed border-white/5 rounded-2xl">
+              <div className="col-span-full py-12 text-center text-zinc-500 bg-surface-0f1219/20 border border-dashed border-white/5 rounded-2xl">
                 <Calendar className="w-8 h-8 mx-auto text-zinc-600 mb-2" />
                 <p className="text-xs">هیچ نوبت رزروی ثبت نشده است.</p>
               </div>
@@ -764,7 +764,7 @@ export default function SpecialServicesTab() {
             {tournaments
               .filter(t => t.title.includes(searchQuery) || t.gameName.includes(searchQuery))
               .map((tour) => (
-                <div key={tour.id} className="bg-[#0F1219]/40 border border-white/5 rounded-2xl p-5 space-y-4">
+                <div key={tour.id} className="bg-surface-0f1219/40 border border-white/5 rounded-2xl p-5 space-y-4">
                   {/* Title & Banner Info */}
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/5 pb-4">
                     <div className="space-y-1.5">
@@ -830,7 +830,7 @@ export default function SpecialServicesTab() {
                   </div>
 
                   {/* Financial Metrics & Awards Block */}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-[#0B0E14] border border-white/5 p-4 rounded-xl text-xs">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-surface-0b0e14 border border-white/5 p-4 rounded-xl text-xs">
                     <div>
                       <span className="text-[9px] text-zinc-500 uppercase block">هزینه ثبت نام بازیکن:</span>
                       <strong className="text-white font-mono text-xs">{formatCurrency(tour.entryFee)}</strong>
@@ -893,7 +893,7 @@ export default function SpecialServicesTab() {
                         ))}
                       </div>
                     ) : (
-                      <p className="text-[10px] text-zinc-500 italic bg-[#0B0E14]/30 p-3 rounded-xl border border-dashed border-white/5">
+                      <p className="text-[10px] text-zinc-500 italic bg-surface-0b0e14/30 p-3 rounded-xl border border-dashed border-white/5">
                         تاکنون هیچ شرکت‌کننده‌ای برای این جام ثبت‌نام نکرده است.
                       </p>
                     )}
@@ -902,7 +902,7 @@ export default function SpecialServicesTab() {
               ))}
 
             {tournaments.length === 0 && (
-              <div className="py-12 text-center text-zinc-500 bg-[#0F1219]/20 border border-dashed border-white/5 rounded-2xl">
+              <div className="py-12 text-center text-zinc-500 bg-surface-0f1219/20 border border-dashed border-white/5 rounded-2xl">
                 <Trophy className="w-8 h-8 mx-auto text-zinc-600 mb-2" />
                 <p className="text-xs">هیچ تورنمنتی ایجاد نشده است.</p>
               </div>
@@ -918,7 +918,7 @@ export default function SpecialServicesTab() {
               .map((account) => (
                 <div 
                   key={account.id} 
-                  className={`bg-[#0F1219]/50 border rounded-2xl p-5 space-y-4 transition-all relative overflow-hidden ${
+                  className={`bg-surface-0f1219/50 border rounded-2xl p-5 space-y-4 transition-all relative overflow-hidden ${
                     account.status === 'rented' ? 'border-amber-500/30' : 'border-white/5 hover:border-white/10'
                   }`}
                 >
@@ -1012,7 +1012,7 @@ export default function SpecialServicesTab() {
               ))}
 
             {rentals.length === 0 && (
-              <div className="col-span-full py-12 text-center text-zinc-500 bg-[#0F1219]/20 border border-dashed border-white/5 rounded-2xl">
+              <div className="col-span-full py-12 text-center text-zinc-500 bg-surface-0f1219/20 border border-dashed border-white/5 rounded-2xl">
                 <Gamepad2 className="w-8 h-8 mx-auto text-zinc-600 mb-2" />
                 <p className="text-xs">هیچ اکانت اجاره‌ای در دیتابیس ثبت نشده است.</p>
               </div>
@@ -1028,7 +1028,7 @@ export default function SpecialServicesTab() {
               .map((job) => (
                 <div 
                   key={job.id} 
-                  className={`bg-[#0F1219]/50 border rounded-2xl p-5 space-y-4 transition-all relative overflow-hidden ${
+                  className={`bg-surface-0f1219/50 border rounded-2xl p-5 space-y-4 transition-all relative overflow-hidden ${
                     job.status === 'delivered' ? 'border-white/5 opacity-55' :
                     job.status === 'ready' ? 'border-emerald-500/30' :
                     job.status === 'in_repair' ? 'border-amber-500/30' :
@@ -1133,7 +1133,7 @@ export default function SpecialServicesTab() {
               ))}
 
             {repairs.length === 0 && (
-              <div className="col-span-full py-12 text-center text-zinc-500 bg-[#0F1219]/20 border border-dashed border-white/5 rounded-2xl">
+              <div className="col-span-full py-12 text-center text-zinc-500 bg-surface-0f1219/20 border border-dashed border-white/5 rounded-2xl">
                 <Wrench className="w-8 h-8 mx-auto text-zinc-600 mb-2" />
                 <p className="text-xs">هیچ پرونده تعمیرات دسته‌ای در کارگاه پذیرش نشده است.</p>
               </div>
@@ -1145,8 +1145,8 @@ export default function SpecialServicesTab() {
 
       {/* MODAL 1: NEW VIP RESERVATION */}
       {showResModal && (
-        <div className="fixed inset-0 bg-[#06070a]/85 backdrop-blur-md flex items-center justify-center p-4 z-[9999]">
-          <div className="bg-[#121620] border border-white/10 max-w-md w-full rounded-2xl overflow-hidden shadow-2xl p-6 space-y-4 text-right">
+        <div className="fixed inset-0 bg-surface-06070a/85 backdrop-blur-md flex items-center justify-center p-4 z-[9999]">
+          <div className="bg-surface-121620 border border-white/10 max-w-md w-full rounded-2xl overflow-hidden shadow-2xl p-6 space-y-4 text-right">
             <div className="flex justify-between items-center border-b border-white/5 pb-3">
               <h3 className="text-sm font-black text-white">ثبت نوبت رزرو مشتری</h3>
               <button onClick={() => setShowResModal(false)} className="text-zinc-500 hover:text-white transition-colors cursor-pointer text-lg">×</button>
@@ -1161,7 +1161,7 @@ export default function SpecialServicesTab() {
                   value={newRes.customerName}
                   onChange={(e) => setNewRes({ ...newRes, customerName: e.target.value })}
                   placeholder="مثال: امین اکبری"
-                  className="w-full px-3 py-2 bg-[#080B11] border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none"
+                  className="w-full px-3 py-2 bg-surface-080b11 border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none"
                 />
               </div>
 
@@ -1172,7 +1172,7 @@ export default function SpecialServicesTab() {
                   value={newRes.customerPhone}
                   onChange={(e) => setNewRes({ ...newRes, customerPhone: e.target.value })}
                   placeholder="مثال: 09123456789"
-                  className="w-full px-3 py-2 bg-[#080B11] border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none font-mono"
+                  className="w-full px-3 py-2 bg-surface-080b11 border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none font-mono"
                 />
               </div>
 
@@ -1184,7 +1184,7 @@ export default function SpecialServicesTab() {
                   value={newRes.systemName}
                   onChange={(e) => setNewRes({ ...newRes, systemName: e.target.value })}
                   placeholder="مثال: پی‌اس‌فایو VIP شماره ۲"
-                  className="w-full px-3 py-2 bg-[#080B11] border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none"
+                  className="w-full px-3 py-2 bg-surface-080b11 border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none"
                 />
               </div>
 
@@ -1196,7 +1196,7 @@ export default function SpecialServicesTab() {
                   value={newRes.reserveTime}
                   onChange={(e) => setNewRes({ ...newRes, reserveTime: e.target.value })}
                   placeholder="مثال: امروز ساعت ۲۰:۴۵"
-                  className="w-full px-3 py-2 bg-[#080B11] border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none"
+                  className="w-full px-3 py-2 bg-surface-080b11 border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none"
                 />
               </div>
 
@@ -1207,7 +1207,7 @@ export default function SpecialServicesTab() {
                   value={newRes.depositAmount}
                   onChange={(e) => setNewRes({ ...newRes, depositAmount: e.target.value })}
                   placeholder="در صورت عدم پرداخت، خالی بگذارید"
-                  className="w-full px-3 py-2 bg-[#080B11] border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none font-mono"
+                  className="w-full px-3 py-2 bg-surface-080b11 border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none font-mono"
                 />
               </div>
 
@@ -1218,7 +1218,7 @@ export default function SpecialServicesTab() {
                   onChange={(e) => setNewRes({ ...newRes, notes: e.target.value })}
                   placeholder="تعداد دسته‌ها، بازی خاص و..."
                   rows={2}
-                  className="w-full px-3 py-2 bg-[#080B11] border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none resize-none"
+                  className="w-full px-3 py-2 bg-surface-080b11 border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none resize-none"
                 />
               </div>
 
@@ -1235,8 +1235,8 @@ export default function SpecialServicesTab() {
 
       {/* MODAL 2: NEW TOURNAMENT */}
       {showTourModal && (
-        <div className="fixed inset-0 bg-[#06070a]/85 backdrop-blur-md flex items-center justify-center p-4 z-[9999]">
-          <div className="bg-[#121620] border border-white/10 max-w-md w-full rounded-2xl overflow-hidden shadow-2xl p-6 space-y-4 text-right">
+        <div className="fixed inset-0 bg-surface-06070a/85 backdrop-blur-md flex items-center justify-center p-4 z-[9999]">
+          <div className="bg-surface-121620 border border-white/10 max-w-md w-full rounded-2xl overflow-hidden shadow-2xl p-6 space-y-4 text-right">
             <div className="flex justify-between items-center border-b border-white/5 pb-3">
               <h3 className="text-sm font-black text-white">برگزاری مسابقه جدید گیم‌نت</h3>
               <button onClick={() => setShowTourModal(false)} className="text-zinc-500 hover:text-white transition-colors cursor-pointer text-lg">×</button>
@@ -1251,7 +1251,7 @@ export default function SpecialServicesTab() {
                   value={newTour.title}
                   onChange={(e) => setNewTour({ ...newTour, title: e.target.value })}
                   placeholder="مثال: تورنمنت بزرگ فیفا ۲۴ شیراز"
-                  className="w-full px-3 py-2 bg-[#080B11] border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none"
+                  className="w-full px-3 py-2 bg-surface-080b11 border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none"
                 />
               </div>
 
@@ -1263,7 +1263,7 @@ export default function SpecialServicesTab() {
                   value={newTour.gameName}
                   onChange={(e) => setNewTour({ ...newTour, gameName: e.target.value })}
                   placeholder="مثال: FC 24 (PS5)"
-                  className="w-full px-3 py-2 bg-[#080B11] border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none"
+                  className="w-full px-3 py-2 bg-surface-080b11 border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none"
                 />
               </div>
 
@@ -1274,7 +1274,7 @@ export default function SpecialServicesTab() {
                   value={newTour.entryFee}
                   onChange={(e) => setNewTour({ ...newTour, entryFee: e.target.value })}
                   placeholder="رایگان یا هزینه دلخواه"
-                  className="w-full px-3 py-2 bg-[#080B11] border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none font-mono"
+                  className="w-full px-3 py-2 bg-surface-080b11 border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none font-mono"
                 />
               </div>
 
@@ -1285,7 +1285,7 @@ export default function SpecialServicesTab() {
                   value={newTour.prizePool}
                   onChange={(e) => setNewTour({ ...newTour, prizePool: e.target.value })}
                   placeholder="مثال: ۲ میلیون تومان وجه نقد"
-                  className="w-full px-3 py-2 bg-[#080B11] border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none"
+                  className="w-full px-3 py-2 bg-surface-080b11 border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none"
                 />
               </div>
 
@@ -1296,7 +1296,7 @@ export default function SpecialServicesTab() {
                   value={newTour.startDate}
                   onChange={(e) => setNewTour({ ...newTour, startDate: e.target.value })}
                   placeholder="مثال: ۱۴۰۵/۰۴/۳۰"
-                  className="w-full px-3 py-2 bg-[#080B11] border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none"
+                  className="w-full px-3 py-2 bg-surface-080b11 border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none"
                 />
               </div>
 
@@ -1306,7 +1306,7 @@ export default function SpecialServicesTab() {
                   type="number"
                   value={newTour.maxParticipants}
                   onChange={(e) => setNewTour({ ...newTour, maxParticipants: e.target.value })}
-                  className="w-full px-3 py-2 bg-[#080B11] border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none font-mono"
+                  className="w-full px-3 py-2 bg-surface-080b11 border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none font-mono"
                 />
               </div>
 
@@ -1323,8 +1323,8 @@ export default function SpecialServicesTab() {
 
       {/* MODAL 3: ADD RENTAL ACCOUNT */}
       {showRentalModal && (
-        <div className="fixed inset-0 bg-[#06070a]/85 backdrop-blur-md flex items-center justify-center p-4 z-[9999]">
-          <div className="bg-[#121620] border border-white/10 max-w-md w-full rounded-2xl overflow-hidden shadow-2xl p-6 space-y-4 text-right">
+        <div className="fixed inset-0 bg-surface-06070a/85 backdrop-blur-md flex items-center justify-center p-4 z-[9999]">
+          <div className="bg-surface-121620 border border-white/10 max-w-md w-full rounded-2xl overflow-hidden shadow-2xl p-6 space-y-4 text-right">
             <div className="flex justify-between items-center border-b border-white/5 pb-3">
               <h3 className="text-sm font-black text-white">ثبت اکانت اجاره‌ای در دیتابیس</h3>
               <button onClick={() => setShowRentalModal(false)} className="text-zinc-500 hover:text-white transition-colors cursor-pointer text-lg">×</button>
@@ -1339,7 +1339,7 @@ export default function SpecialServicesTab() {
                   value={newRental.title}
                   onChange={(e) => setNewRental({ ...newRental, title: e.target.value })}
                   placeholder="مثال: اکانت اختصاصی EA FC 24 و بازی‌ها"
-                  className="w-full px-3 py-2 bg-[#080B11] border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none"
+                  className="w-full px-3 py-2 bg-surface-080b11 border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none"
                 />
               </div>
 
@@ -1348,7 +1348,7 @@ export default function SpecialServicesTab() {
                 <select
                   value={newRental.platform}
                   onChange={(e) => setNewRental({ ...newRental, platform: e.target.value as any })}
-                  className="w-full px-3 py-2 bg-[#080B11] border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none text-right cursor-pointer"
+                  className="w-full px-3 py-2 bg-surface-080b11 border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none text-right cursor-pointer"
                 >
                   <option value="Steam">Steam (استیم)</option>
                   <option value="PlayStation">PlayStation (پلی استیشن)</option>
@@ -1365,7 +1365,7 @@ export default function SpecialServicesTab() {
                   onChange={(e) => setNewRental({ ...newRental, gamesList: e.target.value })}
                   placeholder="مثال: Red Dead 2, GTA V, CS2 Premium"
                   rows={3}
-                  className="w-full px-3 py-2 bg-[#080B11] border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none resize-none"
+                  className="w-full px-3 py-2 bg-surface-080b11 border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none resize-none"
                 />
               </div>
 
@@ -1377,7 +1377,7 @@ export default function SpecialServicesTab() {
                   value={newRental.dailyRate}
                   onChange={(e) => setNewRental({ ...newRental, dailyRate: e.target.value })}
                   placeholder="مثال: 45000"
-                  className="w-full px-3 py-2 bg-[#080B11] border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none font-mono"
+                  className="w-full px-3 py-2 bg-surface-080b11 border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none font-mono"
                 />
               </div>
 
@@ -1394,8 +1394,8 @@ export default function SpecialServicesTab() {
 
       {/* MODAL 4: RENT OUT PROCESS FORM */}
       {showRentOutModal && (
-        <div className="fixed inset-0 bg-[#06070a]/85 backdrop-blur-md flex items-center justify-center p-4 z-[9999]">
-          <div className="bg-[#121620] border border-white/10 max-w-md w-full rounded-2xl overflow-hidden shadow-2xl p-6 space-y-4 text-right">
+        <div className="fixed inset-0 bg-surface-06070a/85 backdrop-blur-md flex items-center justify-center p-4 z-[9999]">
+          <div className="bg-surface-121620 border border-white/10 max-w-md w-full rounded-2xl overflow-hidden shadow-2xl p-6 space-y-4 text-right">
             <div className="flex justify-between items-center border-b border-white/5 pb-3">
               <h3 className="text-sm font-black text-white">تحویل اکانت به مشتری</h3>
               <button onClick={() => setShowRentOutModal(null)} className="text-zinc-500 hover:text-white transition-colors cursor-pointer text-lg">×</button>
@@ -1412,7 +1412,7 @@ export default function SpecialServicesTab() {
                   value={rentOutData.renterName}
                   onChange={(e) => setRentOutData({ ...rentOutData, renterName: e.target.value })}
                   placeholder="مثال: یاشار عباسی"
-                  className="w-full px-3 py-2 bg-[#080B11] border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none"
+                  className="w-full px-3 py-2 bg-surface-080b11 border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none"
                 />
               </div>
 
@@ -1424,7 +1424,7 @@ export default function SpecialServicesTab() {
                   value={rentOutData.renterPhone}
                   onChange={(e) => setRentOutData({ ...rentOutData, renterPhone: e.target.value })}
                   placeholder="مثال: 09301234567"
-                  className="w-full px-3 py-2 bg-[#080B11] border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none font-mono"
+                  className="w-full px-3 py-2 bg-surface-080b11 border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none font-mono"
                 />
               </div>
 
@@ -1435,7 +1435,7 @@ export default function SpecialServicesTab() {
                   value={rentOutData.returnDueTime}
                   onChange={(e) => setRentOutData({ ...rentOutData, returnDueTime: e.target.value })}
                   placeholder="مثال: ۳ روز دیگر - ۱۴۰۵/۰۴/۲۴"
-                  className="w-full px-3 py-2 bg-[#080B11] border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none"
+                  className="w-full px-3 py-2 bg-surface-080b11 border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none"
                 />
               </div>
 
@@ -1452,8 +1452,8 @@ export default function SpecialServicesTab() {
 
       {/* MODAL 5: NEW REPAIR JOB */}
       {showRepairModal && (
-        <div className="fixed inset-0 bg-[#06070a]/85 backdrop-blur-md flex items-center justify-center p-4 z-[9999]">
-          <div className="bg-[#121620] border border-white/10 max-w-md w-full rounded-2xl overflow-hidden shadow-2xl p-6 space-y-4 text-right">
+        <div className="fixed inset-0 bg-surface-06070a/85 backdrop-blur-md flex items-center justify-center p-4 z-[9999]">
+          <div className="bg-surface-121620 border border-white/10 max-w-md w-full rounded-2xl overflow-hidden shadow-2xl p-6 space-y-4 text-right">
             <div className="flex justify-between items-center border-b border-white/5 pb-3">
               <h3 className="text-sm font-black text-white">پذیرش دسته / کنسول جهت تعمیر</h3>
               <button onClick={() => setShowRepairModal(false)} className="text-zinc-500 hover:text-white transition-colors cursor-pointer text-lg">×</button>
@@ -1468,7 +1468,7 @@ export default function SpecialServicesTab() {
                   value={newRepair.customerName}
                   onChange={(e) => setNewRepair({ ...newRepair, customerName: e.target.value })}
                   placeholder="مثال: مهران محمودی"
-                  className="w-full px-3 py-2 bg-[#080B11] border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none"
+                  className="w-full px-3 py-2 bg-surface-080b11 border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none"
                 />
               </div>
 
@@ -1480,7 +1480,7 @@ export default function SpecialServicesTab() {
                   value={newRepair.customerPhone}
                   onChange={(e) => setNewRepair({ ...newRepair, customerPhone: e.target.value })}
                   placeholder="مثال: 09172223344"
-                  className="w-full px-3 py-2 bg-[#080B11] border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none font-mono"
+                  className="w-full px-3 py-2 bg-surface-080b11 border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none font-mono"
                 />
               </div>
 
@@ -1490,7 +1490,7 @@ export default function SpecialServicesTab() {
                   <select
                     value={newRepair.deviceType}
                     onChange={(e) => setNewRepair({ ...newRepair, deviceType: e.target.value as any })}
-                    className="w-full px-3 py-2 bg-[#080B11] border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none text-right cursor-pointer"
+                    className="w-full px-3 py-2 bg-surface-080b11 border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none text-right cursor-pointer"
                   >
                     <option value="PS5 Controller">دسته PS5</option>
                     <option value="PS4 Controller">دسته PS4</option>
@@ -1507,7 +1507,7 @@ export default function SpecialServicesTab() {
                     value={newRepair.serialNumber}
                     onChange={(e) => setNewRepair({ ...newRepair, serialNumber: e.target.value })}
                     placeholder="رنگ دسته، بدنه، برچسب"
-                    className="w-full px-3 py-2 bg-[#080B11] border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none"
+                    className="w-full px-3 py-2 bg-surface-080b11 border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none"
                   />
                 </div>
               </div>
@@ -1520,7 +1520,7 @@ export default function SpecialServicesTab() {
                   onChange={(e) => setNewRepair({ ...newRepair, issueDescription: e.target.value })}
                   placeholder="مثال: تعویض برد آنالوگ دریفت خورده و شستشوی دکمه‌ها"
                   rows={2}
-                  className="w-full px-3 py-2 bg-[#080B11] border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none resize-none"
+                  className="w-full px-3 py-2 bg-surface-080b11 border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none resize-none"
                 />
               </div>
 
@@ -1532,7 +1532,7 @@ export default function SpecialServicesTab() {
                     value={newRepair.estimatedCost}
                     onChange={(e) => setNewRepair({ ...newRepair, estimatedCost: e.target.value })}
                     placeholder="مثال: 150000"
-                    className="w-full px-3 py-2 bg-[#080B11] border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none font-mono"
+                    className="w-full px-3 py-2 bg-surface-080b11 border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none font-mono"
                   />
                 </div>
 
@@ -1543,7 +1543,7 @@ export default function SpecialServicesTab() {
                     value={newRepair.depositPaid}
                     onChange={(e) => setNewRepair({ ...newRepair, depositPaid: e.target.value })}
                     placeholder="مثال: 50000"
-                    className="w-full px-3 py-2 bg-[#080B11] border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none font-mono"
+                    className="w-full px-3 py-2 bg-surface-080b11 border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none font-mono"
                   />
                 </div>
               </div>
@@ -1555,7 +1555,7 @@ export default function SpecialServicesTab() {
                   value={newRepair.notes}
                   onChange={(e) => setNewRepair({ ...newRepair, notes: e.target.value })}
                   placeholder="خیلی فوری، مشتری همیشگی و..."
-                  className="w-full px-3 py-2 bg-[#080B11] border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none"
+                  className="w-full px-3 py-2 bg-surface-080b11 border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none"
                 />
               </div>
 
@@ -1572,8 +1572,8 @@ export default function SpecialServicesTab() {
 
       {/* MODAL 6: REG PLAYER TO TOURNAMENT */}
       {showRegPlayerModal && (
-        <div className="fixed inset-0 bg-[#06070a]/85 backdrop-blur-md flex items-center justify-center p-4 z-[9999]">
-          <div className="bg-[#121620] border border-white/10 max-w-md w-full rounded-2xl overflow-hidden shadow-2xl p-6 space-y-4 text-right">
+        <div className="fixed inset-0 bg-surface-06070a/85 backdrop-blur-md flex items-center justify-center p-4 z-[9999]">
+          <div className="bg-surface-121620 border border-white/10 max-w-md w-full rounded-2xl overflow-hidden shadow-2xl p-6 space-y-4 text-right">
             <div className="flex justify-between items-center border-b border-white/5 pb-3">
               <h3 className="text-sm font-black text-white">ثبت‌نام بازیکن در مسابقات</h3>
               <button onClick={() => setShowRegPlayerModal(null)} className="text-zinc-500 hover:text-white transition-colors cursor-pointer text-lg">×</button>
@@ -1590,7 +1590,7 @@ export default function SpecialServicesTab() {
                   value={regPlayerData.name}
                   onChange={(e) => setRegPlayerData({ ...regPlayerData, name: e.target.value })}
                   placeholder="مثال: علی رضایی (Ali_Sniper)"
-                  className="w-full px-3 py-2 bg-[#080B11] border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none"
+                  className="w-full px-3 py-2 bg-surface-080b11 border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none"
                 />
               </div>
 
@@ -1601,11 +1601,11 @@ export default function SpecialServicesTab() {
                   value={regPlayerData.phone}
                   onChange={(e) => setRegPlayerData({ ...regPlayerData, phone: e.target.value })}
                   placeholder="مثال: 09121112233"
-                  className="w-full px-3 py-2 bg-[#080B11] border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none font-mono"
+                  className="w-full px-3 py-2 bg-surface-080b11 border border-white/5 focus:border-indigo-500 rounded-xl text-white focus:outline-none font-mono"
                 />
               </div>
 
-              <div className="flex items-center gap-2 p-2 bg-[#080B11] rounded-xl border border-white/5 cursor-pointer" onClick={() => setRegPlayerData({ ...regPlayerData, paid: !regPlayerData.paid })}>
+              <div className="flex items-center gap-2 p-2 bg-surface-080b11 rounded-xl border border-white/5 cursor-pointer" onClick={() => setRegPlayerData({ ...regPlayerData, paid: !regPlayerData.paid })}>
                 <input
                   type="checkbox"
                   checked={regPlayerData.paid}
