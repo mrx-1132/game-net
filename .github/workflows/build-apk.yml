@@ -1,23 +1,102 @@
-name: Build APK
-on: workflow_dispatch
+name: Build APK (GameNet Remote)
+
+# اپ اندروید ریموت را می‌سازد و در Releases (برچسب remote-apk) می‌گذارد.
+# - با هر تغییر در پوشه mobile خودکار اجرا می‌شود؛ از تب Actions هم دستی (Run workflow).
+# - اگر secretهای امضا تنظیم شده باشند، APK با کلید ثابت امضا می‌شود تا آپدیت‌ها روی نسخه قبلی نصب شوند.
+#   بدون آن‌ها یک نسخه آزمایشی (debug) ساخته می‌شود که برای هر آپدیت باید اپ قبلی را حذف کرد.
+#   secretها: ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, feature/secure-licensing]
+    paths:
+      - 'mobile/**'
+      - '.github/workflows/build-apk.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-apk-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     defaults:
       run:
         working-directory: mobile
+    env:
+      SIGNED: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 21
-      - run: npm run setup
-      - run: chmod +x android/gradlew && cd android && ./gradlew assembleDebug
+
+      - name: Create Android project (Capacitor + icons)
+        run: npm run setup
+
+      - name: Set app version
+        run: |
+          sed -i -E "s/versionCode [0-9]+/versionCode ${{ github.run_number }}/; s/versionName \"[^\"]+\"/versionName \"1.${{ github.run_number }}\"/" android/app/build.gradle
+          grep -E "versionCode|versionName" android/app/build.gradle
+
+      - name: Build
+        working-directory: mobile/android
+        run: |
+          chmod +x gradlew
+          if [ "$SIGNED" = "true" ]; then ./gradlew assembleRelease --no-daemon; else ./gradlew assembleDebug --no-daemon; fi
+
+      - name: Sign
+        env:
+          KS_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KS_PASS: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KS_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+        run: |
+          mkdir -p ../dist-apk
+          if [ "$SIGNED" = "true" ]; then
+            BT=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
+            echo "$KS_B64" | base64 -d > "$RUNNER_TEMP/release.p12"
+            "$BT/zipalign" -p -f 4 android/app/build/outputs/apk/release/app-release-unsigned.apk "$RUNNER_TEMP/aligned.apk"
+            "$BT/apksigner" sign --ks "$RUNNER_TEMP/release.p12" --ks-type PKCS12 \
+              --ks-pass env:KS_PASS --key-pass env:KS_PASS --ks-key-alias "$KS_ALIAS" \
+              --out ../dist-apk/GameNet-Remote.apk "$RUNNER_TEMP/aligned.apk"
+            rm -f "$RUNNER_TEMP/release.p12"
+            "$BT/apksigner" verify --print-certs ../dist-apk/GameNet-Remote.apk | head -2
+          else
+            cp android/app/build/outputs/apk/debug/app-debug.apk ../dist-apk/GameNet-Remote.apk
+          fi
+          ls -la ../dist-apk
+
       - uses: actions/upload-artifact@v4
         with:
-          name: gamenet-remote-apk
-          path: mobile/android/app/build/outputs/apk/debug/app-debug.apk
+          name: GameNet-Remote-apk
+          path: dist-apk/GameNet-Remote.apk
+
+      - name: Publish to Releases
+        working-directory: .
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG=remote-apk
+          if [ "$SIGNED" = "true" ]; then KIND="امضاشده با کلید ثابت — آپدیت روی نسخه قبلی نصب می‌شود"; else KIND="نسخه آزمایشی (debug) — برای آپدیت باید اپ قبلی حذف شود"; fi
+          gh release delete "$TAG" --cleanup-tag -y || true
+          gh release create "$TAG" dist-apk/GameNet-Remote.apk \
+            --target "$GITHUB_SHA" \
+            --title "GameNet Remote (Android) — نسخه 1.${{ github.run_number }}" \
+            --notes "اپ ریموت گیم‌نت برای اندروید.
+
+          - نسخه: 1.${{ github.run_number }}
+          - شاخه: ${GITHUB_REF_NAME} (${GITHUB_SHA::7})
+          - ${KIND}
+
+          نصب: فایل GameNet-Remote.apk را روی گوشی باز کنید و «نصب از منابع ناشناس» را اجازه دهید."
