@@ -75,6 +75,10 @@ export default function RemoteAccessPanel() {
               ) : (
                 <div className="font-mono text-blue-300" dir="ltr">{addr}:{info.port}</div>
               )}
+              <div className="text-[10px] text-slate-500 mt-1 leading-5">
+                اگر IP عوض شود، اپ اندروید خودش کامپیوتر را پیدا می‌کند؛ آیفون باید QR جدید را اسکن کند.
+                بهتر است در مودم برای این کامپیوتر IP ثابت (DHCP Reservation) تعریف کنید.
+              </div>
             </div>
 
             <div className="text-xs leading-6 text-slate-300 space-y-1">

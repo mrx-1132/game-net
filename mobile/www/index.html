@@ -50,6 +50,9 @@ input,select{width:100%;padding:12px;border-radius:12px;border:1px solid var(--l
 .pk{max-height:42vh;overflow:auto;margin:8px 0}
 .sum{display:flex;justify-content:space-between;font-size:14px;padding:3px 0}.sum.big{font-size:17px;font-weight:800;border-top:1px solid var(--line);margin-top:6px;padding-top:8px}
 .tip{background:var(--warn-bg);color:var(--tx);border-radius:14px;padding:12px;font-size:13px;line-height:1.9;margin-bottom:10px}.tip b{color:var(--warn-tx)}
+.conn{background:var(--warn-bg);border-radius:14px;padding:12px;margin:12px 16px 0;font-size:13px;line-height:1.8}.conn .acts{margin-top:8px}
+.menu{display:grid;gap:8px}.menu button{text-align:right}
+#menuBtn{background:var(--soft);color:var(--tx);padding:6px 10px;border-radius:10px;font-size:15px;margin-inline-start:6px}
 .chk{display:flex;align-items:center;gap:8px;margin:10px 0;font-size:14px}.chk input{width:auto;margin:0}
 #themeBtn{background:var(--soft);color:var(--tx);padding:6px 10px;border-radius:10px;font-size:15px;margin-inline-start:10px}
 #toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(24px + env(safe-area-inset-bottom));background:#065f46;color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;font-weight:700;z-index:50;display:none;max-width:90%;text-align:center}
@@ -248,13 +251,15 @@ function renderSetup(msg = '') {
 function render() {
   if (!localStorage.getItem(LS.token)) return renderSetup();
   const T = [['systems', 'سیستم‌ها'], ['sale', 'بوفه'], ['debt', 'نسیه']];
-  $('#app').innerHTML = `<header><div class="name">GameNet</div><div class="mu row"><span><span class="dot ${online ? 'ok' : ''}" id="dot"></span><span id="st">${online ? 'متصل' : 'قطع'}</span></span><button id="themeBtn" type="button" onclick="cycleTheme()"></button></div></header>
+  $('#app').innerHTML = `<header><div class="name">GameNet</div><div class="mu row"><span><span class="dot ${online ? 'ok' : ''}" id="dot"></span><span id="st">${online ? 'متصل' : 'قطع'}</span></span><button id="themeBtn" type="button" onclick="cycleTheme()"></button><button id="menuBtn" type="button" onclick="openMenu()" aria-label="تنظیمات">⚙️</button></div></header>
+  <div id="conn"></div>
   <div class="tabs">${T.map(([k, l]) => `<div class="tab ${tab === k ? 'on' : ''}" data-t="${k}">${l}</div>`).join('')}</div>
   <main>${tab === 'debt' ? '<input id="q" placeholder="جستجوی نام یا شماره…">' : ''}<div id="list"></div></main>`;
   document.querySelectorAll('.tab').forEach((el) => (el.onclick = () => { tab = el.dataset.t; if (tab === 'sale') saleCart = {}; render(); }));
   if (tab === 'debt') $('#q').oninput = renderList;
   if (tab === 'sale') renderSale(); else renderList();
   applyTheme();
+  updateConnBanner();
 }
 
 function elapsed(s) {
@@ -518,13 +523,130 @@ function openLedger(id) {
   };
 }
 
+// ---------- اتصال: عوض شدن IP کامپیوتر ----------
+// توکن گوشی به IP وابسته نیست؛ کافی است آدرس جدید پیدا شود. جفت‌سازی دوباره لازم نیست.
+let failCount = 0, discovering = false, lastDiscover = 0;
+const hexToBin = (h) => h.replace(/../g, (x) => String.fromCharCode(parseInt(x, 16)));
+function hmacHex(key, msg) { // key: حداکثر ۶۴ بایت ASCII
+  let k = key; while (k.length < 64) k += '\x00';
+  let ip = '', op = '';
+  for (let i = 0; i < 64; i++) { const c = k.charCodeAt(i); ip += String.fromCharCode(c ^ 0x36); op += String.fromCharCode(c ^ 0x5c); }
+  return sha256(op + hexToBin(sha256(ip + msg)));
+}
+function randHex(n) { const a = new Uint8Array(n); crypto.getRandomValues(a); return Array.from(a, (b) => b.toString(16).padStart(2, '0')).join(''); }
+
+async function fetchJson(url, opts, ms) {
+  const ctrl = new AbortController(), t = setTimeout(() => ctrl.abort(), ms);
+  try { const r = await fetch(url, { ...opts, signal: ctrl.signal }); return r.ok ? await r.json() : null; }
+  catch { return null; } finally { clearTimeout(t); }
+}
+
+// فقط کامپیوتری که هش توکن این گوشی را دارد جواب درست می‌دهد؛ توکن به هیچ دستگاه دیگری فرستاده نمی‌شود
+async function probe(base, tokenHash, kid) {
+  const ping = await fetchJson(base + '/api/ping', {}, 1500);
+  if (!ping || ping.app !== 'gamenet-manager') return false;
+  const nonce = randHex(16);
+  const r = await fetchJson(base + '/api/hello', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ kid, nonce }) }, 2500);
+  return !!r && r.proof === hmacHex(tokenHash, nonce);
+}
+
+async function discover(manual) {
+  const token = localStorage.getItem(LS.token);
+  if (WEB || discovering || !token) return;
+  const m = /^http:\/\/(\d+)\.(\d+)\.(\d+)\.(\d+):(\d+)/.exec(localStorage.getItem(LS.url) || '');
+  if (!m) { if (manual) openAddress(); return; }
+  discovering = true; lastDiscover = Date.now(); updateConnBanner();
+  const tokenHash = sha256(token), kid = sha256(tokenHash);
+  const prefix = `${m[1]}.${m[2]}.${m[3]}.`, port = m[5];
+  const hosts = [];
+  for (let i = 1; i < 255; i++) if (String(i) !== m[4]) hosts.push(`http://${prefix}${i}:${port}`);
+  let found = null, idx = 0;
+  const worker = async () => { while (!found && idx < hosts.length) { const h = hosts[idx++]; if (await probe(h, tokenHash, kid)) found = found || h; } };
+  await Promise.all(Array.from({ length: 24 }, worker));
+  discovering = false;
+  if (found) {
+    localStorage.setItem(LS.url, found);
+    failCount = 0;
+    toast('کامپیوتر پیدا شد: ' + found.replace('http://', ''));
+    poll();
+  } else if (manual) {
+    toast('کامپیوتر در این شبکه پیدا نشد؛ آدرس را دستی وارد کنید', true);
+  }
+  updateConnBanner();
+}
+
+function updateConnBanner() {
+  const el = $('#conn');
+  if (!el) return;
+  if (online || failCount < 2) { el.innerHTML = ''; return; }
+  if (WEB) {
+    el.innerHTML = `<div class="conn"><b>ارتباط با کامپیوتر برقرار نیست.</b><br>
+      برنامه گیم‌نت روی کامپیوتر باز است؟ اگر IP کامپیوتر عوض شده، از تنظیمات ← ریموت موبایل QR جدید را اسکن کنید.</div>`;
+    return;
+  }
+  el.innerHTML = `<div class="conn"><b>ارتباط با کامپیوتر برقرار نیست.</b>
+    ${discovering ? '<div>در حال جستجوی کامپیوتر در شبکه…</div>' : '<div>اگر IP کامپیوتر عوض شده، جستجو کنید یا آدرس جدید را وارد کنید. نیازی به جفت‌سازی دوباره نیست.</div>'}
+    <div class="acts"><button id="cdisc" ${discovering ? 'disabled' : ''}>جستجوی خودکار</button><button class="s" id="caddr">تغییر آدرس</button></div></div>`;
+  $('#cdisc').onclick = () => discover(true);
+  $('#caddr').onclick = openAddress;
+}
+
+function openAddress() {
+  const cur = (localStorage.getItem(LS.url) || '').replace('http://', '');
+  openSheet(`<div class="name">آدرس کامپیوتر</div>
+  <div class="mu" style="margin:6px 0">آدرس جدید را از تنظیمات ← «ریموت موبایل» روی کامپیوتر ببینید.</div>
+  <input id="naddr" dir="ltr" placeholder="192.168.1.10:4747" value="${esc(cur)}">
+  <div class="err" id="err"></div>
+  <div class="row"><button class="s" id="x" style="flex:1">انصراف</button><button id="ok" style="flex:2">ذخیره و اتصال</button></div>`);
+  $('#x').onclick = closeSheet;
+  $('#ok').onclick = async () => {
+    let host = $('#naddr').value.trim().replace(/^https?:\/\//, '').replace(/\/+$/, '');
+    if (!host) return ($('#err').textContent = 'آدرس را وارد کنید');
+    if (!/:\d+$/.test(host)) host += ':4747';
+    $('#ok').disabled = true; $('#err').textContent = '';
+    const token = localStorage.getItem(LS.token);
+    const th = sha256(token);
+    if (!(await probe('http://' + host, th, sha256(th)))) {
+      $('#ok').disabled = false;
+      return ($('#err').textContent = 'برنامه گیم‌نت با این گوشی در این آدرس پیدا نشد');
+    }
+    localStorage.setItem(LS.url, 'http://' + host);
+    failCount = 0; closeSheet(); toast('آدرس ذخیره شد'); poll();
+  };
+}
+
+function openMenu() {
+  const t = getTheme();
+  openSheet(`<div class="name" style="margin-bottom:6px">تنظیمات</div>
+  <div class="mu" style="margin-bottom:10px">${WEB ? 'کامپیوتر: <span dir="ltr">' + esc(location.host) + '</span>' : 'کامپیوتر: <span dir="ltr">' + esc((localStorage.getItem(LS.url) || '').replace('http://', '')) + '</span>'}</div>
+  <div class="menu">
+    <button class="s" data-m="theme">تم: ${THEME_ICON[t]} ${THEME_LABEL[t]}</button>
+    ${WEB ? '' : '<button class="s" data-m="addr">تغییر آدرس کامپیوتر</button><button class="s" data-m="disc">جستجوی خودکار کامپیوتر</button>'}
+    <button class="r" data-m="unpair">حذف این گوشی و جفت‌سازی دوباره</button>
+    <button class="s" data-m="x">بستن</button>
+  </div>`);
+  document.querySelectorAll('[data-m]').forEach((b) => (b.onclick = () => {
+    const m = b.dataset.m;
+    if (m === 'theme') { cycleTheme(); openMenu(); }
+    else if (m === 'addr') openAddress();
+    else if (m === 'disc') { closeSheet(); discover(true); }
+    else if (m === 'unpair') { if (confirm('اتصال این گوشی حذف شود؟ برای استفاده دوباره باید با کد جدید جفت شود.')) { closeSheet(); unpair(); } }
+    else closeSheet();
+  }));
+}
+
 // ---------- Polling ----------
 async function poll() {
   if (!localStorage.getItem(LS.token)) return;
   try {
     const j = await api('/api/state');
-    skew = j.serverTime - Date.now(); state = j.state; online = true;
-  } catch (e) { online = false; }
+    skew = j.serverTime - Date.now(); state = j.state; online = true; failCount = 0;
+  } catch (e) {
+    online = false; failCount++;
+    // اندروید: بعد از ~۱۰ ثانیه قطعی، کامپیوتر را در شبکه پیدا کن (شاید IP عوض شده)
+    if (!WEB && NATIVE && failCount >= 4 && !discovering && Date.now() - lastDiscover > 60000) discover(false);
+  }
+  updateConnBanner();
   const dot = $('#dot'); if (dot) { dot.className = 'dot ' + (online ? 'ok' : ''); $('#st').textContent = online ? 'متصل' : 'قطع'; }
   if (tab === 'sale' && state && !salePay && $('#list')) renderSale();
   if (!document.querySelector('.sheet')) renderList();

@@ -76,6 +76,16 @@ function startRemoteServer(getWindow, { isAllowed = () => true } = {}) {
   };
   const hash = (t) => crypto.createHash('sha256').update(t).digest('hex');
 
+  // شناسه ثابت این کامپیوتر (برای پیدا کردن دوباره آن توسط گوشی بعد از عوض شدن IP)
+  const idFile = path.join(app.getPath('userData'), 'remote-server-id');
+  let serverId = '';
+  try { serverId = fs.readFileSync(idFile, 'utf8').trim(); } catch { /* first run */ }
+  if (!/^[a-f0-9]{32}$/.test(serverId)) {
+    serverId = crypto.randomBytes(16).toString('hex');
+    try { fs.writeFileSync(idFile, serverId); } catch (e) { console.error('remote: id save failed', e); }
+  }
+  let helloHits = [];
+
   let latestState = null;
   let pairing = null; // { code, expiresAt }
   let failedPairs = 0;
@@ -161,10 +171,28 @@ function startRemoteServer(getWindow, { isAllowed = () => true } = {}) {
     res.sendFile(path.join(WEB_DIR, path.basename(req.path)));
   });
 
-  api.get('/api/ping', (_req, res) => res.json({ ok: true, app: 'gamenet-manager' }));
+  api.get('/api/ping', (_req, res) => res.json({ ok: true, app: 'gamenet-manager', id: serverId }));
+
+  // اثبات هویت کامپیوتر به گوشی، بدون اینکه گوشی توکنش را بفرستد:
+  // گوشی kid = sha256(sha256(token)) و یک nonce می‌فرستد؛ فقط کامپیوتری که هش توکن را دارد
+  // می‌تواند HMAC درست را برگرداند. بعد از آن گوشی توکن را می‌فرستد.
+  api.post('/api/hello', (req, res) => {
+    const now = Date.now();
+    helloHits = helloHits.filter((t) => now - t < 60000);
+    if (helloHits.length >= 60) return res.status(429).json({ error: 'busy' });
+    helloHits.push(now);
+    const { kid, nonce } = req.body || {};
+    if (typeof kid !== 'string' || !/^[a-f0-9]{64}$/.test(kid) || typeof nonce !== 'string' || !/^[a-f0-9]{32,64}$/.test(nonce)) {
+      return res.status(400).json({ error: 'bad request' });
+    }
+    const device = devices.find((d) => safeEq(hash(d.tokenHash), kid));
+    if (!device) return res.status(404).json({ error: 'unknown device' });
+    const proof = crypto.createHmac('sha256', device.tokenHash).update(nonce).digest('hex');
+    res.json({ ok: true, id: serverId, proof });
+  });
 
   api.use('/api', (req, res, next) => {
-    if (req.path === '/ping' || isAllowed()) return next();
+    if (req.path === '/ping' || req.path === '/hello' || isAllowed()) return next();
     res.status(403).json({ error: NOT_ALLOWED });
   });
 

@@ -4,8 +4,9 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "setup": "npm i @capacitor/core @capacitor/android capacitor-native-biometric && npm i -D @capacitor/cli && npx cap add android && node patch-android.mjs && npx cap sync android",
+    "setup": "npm i @capacitor/core @capacitor/android capacitor-native-biometric && npm i -D @capacitor/cli @capacitor/assets && npx cap add android && node patch-android.mjs && npm run icons && npx cap sync android",
     "sync": "npx cap sync android",
-    "open": "npx cap open android"
+    "open": "npx cap open android",
+    "icons": "npx capacitor-assets generate --android --iconBackgroundColor \"#ffffff\" --splashBackgroundColor \"#ffffff\""
   }
 }

@@ -9,7 +9,7 @@ User=gamenet
 Group=gamenet
 WorkingDirectory=/opt/gamenet-license
 EnvironmentFile=/etc/gamenet-license.env
-ExecStart=/usr/bin/node server/index.mjs
+ExecStart=__NODE__ server/index.mjs
 Restart=always
 RestartSec=3
 # محدودیت منابع (برای سرور ۲ گیگ رم کافی است)
