@@ -1,7 +1,15 @@
 /**
- * GameNet Local License Service (Offline / Local Mode)
- * Operates 100% locally via browser/Electron localStorage without requiring any external server connection.
+ * سرویس لایسنس سمت رابط کاربری
+ *
+ * - برنامه دسکتاپ: همه چیز در main process الکترون انجام می‌شود (electron/license.cjs)
+ *   و این فایل فقط وضعیت را از طریق window.licenseBridge می‌گیرد. چیزی در localStorage
+ *   تصمیم نمی‌گیرد.
+ * - نسخه وب (بدون الکترون): مستقیم با سرور لایسنس صحبت می‌کند. این حالت ضعیف‌تر است
+ *   چون مرورگر قابل اعتماد نیست؛ برای فروش از نسخه دسکتاپ استفاده کنید.
+ * - پنل مدیر (admin.html): توابع Admin* با API مدیریت سرور کار می‌کنند.
  */
+
+export type SubscriptionType = '6months' | '12months' | 'custom' | 'lifetime';
 
 export interface LicenseUser {
   id: string;
@@ -9,467 +17,318 @@ export interface LicenseUser {
   businessName: string;
   ownerName: string;
   phoneNumber: string;
-  subscriptionType: '6months' | '12months' | 'custom' | 'lifetime';
+  subscriptionType: SubscriptionType;
   startDateISO: string;
   endDateISO: string;
-  customDays?: number;
   status: 'active' | 'suspended' | 'expired';
   rawStatus?: 'active' | 'suspended';
   isExpired?: boolean;
-  createdAtISO: string;
-  passwordText?: string;
+  maxDevices?: number;
+  deviceCount?: number;
+  features?: { remote: boolean };
+  createdAtISO?: string;
 }
 
-const STORAGE_KEYS = {
-  LOCAL_LICENSES_DB: 'gamenet_local_licenses_db_v2',
-  CLIENT_TOKEN: 'gamenet_license_token_v2',
-  CLIENT_INFO: 'gamenet_license_client_v2',
-  CLIENT_LOGGED_OUT: 'gamenet_license_explicit_logout_v2',
-  ADMIN_TOKEN: 'gamenet_admin_token_v2',
+export type LicenseState =
+  | 'loading'
+  | 'active'
+  | 'none'
+  | 'invalid'
+  | 'device_mismatch'
+  | 'clock'
+  | 'offline_expired'
+  | 'expired'
+  | 'suspended'
+  | 'device_revoked'
+  | 'no_public_key';
+
+export interface LicenseStatus {
+  state: LicenseState;
+  message?: string;
+  license?: Omit<LicenseUser, 'status'>;
+  features?: { remote: boolean };
+  tokenExpiresAt?: string;
+  lastSync?: number | null;
+}
+
+export interface LicenseBridge {
+  status: () => Promise<LicenseStatus>;
+  activate: (username: string, password: string) => Promise<{ ok: boolean; message?: string; status?: LicenseStatus | string }>;
+  refresh: () => Promise<{ ok: boolean; offline?: boolean; message?: string; status: LicenseStatus }>;
+  logout: () => Promise<LicenseStatus>;
+  onChange: (cb: (s: LicenseStatus) => void) => () => void;
+}
+
+declare global {
+  interface Window {
+    licenseBridge?: LicenseBridge;
+  }
+}
+
+const KEYS = {
+  WEB_TOKEN: 'gamenet_web_license_token_v3',
+  WEB_DEVICE: 'gamenet_web_device_id_v3',
+  ADMIN_TOKEN: 'gamenet_admin_token_v3',
   CUSTOM_SERVER_URL: 'gamenet_custom_license_server_url',
 };
 
-function createDefaultLocalLicense(): LicenseUser {
-  const now = Date.now();
-  return {
-    id: 'lic-local-default',
-    username: 'local_admin',
-    passwordText: '123',
-    businessName: 'نسخه لوکال (آفلاین - بدون نیاز به سرور)',
-    ownerName: 'مدیریت مجموعه',
-    phoneNumber: '09120000000',
-    subscriptionType: 'lifetime',
-    startDateISO: new Date(now).toISOString(),
-    endDateISO: new Date(now + 9999 * 24 * 3600 * 1000).toISOString(),
-    status: 'active',
-    rawStatus: 'active',
-    isExpired: false,
-    createdAtISO: new Date(now).toISOString(),
-  };
-}
+const safeGet = (store: Storage, k: string) => { try { return store.getItem(k); } catch { return null; } };
+const safeSet = (store: Storage, k: string, v: string | null) => {
+  try { if (v == null) store.removeItem(k); else store.setItem(k, v); } catch { /* ignore */ }
+};
 
-function getInitialSeedLicenses(): LicenseUser[] {
-  const now = Date.now();
-  return [
-    createDefaultLocalLicense(),
-    {
-      id: 'lic-1',
-      username: 'game_user1',
-      passwordText: '123456',
-      businessName: 'گیم نت کهکشان (اشتراک ۶ ماهه)',
-      ownerName: 'حمید محمدی',
-      phoneNumber: '09123456789',
-      subscriptionType: '6months',
-      startDateISO: new Date(now).toISOString(),
-      endDateISO: new Date(now + 180 * 24 * 3600 * 1000).toISOString(),
-      status: 'active',
-      rawStatus: 'active',
-      isExpired: false,
-      createdAtISO: new Date(now).toISOString(),
-    },
-    {
-      id: 'lic-2',
-      username: 'game_user2',
-      passwordText: '123456',
-      businessName: 'کلوپ پرشین (اشتراک ۱۲ ماهه)',
-      ownerName: 'سعید رضایی',
-      phoneNumber: '09187654321',
-      subscriptionType: '12months',
-      startDateISO: new Date(now).toISOString(),
-      endDateISO: new Date(now + 365 * 24 * 3600 * 1000).toISOString(),
-      status: 'active',
-      rawStatus: 'active',
-      isExpired: false,
-      createdAtISO: new Date(now).toISOString(),
-    },
-    {
-      id: 'lic-3',
-      username: 'game_user3',
-      passwordText: '123456',
-      businessName: 'گیم آریانا (اشتراک نامحدود / Lifetime)',
-      ownerName: 'آرش علوی',
-      phoneNumber: '09012223344',
-      subscriptionType: 'lifetime',
-      startDateISO: new Date(now).toISOString(),
-      endDateISO: new Date(now + 9999 * 24 * 3600 * 1000).toISOString(),
-      status: 'active',
-      rawStatus: 'active',
-      isExpired: false,
-      createdAtISO: new Date(now).toISOString(),
-    },
-  ];
-}
-
-function normalizeLicenseStatus(user: LicenseUser): LicenseUser {
-  const isLifetime = user.subscriptionType === 'lifetime';
-  const endMs = new Date(user.endDateISO).getTime();
-  const isExpired = !isLifetime && !isNaN(endMs) && endMs < Date.now();
-  const rawStatus = user.rawStatus || (user.status === 'suspended' ? 'suspended' : 'active');
-  let status: LicenseUser['status'] = rawStatus;
-  if (rawStatus === 'active' && isExpired) {
-    status = 'expired';
-  }
-  return {
-    ...user,
-    rawStatus,
-    isExpired,
-    status,
-  };
-}
-
-export function getLocalLicensesList(): LicenseUser[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEYS.LOCAL_LICENSES_DB);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed.map(normalizeLicenseStatus);
-      }
-    }
-  } catch (e) {
-    console.warn('Error reading local licenses db:', e);
-  }
-  const seeds = getInitialSeedLicenses();
-  localStorage.setItem(STORAGE_KEYS.LOCAL_LICENSES_DB, JSON.stringify(seeds));
-  return seeds;
-}
-
-function saveLocalLicensesList(list: LicenseUser[]): void {
-  localStorage.setItem(STORAGE_KEYS.LOCAL_LICENSES_DB, JSON.stringify(list));
-}
-
-export const DEFAULT_LICENSE_API_URL = '';
+// ---------------------------------------------------------------------------
+// Server URL
+// ---------------------------------------------------------------------------
+export const DEFAULT_LICENSE_API_URL: string =
+  (import.meta.env.VITE_LICENSE_API_URL as string | undefined)?.replace(/\/+$/, '') ||
+  (typeof location !== 'undefined' && location.protocol.startsWith('http') ? location.origin : '');
 
 export function getLicenseApiBaseUrl(): string {
-  return 'local://storage';
+  return safeGet(localStorage, KEYS.CUSTOM_SERVER_URL) || DEFAULT_LICENSE_API_URL;
 }
 
 export function setCustomLicenseServerUrl(url: string): void {
-  if (url.trim()) {
-    localStorage.setItem(STORAGE_KEYS.CUSTOM_SERVER_URL, url.trim());
-  } else {
-    localStorage.removeItem(STORAGE_KEYS.CUSTOM_SERVER_URL);
-  }
+  safeSet(localStorage, KEYS.CUSTOM_SERVER_URL, url.trim() ? url.trim().replace(/\/+$/, '') : null);
 }
 
-export function getStoredClientToken(): string | null {
-  const existing = localStorage.getItem(STORAGE_KEYS.CLIENT_TOKEN);
-  if (existing) return existing;
-  if (localStorage.getItem(STORAGE_KEYS.CLIENT_LOGGED_OUT) !== 'true') {
-    return 'local-offline-token';
-  }
-  return null;
+async function api<T = any>(path: string, init: RequestInit = {}, token?: string | null): Promise<{ httpStatus: number; data: T }> {
+  const headers: Record<string, string> = { Accept: 'application/json' };
+  if (init.body) headers['Content-Type'] = 'application/json';
+  if (token) headers.Authorization = `Bearer ${token}`;
+  const res = await fetch(`${getLicenseApiBaseUrl()}/api${path}`, { ...init, headers: { ...headers, ...(init.headers as any) } });
+  const data = await res.json().catch(() => ({}));
+  return { httpStatus: res.status, data };
 }
 
-export function getStoredClient(): LicenseUser | null {
+// ---------------------------------------------------------------------------
+// Client (the gamenet app)
+// ---------------------------------------------------------------------------
+const DEV_BYPASS = import.meta.env.DEV && import.meta.env.VITE_LICENSE_DEV_BYPASS === 'true';
+
+const DEV_STATUS: LicenseStatus = {
+  state: 'active',
+  license: {
+    id: 'dev', username: 'dev', businessName: 'حالت توسعه (بدون لایسنس)', ownerName: '', phoneNumber: '',
+    subscriptionType: 'lifetime', startDateISO: new Date().toISOString(), endDateISO: '2099-12-31T00:00:00.000Z',
+  },
+  features: { remote: true },
+};
+
+export function hasDesktopLicense(): boolean {
+  return typeof window !== 'undefined' && !!window.licenseBridge;
+}
+
+// --- web fallback (unverified, online check on every start) ---
+function webDeviceId(): string {
+  let id = safeGet(localStorage, KEYS.WEB_DEVICE);
+  if (!id || !/^[a-f0-9]{64}$/.test(id)) {
+    const b = new Uint8Array(32);
+    crypto.getRandomValues(b);
+    id = Array.from(b, (x) => x.toString(16).padStart(2, '0')).join('');
+    safeSet(localStorage, KEYS.WEB_DEVICE, id);
+  }
+  return id;
+}
+
+function decodeWebToken(token: string | null): LicenseStatus {
+  if (!token) return { state: 'none' };
   try {
-    const raw = localStorage.getItem(STORAGE_KEYS.CLIENT_INFO);
-    if (raw) {
-      return normalizeLicenseStatus(JSON.parse(raw));
-    }
-    // Auto-activate default local license if user hasn't explicitly logged out
-    if (localStorage.getItem(STORAGE_KEYS.CLIENT_LOGGED_OUT) !== 'true') {
-      const defaultClient = createDefaultLocalLicense();
-      setStoredClient(defaultClient, 'local-offline-token');
-      return defaultClient;
-    }
-    return null;
+    const p = JSON.parse(atob(token.split('.')[0].replace(/-/g, '+').replace(/_/g, '/')));
+    const license = {
+      id: p.lid, username: p.usr, businessName: p.bn, ownerName: p.own || '', phoneNumber: p.ph || '',
+      subscriptionType: p.plan, startDateISO: p.start, endDateISO: p.end || '2099-12-31T00:00:00.000Z',
+    };
+    if (Date.now() > p.exp) return { state: p.end && Date.now() > Date.parse(p.end) ? 'expired' : 'offline_expired', license };
+    return { state: 'active', license, features: p.feat, tokenExpiresAt: new Date(p.exp).toISOString() };
   } catch {
-    const defaultClient = createDefaultLocalLicense();
-    return defaultClient;
+    return { state: 'invalid' };
   }
 }
 
-export function setStoredClient(user: LicenseUser | null, token?: string): void {
-  if (user) {
-    localStorage.setItem(STORAGE_KEYS.CLIENT_INFO, JSON.stringify(user));
-    localStorage.removeItem(STORAGE_KEYS.CLIENT_LOGGED_OUT);
-  } else {
-    localStorage.removeItem(STORAGE_KEYS.CLIENT_INFO);
+const webStatusFromServer = (data: any): LicenseStatus | null =>
+  ['expired', 'suspended', 'device_revoked'].includes(data?.status) ? { state: data.status, message: data.message } : null;
+
+export async function getLicenseStatus(): Promise<LicenseStatus> {
+  if (DEV_BYPASS) return DEV_STATUS;
+  if (window.licenseBridge) return window.licenseBridge.status();
+  return decodeWebToken(safeGet(localStorage, KEYS.WEB_TOKEN));
+}
+
+export async function activateLicense(username: string, password: string): Promise<{ ok: boolean; message?: string }> {
+  if (window.licenseBridge) {
+    const r = await window.licenseBridge.activate(username, password);
+    return { ok: r.ok, message: r.message };
   }
+  try {
+    const { data } = await api('/license/activate', {
+      method: 'POST',
+      body: JSON.stringify({ username, password, deviceId: webDeviceId(), deviceName: 'مرورگر' }),
+    });
+    if (data.success && data.token) {
+      safeSet(localStorage, KEYS.WEB_TOKEN, data.token);
+      return { ok: true };
+    }
+    return { ok: false, message: data.message || 'فعال‌سازی ناموفق بود.' };
+  } catch {
+    return { ok: false, message: 'اتصال به سرور لایسنس برقرار نشد.' };
+  }
+}
+
+export async function refreshLicense(): Promise<{ ok: boolean; message?: string; status: LicenseStatus }> {
+  if (DEV_BYPASS) return { ok: true, status: DEV_STATUS };
+  if (window.licenseBridge) return window.licenseBridge.refresh();
+  const token = safeGet(localStorage, KEYS.WEB_TOKEN);
+  if (!token) return { ok: false, status: { state: 'none' } };
+  try {
+    const { data } = await api('/license/refresh', { method: 'POST', body: JSON.stringify({ token, deviceId: webDeviceId() }) });
+    if (data.success && data.token) {
+      safeSet(localStorage, KEYS.WEB_TOKEN, data.token);
+      return { ok: true, status: decodeWebToken(data.token) };
+    }
+    const blocked = webStatusFromServer(data);
+    if (blocked) return { ok: false, message: data.message, status: blocked };
+    if (data.status === 'invalid' || data.status === 'not_found') safeSet(localStorage, KEYS.WEB_TOKEN, null);
+    return { ok: false, message: data.message, status: await getLicenseStatus() };
+  } catch {
+    return { ok: false, message: 'اتصال به سرور لایسنس برقرار نشد.', status: await getLicenseStatus() };
+  }
+}
+
+export async function logoutLicense(): Promise<void> {
+  if (window.licenseBridge) {
+    await window.licenseBridge.logout();
+    return;
+  }
+  const token = safeGet(localStorage, KEYS.WEB_TOKEN);
   if (token) {
-    localStorage.setItem(STORAGE_KEYS.CLIENT_TOKEN, token);
-  } else if (user === null) {
-    localStorage.removeItem(STORAGE_KEYS.CLIENT_TOKEN);
+    await api('/license/deactivate', { method: 'POST', body: JSON.stringify({ token, deviceId: webDeviceId() }) }).catch(() => {});
   }
+  safeSet(localStorage, KEYS.WEB_TOKEN, null);
 }
 
-export function activateLocalDefaultLicense(): LicenseUser {
-  const defaultClient = createDefaultLocalLicense();
-  const list = getLocalLicensesList();
-  if (!list.some((u) => u.id === defaultClient.id)) {
-    saveLocalLicensesList([defaultClient, ...list]);
-  }
-  setStoredClient(defaultClient, 'local-offline-token');
-  return defaultClient;
+export function onLicenseChange(cb: (s: LicenseStatus) => void): () => void {
+  return window.licenseBridge ? window.licenseBridge.onChange(cb) : () => {};
 }
 
+export function statusToUser(s: LicenseStatus): LicenseUser | null {
+  if (!s.license) return null;
+  const status: LicenseUser['status'] = s.state === 'suspended' ? 'suspended' : s.state === 'expired' ? 'expired' : 'active';
+  return { ...s.license, status, features: s.features };
+}
+
+/**
+ * قفل «پیشخوان توسعه‌دهنده» داخل برنامه (تنظیمات پیامک و ...).
+ * فقط با نام کاربری/رمز مدیر خود برنامه باز می‌شود؛ هیچ رمز پیش‌فرض یا عمومی ندارد.
+ */
+export function verifyConsoleAdmin(username: string, password: string, appAdminUsername: string, appAdminPassword: string): boolean {
+  if (!appAdminPassword) return false;
+  return username.trim().toLowerCase() === appAdminUsername.trim().toLowerCase() && password === appAdminPassword;
+}
+
+// ---------------------------------------------------------------------------
+// Admin panel (admin.html) -> license server
+// ---------------------------------------------------------------------------
 export function getStoredAdminToken(): string | null {
-  return localStorage.getItem(STORAGE_KEYS.ADMIN_TOKEN);
+  return safeGet(sessionStorage, KEYS.ADMIN_TOKEN);
 }
 
 export function setStoredAdminToken(token: string | null): void {
-  if (token) {
-    localStorage.setItem(STORAGE_KEYS.ADMIN_TOKEN, token);
-  } else {
-    localStorage.removeItem(STORAGE_KEYS.ADMIN_TOKEN);
+  safeSet(sessionStorage, KEYS.ADMIN_TOKEN, token);
+}
+
+function adminCall<T = any>(path: string, init: RequestInit = {}) {
+  return api<T>(path, init, getStoredAdminToken());
+}
+
+export async function loginAdmin(username: string, password: string): Promise<{ success: boolean; message: string; token?: string }> {
+  try {
+    const { data } = await api('/admin/login', { method: 'POST', body: JSON.stringify({ username, password }) });
+    return { success: !!data.success, message: data.message || '', token: data.token };
+  } catch {
+    return { success: false, message: 'اتصال به سرور لایسنس برقرار نشد.' };
   }
 }
 
-/**
- * Client Login (100% Local)
- */
-export async function loginLicenseClient(
-  username: string,
-  passwordText: string
-): Promise<{ success: boolean; message: string; user?: LicenseUser; token?: string; status?: string }> {
-  const cleanUser = username.trim().toLowerCase();
-  const list = getLocalLicensesList();
-
-  // Match against local licenses list
-  const found = list.find((u) => u.username.trim().toLowerCase() === cleanUser);
-
-  if (found) {
-    const expectedPass = found.passwordText || '123456';
-    if (passwordText !== expectedPass && passwordText !== '123') {
-      return {
-        success: false,
-        message: 'نام کاربری یا رمز عبور اشتباه است.',
-      };
-    }
-
-    const normalized = normalizeLicenseStatus(found);
-    if (normalized.status === 'suspended') {
-      return {
-        success: false,
-        status: 'suspended',
-        message: 'این حساب لایسنس مسدود شده است.',
-      };
-    }
-
-    const token = `local-token-${normalized.id}-${Date.now()}`;
-    setStoredClient(normalized, token);
-    return {
-      success: true,
-      message: 'ورود به سامانه لایسنس محلی با موفقیت انجام شد.',
-      user: normalized,
-      token,
-    };
-  }
-
-  // Also allow quick login with default admin credentials ('admin' / '123')
-  if ((cleanUser === 'admin' || cleanUser === 'local') && (passwordText === '123' || passwordText === 'admin123')) {
-    const defaultClient = activateLocalDefaultLicense();
-    return {
-      success: true,
-      message: 'ورود با لایسنس محلی انجام شد.',
-      user: defaultClient,
-      token: 'local-offline-token',
-    };
-  }
-
-  return {
-    success: false,
-    message: 'نام کاربری یافت نشد. (می‌توانید از دکمه ورود مستقیم لوکال یا حساب game_user1 با رمز 123456 استفاده کنید)',
-  };
-}
-
-/**
- * Check & verify current subscription from Local Storage
- */
-export async function fetchCurrentSubscription(): Promise<{
-  success: boolean;
-  user?: LicenseUser;
-  message?: string;
-  status?: string;
-}> {
-  const stored = getStoredClient();
-  if (!stored) {
-    return { success: false, message: 'لایسنس فعالی یافت نشد.' };
-  }
-
-  const list = getLocalLicensesList();
-  const latest = list.find((u) => u.id === stored.id || u.username.toLowerCase() === stored.username.toLowerCase()) || stored;
-  const normalized = normalizeLicenseStatus(latest);
-
-  if (normalized.status === 'suspended') {
-    setStoredClient(normalized);
-    return {
-      success: false,
-      user: normalized,
-      status: 'suspended',
-      message: 'این حساب لایسنس مسدود شده است.',
-    };
-  }
-
-  setStoredClient(normalized);
-  return {
-    success: true,
-    user: normalized,
-    status: normalized.status,
-  };
-}
-
-/**
- * Logout Client
- */
-export function logoutLicenseClient(): void {
-  localStorage.setItem(STORAGE_KEYS.CLIENT_LOGGED_OUT, 'true');
-  setStoredClient(null);
-}
-
-/**
- * Admin Login (100% Local)
- */
-export async function loginAdmin(
-  username: string,
-  passwordText: string,
-  appAdminUsername = 'admin',
-  appAdminPassword = '123'
-): Promise<{ success: boolean; message: string; token?: string }> {
-  const cleanInputUser = username.trim().toLowerCase();
-  const validUser = cleanInputUser === 'admin' || cleanInputUser === appAdminUsername.trim().toLowerCase();
-
-  const validPass =
-    passwordText === '123' ||
-    passwordText === 'admin123' ||
-    passwordText === appAdminPassword;
-
-  if (validUser && validPass) {
-    const token = `local-admin-token-${Date.now()}`;
-    setStoredAdminToken(token);
-    return {
-      success: true,
-      message: 'ورود مدیریت محلی تایید شد.',
-      token,
-    };
-  }
-
-  return {
-    success: false,
-    message: 'نام کاربری یا رمز عبور مدیر نادرست است (پیش‌فرض: admin و رمز 123).',
-  };
-}
-
-/**
- * Logout Admin
- */
 export function logoutAdmin(): void {
   setStoredAdminToken(null);
 }
 
-/**
- * Admin: Fetch all licenses locally
- */
 export async function fetchAdminLicenses(): Promise<LicenseUser[]> {
-  return getLocalLicensesList();
+  const { httpStatus, data } = await adminCall('/admin/licenses');
+  if (httpStatus === 401) throw new Error('401: نشست مدیریت منقضی شده است.');
+  if (!data.success) throw new Error(data.message || 'خطا در دریافت لیست لایسنس‌ها.');
+  return data.licenses;
 }
 
-/**
- * Admin: Create License locally
- */
 export async function createAdminLicense(payload: {
   username: string;
   password: string;
   businessName: string;
   ownerName?: string;
   phoneNumber?: string;
-  subscriptionType?: '6months' | '12months' | 'custom' | 'lifetime';
+  subscriptionType?: SubscriptionType;
   customDays?: number;
   status?: 'active' | 'suspended';
+  maxDevices?: number;
+  features?: { remote: boolean };
 }): Promise<{ success: boolean; message: string; license?: LicenseUser }> {
-  const list = getLocalLicensesList();
-  const cleanUser = payload.username.trim().toLowerCase();
-
-  if (list.some((u) => u.username.trim().toLowerCase() === cleanUser)) {
-    return { success: false, message: 'این نام کاربری قبلاً در لیست لایسنس‌ها ثبت شده است.' };
-  }
-
-  const now = Date.now();
-  const subType = payload.subscriptionType || '6months';
-  let days = 180;
-  if (subType === '12months') days = 365;
-  else if (subType === 'lifetime') days = 9999;
-  else if (subType === 'custom') days = Number(payload.customDays) || 30;
-
-  const newLicense: LicenseUser = normalizeLicenseStatus({
-    id: `lic-${now}`,
-    username: payload.username.trim(),
-    passwordText: payload.password,
-    businessName: payload.businessName.trim() || 'گیم‌نت ثبت شده',
-    ownerName: (payload.ownerName || 'مدیر مجموعه').trim(),
-    phoneNumber: (payload.phoneNumber || '').trim(),
-    subscriptionType: subType,
-    customDays: payload.customDays,
-    startDateISO: new Date(now).toISOString(),
-    endDateISO: new Date(now + days * 24 * 3600 * 1000).toISOString(),
-    status: payload.status === 'suspended' ? 'suspended' : 'active',
-    rawStatus: payload.status === 'suspended' ? 'suspended' : 'active',
-    createdAtISO: new Date(now).toISOString(),
-  });
-
-  const updated = [newLicense, ...list];
-  saveLocalLicensesList(updated);
-
-  return {
-    success: true,
-    message: 'لایسنس جدید در حافظه محلی ثبت شد.',
-    license: newLicense,
-  };
+  const { data } = await adminCall('/admin/licenses', { method: 'POST', body: JSON.stringify(payload) });
+  return data;
 }
 
-/**
- * Admin: Update License locally
- */
 export async function updateAdminLicense(
   id: string,
-  updates: Partial<LicenseUser> & { password?: string }
+  updates: Partial<Omit<LicenseUser, 'status'>> & { status?: 'active' | 'suspended' | 'expired'; password?: string }
 ): Promise<{ success: boolean; message: string; license?: LicenseUser }> {
-  const list = getLocalLicensesList();
-  const idx = list.findIndex((u) => u.id === id);
-  if (idx === -1) {
-    return { success: false, message: 'لایسنس مورد نظر یافت نشد.' };
-  }
-
-  const current = list[idx];
-  const nextRawStatus = updates.status
-    ? updates.status === 'suspended'
-      ? 'suspended'
-      : 'active'
-    : current.rawStatus || (current.status === 'suspended' ? 'suspended' : 'active');
-
-  const updatedItem = normalizeLicenseStatus({
-    ...current,
-    ...updates,
-    rawStatus: nextRawStatus,
-    passwordText: updates.password ? updates.password : current.passwordText,
-  });
-
-  list[idx] = updatedItem;
-  saveLocalLicensesList(list);
-
-  // Also sync stored client if it's the same user
-  const activeClient = getStoredClient();
-  if (activeClient && activeClient.id === id) {
-    setStoredClient(updatedItem);
-  }
-
-  return {
-    success: true,
-    message: 'تغییرات لایسنس با موفقیت ذخیره شد.',
-    license: updatedItem,
-  };
+  const { data } = await adminCall(`/admin/licenses/${encodeURIComponent(id)}`, { method: 'PATCH', body: JSON.stringify(updates) });
+  return data;
 }
 
-/**
- * Admin: Delete License locally
- */
 export async function deleteAdminLicense(id: string): Promise<{ success: boolean; message: string }> {
-  const list = getLocalLicensesList();
-  const filtered = list.filter((u) => u.id !== id);
-  saveLocalLicensesList(filtered);
-  return {
-    success: true,
-    message: 'لایسنس با موفقیت حذف گردید.',
-  };
+  const { data } = await adminCall(`/admin/licenses/${encodeURIComponent(id)}`, { method: 'DELETE' });
+  return data;
+}
+
+export interface LicenseDevice {
+  id: string;
+  name: string;
+  activatedAt: string;
+  lastSeen: string | null;
+  lastIp: string;
+}
+
+export async function fetchLicenseDevices(licenseId: string): Promise<LicenseDevice[]> {
+  const { data } = await adminCall(`/admin/licenses/${encodeURIComponent(licenseId)}/devices`);
+  if (!data.success) throw new Error(data.message || 'خطا در دریافت دستگاه‌ها.');
+  return data.devices;
+}
+
+export async function revokeLicenseDevice(deviceId: string): Promise<{ success: boolean; message: string }> {
+  const { data } = await adminCall(`/admin/devices/${encodeURIComponent(deviceId)}`, { method: 'DELETE' });
+  return data;
+}
+
+/** دانلود فایل بکاپ کامل (لایسنس‌ها + دستگاه‌ها) برای انتقال به سرور جدید */
+export async function downloadLicenseBackup(): Promise<void> {
+  const { httpStatus, data } = await adminCall('/admin/backup');
+  if (httpStatus !== 200) throw new Error(data?.message || 'خطا در دریافت بکاپ.');
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `gamenet-licenses-${new Date().toISOString().slice(0, 10)}.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+/** جایگزینی کامل دیتابیس این سرور با محتوای فایل بکاپ */
+export async function restoreLicenseBackup(file: File): Promise<{ success: boolean; message: string }> {
+  let backup: unknown;
+  try {
+    backup = JSON.parse(await file.text());
+  } catch {
+    return { success: false, message: 'فایل انتخاب‌شده JSON معتبر نیست.' };
+  }
+  const { data } = await adminCall('/admin/restore', { method: 'POST', body: JSON.stringify({ confirm: 'REPLACE_ALL', backup }) });
+  return data;
 }

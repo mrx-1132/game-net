@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   Shield, Key, Lock, Server, CheckCircle2, AlertTriangle, RefreshCw,
   Search, Plus, Trash2, Calendar, Phone, Building, User, Clock,
-  LogOut, X, Edit3, Check, ChevronDown, Activity, Globe, Power
+  LogOut, X, Edit3, Check, ChevronDown, Activity, Globe, Power, Laptop, Download, Upload
 } from 'lucide-react';
 import {
   LicenseUser,
@@ -15,7 +15,12 @@ import {
   deleteAdminLicense,
   getStoredAdminToken,
   setStoredAdminToken,
-  DEFAULT_LICENSE_API_URL
+  DEFAULT_LICENSE_API_URL,
+  LicenseDevice,
+  fetchLicenseDevices,
+  revokeLicenseDevice,
+  downloadLicenseBackup,
+  restoreLicenseBackup
 } from '../services/licenseService';
 
 function toPersianDigits(n: number | string): string {
@@ -81,6 +86,8 @@ export default function AdminApp() {
   const [newCustomDays, setNewCustomDays] = useState(30);
   const [newInitialStatus, setNewInitialStatus] = useState<'active' | 'suspended'>('active');
   const [isSubmittingCreate, setIsSubmittingCreate] = useState(false);
+  const [newMaxDevices, setNewMaxDevices] = useState(1);
+  const [newRemote, setNewRemote] = useState(true);
 
   // Edit Form State
   const [editBusinessName, setEditBusinessName] = useState('');
@@ -90,6 +97,14 @@ export default function AdminApp() {
   const [editEndDateISO, setEditEndDateISO] = useState('');
   const [editStatus, setEditStatus] = useState<'active' | 'suspended'>('active');
   const [isSubmittingEdit, setIsSubmittingEdit] = useState(false);
+  const [editMaxDevices, setEditMaxDevices] = useState(1);
+  const [editRemote, setEditRemote] = useState(true);
+
+  // Devices modal
+  const [devicesLicense, setDevicesLicense] = useState<LicenseUser | null>(null);
+  const [devices, setDevices] = useState<LicenseDevice[]>([]);
+  const [isLoadingDevices, setIsLoadingDevices] = useState(false);
+  const restoreInputRef = React.useRef<HTMLInputElement>(null);
 
   // Check Server Health
   const checkHealth = useCallback(async () => {
@@ -247,6 +262,8 @@ export default function AdminApp() {
         subscriptionType: newSubType,
         customDays: newSubType === 'custom' ? Number(newCustomDays) || 30 : undefined,
         status: newInitialStatus,
+        maxDevices: newMaxDevices,
+        features: { remote: newRemote },
       });
       if (res.success) {
         setShowCreateModal(false);
@@ -276,6 +293,8 @@ export default function AdminApp() {
     setEditNewPassword('');
     setEditEndDateISO(lic.endDateISO ? lic.endDateISO.split('T')[0] : '');
     setEditStatus(lic.status === 'suspended' ? 'suspended' : 'active');
+    setEditMaxDevices(lic.maxDevices || 1);
+    setEditRemote(lic.features?.remote !== false);
     setShowEditModal(true);
   };
 
@@ -290,6 +309,8 @@ export default function AdminApp() {
         ownerName: editOwnerName.trim(),
         phoneNumber: editPhone.trim(),
         status: editStatus,
+        maxDevices: editMaxDevices,
+        features: { remote: editRemote },
       };
       if (editNewPassword.trim().length > 0) {
         updates.password = editNewPassword.trim();
@@ -372,6 +393,57 @@ export default function AdminApp() {
       setErrorMessage(err?.message || 'خطا در حذف لایسنس.');
     } finally {
       setIsDeleting(false);
+    }
+  };
+
+  // Devices of a license
+  const openDevicesModal = async (lic: LicenseUser) => {
+    setDevicesLicense(lic);
+    setDevices([]);
+    setIsLoadingDevices(true);
+    try {
+      setDevices(await fetchLicenseDevices(lic.id));
+    } catch (err: any) {
+      setErrorMessage(err?.message || 'خطا در دریافت دستگاه‌ها.');
+    } finally {
+      setIsLoadingDevices(false);
+    }
+  };
+
+  const handleRevokeDevice = async (dev: LicenseDevice) => {
+    if (!devicesLicense) return;
+    if (!window.confirm(`دسترسی «${dev.name}» لغو شود؟ این کامپیوتر حداکثر تا چند ساعت دیگر قفل می‌شود و جای آن برای دستگاه جدید آزاد می‌شود.`)) return;
+    const res = await revokeLicenseDevice(dev.id);
+    if (res.success) {
+      setDevices((prev) => prev.filter((d) => d.id !== dev.id));
+      notifySuccess('دسترسی دستگاه لغو شد.');
+      loadLicenses();
+    } else {
+      setErrorMessage(res.message || 'خطا در لغو دسترسی.');
+    }
+  };
+
+  // Backup / restore
+  const handleDownloadBackup = async () => {
+    try {
+      await downloadLicenseBackup();
+      notifySuccess('فایل بکاپ دانلود شد. آن را جای امن نگه دارید.');
+    } catch (err: any) {
+      setErrorMessage(err?.message || 'خطا در دریافت بکاپ.');
+    }
+  };
+
+  const handleRestoreFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    if (!window.confirm('همه لایسنس‌ها و دستگاه‌های فعلی این سرور با محتوای فایل بکاپ جایگزین می‌شوند. ادامه می‌دهید؟')) return;
+    const res = await restoreLicenseBackup(file);
+    if (res.success) {
+      notifySuccess(res.message);
+      loadLicenses();
+    } else {
+      setErrorMessage(res.message || 'خطا در بازیابی بکاپ.');
     }
   };
 
@@ -525,7 +597,7 @@ export default function AdminApp() {
                 Admin v2.0
               </span>
             </h1>
-            <p className="text-[10px] text-slate-400">اتصال زنده به پایگاه داده متمرکز PostgreSQL روی Railway</p>
+            <p className="text-[10px] text-slate-400">مدیریت اشتراک‌ها، دستگاه‌ها و بکاپ سرور لایسنس</p>
           </div>
         </div>
 
@@ -535,6 +607,27 @@ export default function AdminApp() {
             <span className={`w-2 h-2 rounded-full ${serverPingStatus === 'online' ? 'bg-emerald-400' : 'bg-rose-500'}`} />
             <span className="text-[11px] text-slate-300 font-mono">{serverInfo?.database || 'PostgreSQL'}</span>
           </div>
+
+          <button
+            type="button"
+            onClick={handleDownloadBackup}
+            className="px-3 py-1.5 bg-[#121622] hover:bg-[#1a2030] text-emerald-300 rounded-xl border border-white/10 text-xs font-bold flex items-center gap-1.5 cursor-pointer"
+            title="دانلود بکاپ کامل برای انتقال به سرور جدید"
+          >
+            <Download className="w-3.5 h-3.5" />
+            <span className="hidden md:inline">بکاپ</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => restoreInputRef.current?.click()}
+            className="px-3 py-1.5 bg-[#121622] hover:bg-[#1a2030] text-amber-300 rounded-xl border border-white/10 text-xs font-bold flex items-center gap-1.5 cursor-pointer"
+            title="بازیابی از فایل بکاپ (جایگزینی کامل)"
+          >
+            <Upload className="w-3.5 h-3.5" />
+            <span className="hidden md:inline">بازیابی</span>
+          </button>
+          <input ref={restoreInputRef} type="file" accept="application/json,.json" className="hidden" onChange={handleRestoreFile} />
 
           <button
             type="button"
@@ -680,6 +773,7 @@ export default function AdminApp() {
                   <th className="p-3.5">تاریخ شروع</th>
                   <th className="p-3.5">تاریخ انقضا</th>
                   <th className="p-3.5 text-center">مهلت باقیمانده</th>
+                  <th className="p-3.5 text-center">دستگاه‌ها</th>
                   <th className="p-3.5 text-center">وضعیت دسترسی</th>
                   <th className="p-3.5 text-center">عملیات مدیریت</th>
                 </tr>
@@ -687,7 +781,7 @@ export default function AdminApp() {
               <tbody className="divide-y divide-white/5">
                 {filteredLicenses.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="p-8 text-center text-slate-500">
+                    <td colSpan={9} className="p-8 text-center text-slate-500">
                       هیچ لایسنسی با مشخصات وارد شده یافت نشد.
                     </td>
                   </tr>
@@ -743,6 +837,19 @@ export default function AdminApp() {
                               {toPersianDigits(remDays)} روز
                             </span>
                           )}
+                        </td>
+
+                        <td className="p-3.5 text-center">
+                          <button
+                            type="button"
+                            onClick={() => openDevicesModal(lic)}
+                            className="px-2 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-slate-200 text-[10px] font-bold inline-flex items-center gap-1 cursor-pointer"
+                            title="مشاهده و لغو دستگاه‌ها"
+                          >
+                            <Laptop className="w-3 h-3" />
+                            <span className="font-mono">{toPersianDigits(lic.deviceCount ?? 0)}/{toPersianDigits(lic.maxDevices ?? 1)}</span>
+                            {lic.features?.remote !== false && <span title="ریموت موبایل فعال">📱</span>}
+                          </button>
                         </td>
 
                         <td className="p-3.5 text-center">
@@ -924,6 +1031,23 @@ export default function AdminApp() {
                     <option value="suspended">مسدود اولیه (Suspended)</option>
                   </select>
                 </div>
+
+                <div className="space-y-1">
+                  <label className="text-[10px] text-slate-300 font-bold block">حداکثر تعداد کامپیوتر:</label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="20"
+                    value={newMaxDevices}
+                    onChange={(e) => setNewMaxDevices(Math.max(1, Math.min(20, Number(e.target.value) || 1)))}
+                    className="w-full px-3 py-2 bg-[#06080d] border border-white/10 rounded-xl text-white focus:ring-1 focus:ring-amber-500 text-xs font-mono"
+                  />
+                </div>
+
+                <label className="flex items-center gap-2 text-[11px] text-slate-300 cursor-pointer select-none">
+                  <input type="checkbox" checked={newRemote} onChange={(e) => setNewRemote(e.target.checked)} />
+                  <span>امکان ریموت موبایل فعال باشد</span>
+                </label>
               </div>
 
               <div className="flex gap-2 justify-end pt-3 border-t border-white/5">
@@ -1030,6 +1154,23 @@ export default function AdminApp() {
                   <option value="suspended">مسدود شده (Suspended)</option>
                 </select>
               </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] text-slate-300 font-bold block">حداکثر تعداد کامپیوتر:</label>
+                <input
+                  type="number"
+                  min="1"
+                  max="20"
+                  value={editMaxDevices}
+                  onChange={(e) => setEditMaxDevices(Math.max(1, Math.min(20, Number(e.target.value) || 1)))}
+                  className="w-full px-3 py-2 bg-[#06080d] border border-white/10 rounded-xl text-white focus:ring-1 focus:ring-amber-500 text-xs font-mono"
+                />
+              </div>
+
+              <label className="flex items-center gap-2 text-[11px] text-slate-300 cursor-pointer select-none">
+                <input type="checkbox" checked={editRemote} onChange={(e) => setEditRemote(e.target.checked)} />
+                <span>امکان ریموت موبایل فعال باشد</span>
+              </label>
 
               <div className="flex gap-2 justify-end pt-3 border-t border-white/5">
                 <button
@@ -1179,6 +1320,50 @@ export default function AdminApp() {
                 )}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+      {devicesLicense && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4" dir="rtl">
+          <div className="w-full max-w-lg bg-[#0f131c] border border-white/10 rounded-2xl p-5 space-y-4 shadow-2xl">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-black text-white flex items-center gap-2">
+                <Laptop className="w-4 h-4 text-amber-400" />
+                دستگاه‌های «{devicesLicense.businessName}»
+              </h3>
+              <button type="button" onClick={() => setDevicesLicense(null)} className="text-slate-400 hover:text-white cursor-pointer">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <p className="text-[10px] text-slate-400 leading-relaxed">
+              اگر مشتری ویندوز را عوض کرده یا کامپیوتر جدید خریده، دستگاه قبلی را لغو کنید تا بتواند روی سیستم جدید فعال کند.
+            </p>
+            {isLoadingDevices ? (
+              <div className="py-6 text-center"><RefreshCw className="w-5 h-5 animate-spin inline text-amber-400" /></div>
+            ) : devices.length === 0 ? (
+              <div className="py-6 text-center text-xs text-slate-500">هنوز روی هیچ دستگاهی فعال نشده است.</div>
+            ) : (
+              <div className="divide-y divide-white/5">
+                {devices.map((d) => (
+                  <div key={d.id} className="py-2.5 flex items-center justify-between gap-3 text-xs">
+                    <div className="space-y-0.5">
+                      <div className="font-bold text-white">{d.name || 'کامپیوتر'}</div>
+                      <div className="text-[10px] text-slate-400">
+                        فعال‌سازی: {formatDatePersian(d.activatedAt)} • آخرین اتصال: {d.lastSeen ? formatDatePersian(d.lastSeen) : '-'}
+                        {d.lastIp && <span className="font-mono" dir="ltr"> • {d.lastIp}</span>}
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleRevokeDevice(d)}
+                      className="px-2.5 py-1 bg-rose-500/10 hover:bg-rose-600 text-rose-400 hover:text-white rounded-lg text-[10px] font-bold cursor-pointer"
+                    >
+                      لغو دسترسی
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}

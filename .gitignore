@@ -13,3 +13,6 @@ server/keys/
 *.pem
 !electron/license-public*.pem
 backups/
+
+# local package-manager lockfile (project uses bun.lock)
+package-lock.json

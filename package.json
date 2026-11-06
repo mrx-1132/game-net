@@ -15,7 +15,10 @@
     "clean": "rm -rf dist dist-electron",
     "lint": "tsc --noEmit",
     "electron:dev": "npm run build && electron .",
-    "electron:dist": "npm run build && electron-builder"
+    "electron:dist": "npm run build && electron-builder",
+    "license:keygen": "node server/tools/keygen.mjs",
+    "license:backup": "node server/tools/backup.mjs export",
+    "license:restore": "node server/tools/backup.mjs import"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
@@ -67,7 +70,9 @@
       "target": [
         {
           "target": "portable",
-          "arch": ["x64"]
+          "arch": [
+            "x64"
+          ]
         }
       ],
       "icon": "public/icon.ico",

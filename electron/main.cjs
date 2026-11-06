@@ -1,6 +1,7 @@
 const { app, BrowserWindow, Menu } = require('electron');
 const path = require('path');
 const { startRemoteServer } = require('./remote-server.cjs');
+const { createLicenseManager } = require('./license.cjs');
 
 let mainWindow;
 
@@ -20,6 +21,8 @@ function createWindow() {
       contextIsolation: true,
       sandbox: true,
       preload: path.join(__dirname, 'preload.cjs'),
+      // DevTools فقط در حالت توسعه
+      devTools: !app.isPackaged,
     },
     backgroundColor: '#0B0E14', // Match the app's dark background
     show: false,
@@ -62,8 +65,10 @@ if (!gotTheLock) {
   });
 
   app.whenReady().then(() => {
+    const license = createLicenseManager({ getWindow: () => mainWindow });
     createWindow();
-    startRemoteServer(() => mainWindow);
+    // ریموت فقط با اشتراک فعالی که امکان ریموت دارد کار می‌کند
+    startRemoteServer(() => mainWindow, { isAllowed: () => license.hasFeature('remote') });
 
     app.on('activate', () => {
       if (BrowserWindow.getAllWindows().length === 0) {

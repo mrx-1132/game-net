@@ -66,7 +66,8 @@ function safeEq(a, b) {
   return x.length === y.length && crypto.timingSafeEqual(x, y);
 }
 
-function startRemoteServer(getWindow) {
+function startRemoteServer(getWindow, { isAllowed = () => true } = {}) {
+  const NOT_ALLOWED = 'ریموت موبایل در اشتراک فعلی این برنامه فعال نیست.';
   const devicesFile = path.join(app.getPath('userData'), 'remote-devices.json');
   let devices = [];
   try { devices = JSON.parse(fs.readFileSync(devicesFile, 'utf8')); } catch { /* first run */ }
@@ -95,6 +96,7 @@ function startRemoteServer(getWindow) {
     return { port: PORT, addresses };
   });
   ipcMain.handle('remote:pair-code', () => {
+    if (!isAllowed()) throw new Error(NOT_ALLOWED);
     pairing = { code: String(crypto.randomInt(0, 1000000)).padStart(6, '0'), expiresAt: Date.now() + PAIR_TTL_MS };
     return pairing;
   });
@@ -126,6 +128,11 @@ function startRemoteServer(getWindow) {
   api.use(express.json({ limit: '10kb' }));
 
   api.get('/api/ping', (_req, res) => res.json({ ok: true, app: 'gamenet-manager' }));
+
+  api.use('/api', (req, res, next) => {
+    if (req.path === '/ping' || isAllowed()) return next();
+    res.status(403).json({ error: NOT_ALLOWED });
+  });
 
   api.post('/api/pair', (req, res) => {
     const now = Date.now();

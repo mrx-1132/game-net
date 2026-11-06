@@ -1,96 +1,76 @@
-# سرور مرکزی لایسنس و مدیریت اشتراک گیم‌نت (GameNet License Server)
+# سرور لایسنس گیم‌نت
 
-این ماژول معماری لایسنسینگ را به یک **License Server مستقل و امن** مبتنی بر **Node.js / Express**، دیتابیس مرکزی **PostgreSQL**، هشینگ **bcrypt** و توکن‌های **JWT** ارتقا می‌دهد.
+## چطور کار می‌کند
 
----
+1. مشتری در برنامه با نام کاربری و رمز اشتراک وارد می‌شود.
+2. برنامه شناسه سخت‌افزار کامپیوتر را همراه درخواست می‌فرستد.
+3. سرور یک **توکن امضاشده (Ed25519)** برمی‌گرداند که به همان کامپیوتر گره خورده است.
+4. برنامه امضا را با **کلید عمومی** داخل خودش بررسی می‌کند. هر تغییری در توکن (تاریخ، امکانات، …) امضا را خراب می‌کند.
+5. هر ۶ ساعت توکن تمدید می‌شود. بدون اینترنت تا ۷ روز (`LICENSE_TOKEN_TTL_DAYS`) کار می‌کند.
+6. اگر لایسنس مسدود یا منقضی شود یا دستگاه لغو شود، در اولین تمدید برنامه قفل می‌شود و ریموت موبایل خاموش می‌شود.
+7. عقب کشیدن ساعت ویندوز تشخیص داده می‌شود.
 
-## 🔒 ویژگی‌های کلیدی و امنیتی
+کلید خصوصی فقط روی سرور است. بدون آن هیچ‌کس نمی‌تواند لایسنس جعلی بسازد.
 
-1. **حذف وابستگی به localStorage به عنوان منبع اصلی:** تمامی استعلام‌ها و تایید هویت‌ها از سمت سرور مرکزی انجام می‌شود.
-2. **هشینگ رمز عبور مشتریان با bcrypt:** کلمه عبور به صورت خام (Plaintext) در هیچ‌کجا ذخیره یا ارسال نمی‌شود.
-3. **عدم قرارگیری رمز مدیر یا Master Password در سورس React:** رمزهای دسترسی به محیط مدیریت به صورت متغیرهای محیطی در سرور نگهداری می‌شوند.
-4. **کنترل وضعیت انقضا و مسدودسازی (Suspended) در سرور:** تصمیم‌گیری معتبر بودن اشتراک منحصراً توسط سرور انجام می‌پذیرد.
-5. **نشست‌های مبتنی بر JWT:** فرانت‌اند تنها توکن Bearer کوتاه‌مدت/میان‌مدت و اطلاعات عمومی را نگهداری می‌کند.
+## راه‌اندازی اولیه (فقط یک بار)
 
----
-
-## 🗄️ ساختار دیتابیس (PostgreSQL)
-
-جدول `licenses` به طور خودکار در اولین استارت سرور ایجاد می‌شود:
-
-```sql
-CREATE TABLE IF NOT EXISTS licenses (
-  id VARCHAR(64) PRIMARY KEY,
-  username VARCHAR(100) UNIQUE NOT NULL,
-  password_hash VARCHAR(255) NOT NULL,
-  business_name VARCHAR(255) NOT NULL,
-  owner_name VARCHAR(255) NOT NULL,
-  phone_number VARCHAR(50) DEFAULT '',
-  subscription_type VARCHAR(50) NOT NULL DEFAULT '6months',
-  start_date TIMESTAMPTZ NOT NULL,
-  end_date TIMESTAMPTZ NOT NULL,
-  status VARCHAR(20) NOT NULL DEFAULT 'active',
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-```
-
-*نکته: در صورتی که متغیر `DATABASE_URL` خالی باشد، سرور به طور خودکار از ذخیره‌سازی محلی پایدار (`server/data/licenses.json`) جهت تست سریع و بدون نیاز به کانفیگ استفاده خواهد کرد.*
-
----
-
-## 🚀 نحوه راه‌اندازی و اجرا
-
-### ۱. تنظیم متغیرهای محیطی
-یک فایل `.env` بر اساس `.env.license.example` بسازید:
-
-```env
-DATABASE_URL=postgresql://postgres:password@localhost:5432/gamenet_db
-DATABASE_SSL=false
-LICENSE_JWT_SECRET=your_super_secret_jwt_key_here
-ADMIN_USERNAME=admin
-ADMIN_PASSWORD_HASH=$2a$10$w8.t871yZ08W0mZtV5BZe.Z39D6c3nI5sF55i7T5O5lqgY9P0iCey
-LICENSE_PORT=4000
-CORS_ORIGIN=*
-```
-
-#### تولید هش پسورد bcrypt برای ادمین:
 ```bash
-node -e "console.log(require('bcryptjs').hashSync('رمز_دلخواه_مدیر', 10))"
+npm install
+npm run license:keygen
 ```
 
-### ۲. اجرای سرور لایسنس
+- `server/keys/license-private.pem` ← **کلید خصوصی. محرمانه است؛ حتماً جای امن (مثلاً فلش و یک فضای ابری رمزدار) بکاپ بگیرید.**
+- `electron/license-public.pem` ← کلید عمومی؛ کامیت کنید تا داخل برنامه قرار بگیرد.
+
+بعد `server/.env.example` را به `.env` کپی و پر کنید (رمز مدیر، `ADMIN_JWT_SECRET`، `LICENSE_SERVER_URLS`).
+روی هاست‌هایی مثل Railway، محتوای کلید خصوصی را در متغیر `LICENSE_PRIVATE_KEY` بگذارید (خروجی keygen یک خطی آن را چاپ می‌کند).
+
+آدرس سرور را در `electron/license-config.cjs` بنویسید. **از دامنه استفاده کنید نه IP.**
+
 ```bash
 npm run license-server
 ```
 
-### ۳. اتصال فرانت‌اند (React)
-در فایل محیطی فرانت‌اند (`.env`):
-```env
-VITE_LICENSE_API_URL=https://license.yourdomain.com
-```
-*(اگر خالی باشد، فرانت‌اند به مسیر `/api` دامنه فعلی متصل می‌شود)*
+پنل مدیریت: `https://دامنه-شما/admin`
 
----
+## انتقال به سرور جدید
 
-## 📡 اندپوینت‌های وب‌سرویس (API Endpoints)
+برنامه‌های نصب‌شده به دو چیز وابسته‌اند: **کلید خصوصی** و **آدرس سرور**. اگر هر دو را درست منتقل کنید، مشتری‌ها هیچ چیزی حس نمی‌کنند.
 
-### بخش مشتری (Client):
-* `POST /api/license/login`
-  * بدنه: `{ "username": "...", "password": "..." }`
-  * خروجی: `{ "success": true, "token": "...", "user": { ... } }`
-* `GET /api/license/me`
-  * هدر: `Authorization: Bearer <token>`
-  * خروجی: بررسی وضعیت لحظه‌ای، تاریخ انقضا و بازگشت داده‌های اشتراک.
+1. **بکاپ دیتابیس**: در پنل مدیریت دکمه «بکاپ» (یا `npm run license:backup backup.json`).
+2. **کلید خصوصی**: همان `license-private.pem` قبلی (یا همان مقدار `LICENSE_PRIVATE_KEY`) را روی سرور جدید بگذارید. **کلید جدید نسازید**؛ کلید جدید یعنی همه برنامه‌های نصب‌شده قفل می‌شوند.
+3. سرور جدید را با همان `.env` بالا بیاورید.
+4. **بازیابی**: در پنل مدیریت سرور جدید دکمه «بازیابی» (یا `npm run license:restore backup.json -- --yes`).
+5. **آدرس**:
+   - اگر دامنه دارید: فقط DNS دامنه را به سرور جدید بزنید. تمام.
+   - اگر آدرس عوض می‌شود: روی **سرور قدیم** آدرس جدید را اول لیست بگذارید
+     (`LICENSE_SERVER_URLS=https://new.example.com,https://old.example.com`) و چند روز روشن نگهش دارید.
+     هر برنامه در تمدید بعدی آدرس جدید را داخل توکن امضاشده می‌گیرد و از آن به بعد به سرور جدید می‌رود.
+     بعد از یکی دو هفته سرور قدیم را خاموش کنید. در نسخه بعدی برنامه هم آدرس را در `electron/license-config.cjs` عوض کنید.
 
-### بخش مدیریت (Admin):
-* `POST /api/admin/login`
-  * بدنه: `{ "username": "admin", "password": "..." }`
-  * خروجی: `{ "success": true, "token": "...", "role": "admin" }`
-* `GET /api/admin/licenses`
-  * دریافت لیست تمامی لایسنس‌های مشتریان (بدون فاش شدن رمزها).
-* `POST /api/admin/licenses`
-  * ثبت لایسنس جدید و هش کردن خودکار رمز با bcrypt.
-* `PATCH /api/admin/licenses/:id`
-  * ویرایش مشخصات، تمدید تاریخ، تغییر وضعیت به `suspended` یا `active`.
-* `DELETE /api/admin/licenses/:id`
-  * حذف لایسنس.
+بکاپ از PostgreSQL به فایل JSON و برعکس هم کار می‌کند.
+
+> اگر سرور چند روز در دسترس نباشد، برنامه‌ها تا پایان اعتبار آفلاین (۷ روز) بدون مشکل کار می‌کنند.
+
+## API
+
+| مسیر | توضیح |
+|---|---|
+| `POST /api/license/activate` | فعال‌سازی روی دستگاه (`username`, `password`, `deviceId`) |
+| `POST /api/license/refresh` | تمدید توکن |
+| `POST /api/license/deactivate` | آزاد کردن جای دستگاه (خروج از حساب) |
+| `POST /api/admin/login` | ورود مدیر |
+| `GET/POST /api/admin/licenses` | لیست / ساخت لایسنس |
+| `PATCH/DELETE /api/admin/licenses/:id` | ویرایش / حذف |
+| `GET /api/admin/licenses/:id/devices` | دستگاه‌های یک لایسنس |
+| `DELETE /api/admin/devices/:id` | لغو دسترسی یک دستگاه |
+| `GET /api/admin/backup` | دانلود بکاپ |
+| `POST /api/admin/restore` | بازیابی بکاپ (جایگزینی کامل) |
+
+## نکات امنیتی
+
+- رمز مدیر و کلیدها پیش‌فرض ندارند؛ تا تنظیم نشوند ورود مدیر غیرفعال است.
+- ورودها محدودیت تعداد درخواست دارند.
+- سرور را فقط پشت HTTPS اجرا کنید. برنامه نهایی به آدرس http وصل نمی‌شود.
+- DevTools در نسخه نهایی برنامه غیرفعال است.
+- هیچ برنامه آفلاینی صددرصد ضدکرک نیست؛ این سیستم کرک را پرهزینه می‌کند. برای سخت‌تر کردن، فایل `electron/license.cjs` را قبل از بیلد obfuscate کنید.

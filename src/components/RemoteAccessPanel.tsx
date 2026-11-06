@@ -8,6 +8,7 @@ export default function RemoteAccessPanel() {
   const [pair, setPair] = useState<{ code: string; expiresAt: number } | null>(null);
   const [devices, setDevices] = useState<{ id: string; name: string; lastSeen: string | null }[]>([]);
   const [now, setNow] = useState(Date.now());
+  const [pairError, setPairError] = useState('');
 
   const refresh = async () => {
     if (!bridge) return;
@@ -35,11 +36,20 @@ export default function RemoteAccessPanel() {
       </div>
       <div>
         <button
-          onClick={async () => setPair(await bridge.newPairCode())}
+          onClick={async () => {
+            setPairError('');
+            try {
+              setPair(await bridge.newPairCode());
+            } catch {
+              setPair(null);
+              setPairError('ریموت موبایل در اشتراک فعلی شما فعال نیست. برای فعال‌سازی با پشتیبانی تماس بگیرید.');
+            }
+          }}
           className="px-3 py-2 rounded-lg bg-emerald-600 text-white text-xs font-bold"
         >
           ساخت کد جفت‌سازی جدید
         </button>
+        {pairError && <div className="mt-2 text-xs text-rose-400">{pairError}</div>}
         {pair && left > 0 && (
           <div className="mt-3 text-center">
             <div className="text-3xl font-black tracking-[0.3em] font-mono" dir="ltr">{pair.code}</div>

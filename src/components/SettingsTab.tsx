@@ -2317,7 +2317,7 @@ export default function SettingsTab({
             وضعیت اشتراک سالانه و مدیریت لایسنس
           </h3>
           <p className="text-[10px] text-slate-400 leading-normal">
-            اطلاعات اشتراک فعال کلاینت خود را مانیتور کنید یا جهت تعریف مشتریان جدید و اتصال به هاست اختصاصی، وارد پیشخوان توسعه‌دهنده شوید.
+            اطلاعات اشتراک فعال روی این کامپیوتر. تعریف و تمدید لایسنس‌ها فقط از پنل مدیریت روی سرور لایسنس انجام می‌شود.
           </p>
         </div>
 
@@ -2343,6 +2343,12 @@ export default function SettingsTab({
                   <div>وضعیت انقضاء: <strong className={`font-mono ${lic.getRemainingDays(lic.currentClient) <= 30 ? 'text-rose-400' : 'text-emerald-400'}`}>
                     {lic.getRemainingDaysLabel(lic.currentClient)}
                   </strong></div>
+                  <div>ریموت موبایل: <strong className={lic.currentClient.features?.remote ? 'text-emerald-400' : 'text-slate-500'}>
+                    {lic.currentClient.features?.remote ? 'فعال' : 'غیرفعال'}
+                  </strong></div>
+                  {lic.licenseStatus.tokenExpiresAt && (
+                    <div>اعتبار آفلاین تا: <strong className="text-slate-300">{lic.getPersianDateLabel(lic.licenseStatus.tokenExpiresAt)}</strong></div>
+                  )}
                 </div>
               </div>
             ) : (
@@ -2381,14 +2387,14 @@ export default function SettingsTab({
             <div className="space-y-1 text-right">
               <span className="text-xs font-bold text-slate-300 block border-b border-white/5 pb-1.5">ورود به پنل توسعه‌دهنده</span>
               <p className="text-[10px] text-slate-500 leading-normal">
-                اگر شما نماینده فروش یا توسعه‌دهنده نرم‌افزار هستید، با تایید هویت ارشد می‌توانید لایسنس‌ها و دیتابیس را ویرایش کنید.
+                تنظیمات پیشرفته (مثل سرویس پیامک) با رمز مدیر همین برنامه باز می‌شود.
               </p>
             </div>
 
             {lic.isDevConsoleUnlocked ? (
               <div className="space-y-2">
                 <div className="p-2 bg-amber-500/15 border border-amber-500/25 text-amber-400 text-[10px] rounded-lg font-bold text-center">
-                  🔓 دسترسی به پنل مدیریت لایسنس آزاد است
+                  🔓 پیشخوان مدیریت باز است
                 </div>
                 <button
                   type="button"
@@ -2405,7 +2411,7 @@ export default function SettingsTab({
                 className="w-full py-2 bg-amber-600/10 hover:bg-amber-600 border border-amber-500/30 text-amber-400 hover:text-white font-bold text-[10px] rounded-lg transition-all cursor-pointer flex items-center justify-center gap-1"
               >
                 <Settings2 className="w-3.5 h-3.5" />
-                <span>ورود به پیشخوان مدیریت لایسنس</span>
+                <span>ورود به پیشخوان مدیریت</span>
               </button>
             )}
           </div>
@@ -2585,286 +2591,6 @@ export default function SettingsTab({
                     <span>ارسال پیامک با متد LikeToLike</span>
                   </button>
                 </form>
-              </div>
-            </div>
-
-            {/* ERROR FROM MASTER HOST */}
-            {lic.hostError && (
-              <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-xs rounded-xl flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4 shrink-0" />
-                <span>{lic.hostError}</span>
-              </div>
-            )}
-
-            {/* CREATE CLIENT DIALOGUE */}
-            <div className="flex justify-between items-center pb-3 border-b border-white/5">
-              <h4 className="text-xs font-black text-white flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-amber-400" />
-                سامانه مدیریت لایسنس‌های مشتریان
-              </h4>
-
-              <button
-                type="button"
-                onClick={() => lic.setIsAddingUser(!lic.isAddingUser)}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-lg shadow-blue-550/20 transition-all cursor-pointer"
-              >
-                <Plus className="w-4 h-4" />
-                <span>عضویت مشتری جدید (فروش مجدد)</span>
-              </button>
-            </div>
-
-            {lic.isAddingUser && (
-              <form onSubmit={lic.handleAddLicenseUser} className="p-4 bg-[#111520] border border-white/5 rounded-2xl space-y-4 text-xs animate-in zoom-in-95 duration-200 text-right">
-                <h3 className="text-xs font-bold text-slate-200 flex items-center gap-2 border-b border-white/5 pb-2">
-                  <Laptop className="w-4 h-4 text-blue-400" />
-                  فروش و ثبت مشخصات اشتراک خریدار جدید
-                </h3>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="space-y-1">
-                    <label className="text-[10px] text-slate-400 font-bold block">نام گیم‌نت / بیزینس:</label>
-                    <div className="relative">
-                      <Building className="w-3.5 h-3.5 absolute left-3 top-3 text-slate-500" />
-                      <input
-                        type="text"
-                        required
-                        placeholder="مثال: گیم‌نت الماس پویا"
-                        value={lic.newBusinessName}
-                        onChange={(e) => lic.setNewBusinessName(e.target.value)}
-                        className="w-full px-3 py-2.5 bg-[#080a0f] border border-white/10 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs pr-8 text-right"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-1">
-                    <label className="text-[10px] text-slate-400 font-bold block">نام مالک مجموعه:</label>
-                    <div className="relative">
-                      <User className="w-3.5 h-3.5 absolute left-3 top-3 text-slate-500" />
-                      <input
-                        type="text"
-                        required
-                        placeholder="مثال: سهرابی"
-                        value={lic.newOwnerName}
-                        onChange={(e) => lic.setNewOwnerName(e.target.value)}
-                        className="w-full px-3 py-2.5 bg-[#080a0f] border border-white/10 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs pr-8 text-right"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-1">
-                    <label className="text-[10px] text-slate-400 font-bold block">شماره موبایل خریدار:</label>
-                    <div className="relative">
-                      <Phone className="w-3.5 h-3.5 absolute left-3 top-3 text-slate-500" />
-                      <input
-                        type="text"
-                        required
-                        placeholder="مثال: 09121112233"
-                        value={lic.newPhone}
-                        onChange={(e) => lic.setNewPhone(e.target.value)}
-                        className="w-full px-3 py-2.5 bg-[#080a0f] border border-white/10 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs tracking-wider font-mono pr-8 text-right"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-1">
-                    <label className="text-[10px] text-slate-400 font-bold block">نام کاربری جهت لاگین مشتری:</label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="مثال: diamonds_game"
-                      value={lic.newUsername}
-                      onChange={(e) => lic.setNewUsername(e.target.value)}
-                      className="w-full px-3 py-2.5 bg-[#080a0f] border border-white/10 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs font-mono text-left"
-                    />
-                  </div>
-
-                  <div className="space-y-1">
-                    <label className="text-[10px] text-slate-400 font-bold block">رمز عبور اختصاصی مشتری:</label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="مثال: pass9922"
-                      value={lic.newPassword}
-                      onChange={(e) => lic.setNewPassword(e.target.value)}
-                      className="w-full px-3 py-2.5 bg-[#080a0f] border border-white/10 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs font-mono text-left"
-                    />
-                  </div>
-
-                  <div className="space-y-1">
-                    <label className="text-[10px] text-slate-400 font-bold block">نوع اشتراک فروخته شده:</label>
-                    <select
-                      value={lic.newSubType}
-                      onChange={(e) => lic.setNewSubType(e.target.value as any)}
-                      className="w-full px-3 py-2.5 bg-[#080a0f] border border-white/10 rounded-xl text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs cursor-pointer text-right"
-                    >
-                      <option value="6months">اشتراک 6 ماهه</option>
-                      <option value="12months">اشتراک 12 ماهه (یک سال)</option>
-                      <option value="lifetime">اشتراک مادام‌العمر (همیشگی)</option>
-                      <option value="custom">بازه زمانی سفارشی (تعداد روز)</option>
-                    </select>
-                  </div>
-
-                  {lic.newSubType === 'custom' && (
-                    <div className="space-y-1">
-                      <label className="text-[10px] text-slate-400 font-bold block">تعداد روزهای اشتراک:</label>
-                      <input
-                        type="number"
-                        min="1"
-                        placeholder="30 روز"
-                        value={lic.newCustomDays}
-                        onChange={(e) => lic.setNewCustomDays(e.target.value)}
-                        className="w-full px-3 py-2.5 bg-[#080a0f] border border-white/10 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs font-mono"
-                      />
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex gap-3 justify-end pt-2 border-t border-white/5">
-                  <button
-                    type="submit"
-                    className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl cursor-pointer shadow-lg shadow-emerald-950/20"
-                  >
-                    صدور و ثبت نهایی در هاست
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      lic.setIsAddingUser(false);
-                      lic.setHostError('');
-                    }}
-                    className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-400 font-bold rounded-xl cursor-pointer"
-                  >
-                    انصراف
-                  </button>
-                </div>
-              </form>
-            )}
-
-            {/* CLIENTS INSTALLED LIST (DATABASE) */}
-            <div className="bg-[#111622] rounded-2xl border border-white/5 overflow-hidden text-right font-sans">
-              <div className="p-3 bg-[#0f131d] border-b border-white/5 flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-200">لیست اشتراک مشتریان در دیتابیس میزبان ابری ({lic.licenseUsers.length} مورد)</span>
-              </div>
-
-              <div className="overflow-x-auto">
-                <table className="w-full text-right text-xs">
-                  <thead className="bg-[#0b0e14] text-slate-400 text-[10px] border-b border-white/5 uppercase">
-                    <tr>
-                      <th className="p-3 text-right">گیم‌نت (مشتری)</th>
-                      <th className="p-3 text-right">مدیر مجموعه</th>
-                      <th className="p-3 text-right">نام‌کاربری / رمز</th>
-                      <th className="p-3 text-right">نوع اشتراک</th>
-                      <th className="p-3 text-center">باقیمانده</th>
-                      <th className="p-3 text-center">تاریخ انقضاء</th>
-                      <th className="p-3 text-center">تغییر انقضاء</th>
-                      <th className="p-3 text-center">وضعیت</th>
-                      <th className="p-3 text-center">اقدامات سریع</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-white/5">
-                    {lic.licenseUsers.length === 0 ? (
-                      <tr>
-                        <td colSpan={9} className="p-8 text-center text-slate-500 text-xs">
-                          هیچ اشتراک یا مشتری در دیتابیس ثبت نشده است. می‌توانید با زدن دکمه «عضویت مشتری جدید» اشتراک ثبت کنید.
-                        </td>
-                      </tr>
-                    ) : (
-                      lic.licenseUsers.map(user => {
-                      const remDays = lic.getRemainingDays(user);
-                      const isExpired = remDays <= 0;
-                      const isSuspended = user.status === 'suspended';
-
-                      return (
-                        <tr key={user.id} className="hover:bg-slate-900/50 transition-colors">
-                          <td className="p-3 text-right">
-                            <span className="font-extrabold text-white block">{user.businessName}</span>
-                            <span className="text-[9px] text-slate-500 font-mono">{user.phoneNumber}</span>
-                          </td>
-                          <td className="p-3 text-slate-300 font-bold text-right">{user.ownerName}</td>
-                          <td className="p-3 font-mono text-[11px] text-slate-400 text-right">
-                            <div>کاربر: <b className="text-blue-400">{user.username}</b></div>
-                            <div className="text-[9px] text-slate-500">رمز: <b className="text-emerald-400/80">{user.passwordText || '123456'}</b></div>
-                          </td>
-                          <td className="p-3 text-right">
-                            <span className={`px-2 py-0.5 rounded-lg text-[9px] font-bold ${
-                              user.subscriptionType === 'lifetime' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' :
-                              user.subscriptionType === '12months' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' :
-                              'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20'
-                            }`}>
-                              {user.subscriptionType === 'lifetime' ? 'مادام‌العمر (طلایی)' :
-                               user.subscriptionType === '12months' ? '12 ماهه' : 
-                               user.subscriptionType === '6months' ? '6 ماهه' : 'سفارشی'}
-                            </span>
-                          </td>
-                          <td className="p-3 text-center font-bold font-mono">
-                            <span className={`text-[11px] ${
-                              isSuspended ? 'text-rose-500 line-through' :
-                              user.subscriptionType === 'lifetime' ? 'text-amber-400 font-black' :
-                              isExpired ? 'text-red-500 animate-pulse' :
-                              remDays <= 30 ? 'text-orange-400' : 'text-emerald-400'
-                            }`}>
-                              {lic.getRemainingDaysLabel(user)}
-                            </span>
-                          </td>
-                          <td className="p-3 text-center font-mono text-slate-400 text-[11px]">
-                            {user.subscriptionType === 'lifetime' ? 'نامحدود' : lic.getPersianDateLabel(user.endDateISO)}
-                          </td>
-                          <td className="p-3 text-center">
-                            {user.subscriptionType !== 'lifetime' ? (
-                              <input
-                                type="date"
-                                value={user.endDateISO && !isNaN(new Date(user.endDateISO).getTime()) ? new Date(user.endDateISO).toISOString().split('T')[0] : ''}
-                                onChange={(e) => {
-                                  if (!e.target.value) return;
-                                  const targetDate = new Date(e.target.value);
-                                  lic.handleModifyLicenseEndDate(user.id, targetDate.toISOString());
-                                }}
-                                className="px-2 py-1 bg-[#0b0e14] border border-white/10 rounded-lg text-slate-300 text-[10px] focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono"
-                              />
-                            ) : (
-                              <span className="text-slate-600 text-[10px]">غیر قابل جابجایی</span>
-                            )}
-                          </td>
-                          <td className="p-3 text-center">
-                            <button
-                              type="button"
-                              onClick={() => lic.toggleUserStatus(user.id)}
-                              className={`px-2.5 py-1 rounded-xl text-[10px] font-black cursor-pointer transition-all ${
-                                !isSuspended 
-                                  ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500 hover:text-white' 
-                                  : 'bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500 hover:text-white'
-                              }`}
-                            >
-                              {!isSuspended ? 'فعال (آزاد)' : 'مسدود شده 🔒'}
-                            </button>
-                          </td>
-                          <td className="p-3 text-center">
-                            <div className="flex items-center justify-center gap-2">
-                              {user.subscriptionType !== 'lifetime' && (
-                                <button
-                                  type="button"
-                                  onClick={() => lic.extendMonths(user.id, 3)}
-                                  title="تمدید سریع 3 ماهه"
-                                  className="p-1.5 bg-[#1b2535] hover:bg-blue-600 text-blue-400 hover:text-white rounded-lg transition-colors cursor-pointer text-[10px]"
-                                >
-                                  تمدید 3 ماهه
-                                </button>
-                              )}
-                              <button
-                                type="button"
-                                onClick={() => lic.deleteUser(user.id)}
-                                title="حذف خریدار"
-                                className="p-1.5 bg-rose-500/10 hover:bg-rose-600 text-rose-400 hover:text-white rounded-lg transition-colors cursor-pointer"
-                              >
-                                <Trash2 className="w-3.5 h-3.5" />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    }))}
-                  </tbody>
-                </table>
               </div>
             </div>
           </div>

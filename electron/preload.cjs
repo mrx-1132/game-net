@@ -13,3 +13,15 @@ contextBridge.exposeInMainWorld('remoteBridge', {
   listDevices: () => ipcRenderer.invoke('remote:devices'),
   revokeDevice: (id) => ipcRenderer.invoke('remote:revoke', id),
 });
+
+contextBridge.exposeInMainWorld('licenseBridge', {
+  status: () => ipcRenderer.invoke('license:status'),
+  activate: (username, password) => ipcRenderer.invoke('license:activate', username, password),
+  refresh: () => ipcRenderer.invoke('license:refresh'),
+  logout: () => ipcRenderer.invoke('license:logout'),
+  onChange: (cb) => {
+    const h = (_e, s) => cb(s);
+    ipcRenderer.on('license:changed', h);
+    return () => ipcRenderer.removeListener('license:changed', h);
+  },
+});
