@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
-  Lock,
   Key,
   ShieldCheck,
   ShieldAlert,
@@ -25,6 +24,7 @@ import {
   verifyConsoleAdmin,
   hasDesktopLicense,
 } from '../services/licenseService';
+import defaultLogo from '../assets/images/gamenet-logo.png';
 
 const REMEMBERED_USERNAME = 'gamenet_remembered_username_v2';
 const CONSOLE_FLAG = 'gamenet_dev_console_unlocked';
@@ -226,9 +226,7 @@ export default function LicensingPortal({
 
             <div className="w-full max-w-md bg-surface-0f131a border border-white/10 rounded-3xl shadow-2xl overflow-hidden relative z-10 p-6 space-y-6">
               <div className="text-center space-y-2">
-                <div className="inline-flex p-3 bg-indigo-500/10 text-indigo-400 rounded-2xl border border-indigo-500/20 mb-1">
-                  <Lock className="w-7 h-7" />
-                </div>
+                <img src={defaultLogo} alt="GameNet" className="w-16 h-16 rounded-2xl mx-auto mb-1 shadow-lg shadow-black/30" />
                 <h2 className="text-lg font-black text-white">فعال‌سازی اشتراک گیم‌نت</h2>
                 <p className="text-[11px] text-slate-400 leading-relaxed max-w-sm mx-auto">
                   برای اولین بار، با نام کاربری و رمزی که از پشتیبانی گرفته‌اید وارد شوید. بعد از آن برنامه بدون اینترنت هم کار می‌کند و هر چند روز یک بار خودکار تمدید می‌شود.

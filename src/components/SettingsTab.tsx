@@ -8,6 +8,7 @@ import {
 import { RatesTable, System, SystemType, CardReader, UserPermissions, Operator, ExtraServicePreset, TelegramConfig } from '../types';
 import { formatCurrency, toPersianDigits, sha256Hash } from '../utils';
 import { useLicensing } from './LicensingPortal';
+import defaultLogo from '../assets/images/gamenet-logo.png';
 import { getSmsApiKey, setSmsApiKey, getSmsCredit, sendDirectSms, DEFAULT_SMS_API_KEY, getSmsLineNumber, setSmsLineNumber, getSmsLines } from '../services/smsService';
 import { sendTelegramMessage } from '../services/telegramService';
 import LogoUploadModal from './LogoUploadModal';
@@ -1153,12 +1154,10 @@ export default function SettingsTab({
                       />
                     </div>
                   ) : (
-                    <div className="w-11 h-11 bg-blue-600 text-white rounded-xl shadow-lg shadow-blue-900/30 shrink-0 flex items-center justify-center">
-                      <Monitor className="w-6 h-6 stroke-[2]" />
-                    </div>
+                    <img src={defaultLogo} alt="GameNet" className="w-11 h-11 rounded-xl shadow-lg shadow-black/20 shrink-0" />
                   )}
                   <div className="text-right">
-                    <div className="text-white text-xs font-bold">{appLogo ? 'لوگوی سفارشی فعال' : 'لوگوی پیش‌فرض (آیکون سیستم)'}</div>
+                    <div className="text-white text-xs font-bold">{appLogo ? 'لوگوی سفارشی فعال' : 'لوگوی پیش‌فرض برنامه'}</div>
                     <div className="text-[9px] text-slate-400">فرمت مربعی (PNG, JPG, WEBP, SVG)</div>
                   </div>
                 </div>

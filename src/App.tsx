@@ -58,6 +58,7 @@ import BuffetPOSDesk from './components/BuffetPOSDesk';
 import CloseWorkingDayModal from './components/CloseWorkingDayModal';
 import BackupsTab from './components/BackupsTab';
 import LicensingPortal from './components/LicensingPortal';
+import defaultLogo from './assets/images/gamenet-logo.png';
 import GroupSettleModal from './components/GroupSettleModal';
 import TransferSessionModal from './components/TransferSessionModal';
 import SpecialServicesTab from './components/SpecialServicesTab';
@@ -2422,9 +2423,11 @@ export default function App() {
                   />
                 </div>
               ) : (
-                <div className="p-2.5 bg-blue-600 text-white rounded-xl shadow-lg shadow-blue-900/30 shrink-0 flex items-center justify-center">
-                  <Monitor className="w-6 h-6 stroke-[2]" />
-                </div>
+                <img
+                  src={defaultLogo}
+                  alt="GameNet"
+                  className="w-11 h-11 rounded-xl shadow-lg shadow-black/20 shrink-0"
+                />
               )}
             </div>
             <div>
