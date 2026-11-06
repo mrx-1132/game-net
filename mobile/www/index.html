@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>GameNet Remote</title>
+<style>
+:root{--bg:#0B0E14;--card:#141923;--line:#ffffff14;--tx:#F7FAFC;--mu:#8b95a7;--bl:#2563eb;--gr:#059669;--rd:#dc2626;--am:#d97706}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,Tahoma,sans-serif;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+header{position:sticky;top:0;background:#0F1219;border-bottom:1px solid var(--line);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;z-index:5}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--rd);display:inline-block;margin-left:6px}.dot.ok{background:var(--gr)}
+.tabs{display:flex;gap:8px;padding:12px 16px 0}
+.tab{flex:1;padding:10px 4px;border-radius:12px;background:var(--card);border:1px solid var(--line);color:var(--mu);font-size:13px;font-weight:700;text-align:center}
+.tab.on{background:var(--bl);color:#fff;border-color:var(--bl)}
+main{padding:12px 16px 40px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.name{font-weight:800;font-size:16px}.mu{color:var(--mu);font-size:12px}
+.badge{font-size:11px;padding:3px 8px;border-radius:99px;background:#ffffff14}
+.b-active{background:#05966933;color:#34d399}.b-paused{background:#d9770633;color:#fbbf24}.b-inactive{background:#ffffff0d;color:var(--mu)}
+.timer{font-family:ui-monospace,monospace;font-size:22px;font-weight:800;margin:8px 0 4px;direction:ltr;text-align:right}
+.cost{font-size:13px;margin-bottom:6px}
+.acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.acts button{flex:1;min-width:70px;padding:10px 6px;font-size:13px}
+button{font:inherit;border:0;border-radius:12px;padding:11px 14px;font-weight:700;color:#fff;background:var(--bl)}
+button.g{background:var(--gr)}button.a{background:var(--am)}button.r{background:var(--rd)}button.s{background:#ffffff14}
+button:disabled{opacity:.45}
+input,select{width:100%;padding:12px;border-radius:12px;border:1px solid var(--line);background:#0F1219;color:var(--tx);font:inherit;margin:6px 0}
+.sheet{position:fixed;inset:0;background:#000a;display:flex;align-items:flex-end;z-index:20}
+.sheet>div{width:100%;max-height:90vh;overflow:auto;background:#0F1219;border-radius:20px 20px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));border-top:1px solid var(--line)}
+.seg{display:flex;gap:8px;margin:8px 0}.seg button{flex:1;background:#ffffff14}.seg button.on{background:var(--bl)}
+.err{color:#f87171;font-size:13px;min-height:18px;margin:6px 0}
+.bal{font-weight:800}.pos{color:#f87171}.zero{color:#34d399}
+.item{padding:8px 0;border-bottom:1px solid var(--line)}.item .nm{font-weight:700;font-size:14px}
+.step{display:flex;align-items:center;gap:10px}.step button{width:38px;height:38px;padding:0;font-size:20px;background:#ffffff14}.step span{min-width:24px;text-align:center;font-weight:800}
+.pk{max-height:42vh;overflow:auto;margin:8px 0}
+.sum{display:flex;justify-content:space-between;font-size:14px;padding:3px 0}.sum.big{font-size:17px;font-weight:800;border-top:1px solid var(--line);margin-top:6px;padding-top:8px}
+.chk{display:flex;align-items:center;gap:8px;margin:10px 0;font-size:14px}.chk input{width:auto;margin:0}
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(24px + env(safe-area-inset-bottom));background:#065f46;color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;font-weight:700;z-index:50;display:none;max-width:90%;text-align:center}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="sheet"></div>
+<div id="toast"></div>
+<script>
+const LS = { url: 'gn_url', token: 'gn_token', name: 'gn_dev' };
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fa = (n) => Number(n).toLocaleString('fa-IR');
+const money = (n) => fa(Math.round(n || 0)) + ' ت';
+const toLatin = (s) => String(s).replace(/[۰-۹]/g, (d) => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[٠-٩]/g, (d) => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[,٬،\s]/g, '');
+const rid = () => (crypto.randomUUID ? crypto.randomUUID() : Date.now() + '-' + Math.random().toString(36).slice(2));
+const sysById = (id) => state && state.systems.find((x) => x.id === id);
+
+let state = null, skew = 0, online = false, tab = 'systems', saleCart = {}, salePay = null;
+
+function toast(msg, bad) {
+  const t = $('#toast'); t.textContent = msg; t.style.background = bad ? '#991b1b' : '#065f46'; t.style.display = 'block';
+  clearTimeout(toast._t); toast._t = setTimeout(() => (t.style.display = 'none'), 3500);
+}
+
+async function api(path, opts = {}) {
+  const base = localStorage.getItem(LS.url), token = localStorage.getItem(LS.token);
+  const ctrl = new AbortController(), t = setTimeout(() => ctrl.abort(), 8000);
+  try {
+    const r = await fetch(base + path, {
+      ...opts, signal: ctrl.signal,
+      headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: 'Bearer ' + token } : {}) },
+    });
+    const j = await r.json().catch(() => ({}));
+    if (r.status === 401 && token && path !== '/api/pair') { unpair(); throw new Error('دسترسی این گوشی لغو شده است'); }
+    if (!r.ok) throw new Error(j.error || 'خطا ' + r.status);
+    return j;
+  } catch (e) {
+    if (e.name === 'AbortError') throw new Error('پاسخی از کامپیوتر نیامد');
+    throw e;
+  } finally { clearTimeout(t); }
+}
+
+async function bio(reason) {
+  const cap = window.Capacitor;
+  const NB = cap && cap.Plugins && cap.Plugins.NativeBiometric;
+  if (!cap) return confirm(reason + '\n(حالت تست مرورگر — اثر انگشت واقعی فقط در APK)'); // فقط برای تست روی PC
+  if (!NB) throw new Error('افزونه اثر انگشت نصب نشده است');
+  const a = await NB.isAvailable();
+  if (!a.isAvailable) throw new Error('اثر انگشت یا قفل صفحه روی این گوشی فعال نیست');
+  await NB.verifyIdentity({ reason, title: 'تأیید هویت', subtitle: reason });
+  return true;
+}
+
+function unpair() { localStorage.removeItem(LS.token); state = null; render(); }
+function openSheet(html) { $('#sheet').innerHTML = `<div class="sheet"><div>${html}</div></div>`; }
+function closeSheet() { $('#sheet').innerHTML = ''; }
+
+// ---------- Setup ----------
+function renderSetup(msg = '') {
+  $('#app').innerHTML = `<main><div class="card"><div class="name" style="margin-bottom:8px">اتصال به برنامه گیم‌نت</div>
+  <div class="mu">روی کامپیوتر: تنظیمات ← «ریموت موبایل» ← ساخت کد جفت‌سازی.</div>
+  <input id="host" dir="ltr" placeholder="192.168.1.10:4747" value="${esc((localStorage.getItem(LS.url) || '').replace('http://', ''))}">
+  <input id="code" dir="ltr" inputmode="numeric" maxlength="6" placeholder="کد ۶ رقمی">
+  <input id="dev" placeholder="نام این گوشی" value="${esc(localStorage.getItem(LS.name) || '')}">
+  <div class="err" id="err">${esc(msg)}</div>
+  <button id="go" style="width:100%">اتصال</button></div></main>`;
+  $('#go').onclick = async () => {
+    let host = $('#host').value.trim().replace(/^https?:\/\//, '').replace(/\/+$/, '');
+    if (!host) return ($('#err').textContent = 'آدرس را وارد کنید');
+    if (!/:\d+$/.test(host)) host += ':4747';
+    localStorage.setItem(LS.url, 'http://' + host);
+    const name = $('#dev').value.trim() || 'گوشی';
+    localStorage.setItem(LS.name, name);
+    $('#go').disabled = true; $('#err').textContent = '';
+    try {
+      const j = await api('/api/pair', { method: 'POST', body: JSON.stringify({ code: toLatin($('#code').value), deviceName: name }) });
+      localStorage.setItem(LS.token, j.token);
+      render(); poll();
+    } catch (e) { $('#err').textContent = e.message; $('#go').disabled = false; }
+  };
+}
+
+// ---------- Main ----------
+function render() {
+  if (!localStorage.getItem(LS.token)) return renderSetup();
+  const T = [['systems', 'سیستم‌ها'], ['sale', 'بوفه'], ['debt', 'نسیه']];
+  $('#app').innerHTML = `<header><div class="name">GameNet</div><div class="mu"><span class="dot ${online ? 'ok' : ''}" id="dot"></span><span id="st">${online ? 'متصل' : 'قطع'}</span></div></header>
+  <div class="tabs">${T.map(([k, l]) => `<div class="tab ${tab === k ? 'on' : ''}" data-t="${k}">${l}</div>`).join('')}</div>
+  <main>${tab === 'debt' ? '<input id="q" placeholder="جستجوی نام یا شماره…">' : ''}<div id="list"></div></main>`;
+  document.querySelectorAll('.tab').forEach((el) => (el.onclick = () => { tab = el.dataset.t; if (tab === 'sale') saleCart = {}; render(); }));
+  if (tab === 'debt') $('#q').oninput = renderList;
+  if (tab === 'sale') renderSale(); else renderList();
+}
+
+function elapsed(s) {
+  if (!s) return 0;
+  const end = s.pausedTime ? new Date(s.pausedTime).getTime() : Date.now() + skew;
+  return Math.max(0, end - new Date(s.startTime).getTime() - (s.totalPausedMs || 0));
+}
+function fmt(ms) {
+  const t = Math.floor(ms / 1000), h = Math.floor(t / 3600), m = Math.floor((t % 3600) / 60), s = t % 60;
+  return [h, m, s].map((v) => String(v).padStart(2, '0')).join(':');
+}
+
+function renderList() {
+  if (tab === 'sale') return;
+  const el = $('#list'); if (!el) return;
+  if (!state) { el.innerHTML = '<div class="mu" style="text-align:center;padding:30px">در انتظار داده از کامپیوتر…</div>'; return; }
+  if (tab === 'systems') {
+    el.innerHTML = state.systems.map((s) => {
+      const ses = s.session, paused = ses && ses.pausedTime, mt = ses && ses.metrics;
+      const cls = s.status === 'free' ? '' : s.status === 'inactive' ? 'b-inactive' : paused ? 'b-paused' : 'b-active';
+      const label = s.status === 'free' ? 'آزاد' : s.status === 'inactive' ? 'غیرفعال' : paused ? 'متوقف' : 'در حال بازی';
+      const I = esc(s.id);
+      let act = '';
+      if (s.status === 'free') act = `<button class="g" data-a="start" data-id="${I}">شروع وقت</button>`;
+      else if (ses) act = `<button class="r" data-a="settle" data-id="${I}">تسویه</button>
+        <button data-a="buffet" data-id="${I}">بوفه</button>
+        ${paused ? `<button class="g" data-a="resume" data-id="${I}">ادامه</button>` : `<button class="a" data-a="pause" data-id="${I}">توقف</button>`}
+        <button class="s" data-a="more" data-id="${I}">⋯</button>`;
+      return `<div class="card"><div class="row"><div class="name">${esc(s.name)}</div><span class="badge ${cls}">${label}</span></div>
+      ${ses ? `<div class="mu">${esc(ses.customerName || 'بدون نام')} • ${fa(ses.playersCount)} دسته</div><div class="timer" data-s="${I}">${fmt(elapsed(ses))}</div>
+      ${mt ? `<div class="cost">جمع حساب: <b>${money(mt.totalCost)}</b> <span class="mu">(بازی ${money(mt.gamePlayCost)} • بوفه ${money(mt.buffetCost)})</span></div>` : ''}` : ''}
+      <div class="acts">${act}</div></div>`;
+    }).join('') || '<div class="mu">سیستمی ثبت نشده</div>';
+    el.querySelectorAll('button[data-a]').forEach((b) => (b.onclick = () => onSystemAction(b.dataset.a, b.dataset.id)));
+  } else {
+    const q = ($('#q')?.value || '').trim().toLowerCase();
+    const list = state.debtors.filter((d) => !q || d.name.toLowerCase().includes(q) || String(d.phone || '').includes(toLatin(q)));
+    el.innerHTML = list.map((d) => `<div class="card" data-d="${esc(d.id)}"><div class="row"><div><div class="name">${esc(d.name)}</div><div class="mu" dir="ltr" style="text-align:right">${esc(d.phone || '')}</div></div>
+      <div class="bal ${d.balance > 0 ? 'pos' : 'zero'}">${fa(d.balance)}</div></div></div>`).join('') || '<div class="mu" style="text-align:center;padding:20px">موردی نیست</div>';
+    el.querySelectorAll('[data-d]').forEach((c) => (c.onclick = () => openLedger(c.dataset.d)));
+  }
+}
+
+setInterval(() => document.querySelectorAll('.timer').forEach((t) => {
+  const s = sysById(t.dataset.s);
+  if (s && s.session) t.textContent = fmt(elapsed(s.session));
+}), 1000);
+
+// ---------- Helpers: send / picker / pay ----------
+async function send(body) {
+  const r = await api('/api/cmd', { method: 'POST', body: JSON.stringify({ ...body, requestId: rid() }) });
+  setTimeout(poll, 600);
+  return r;
+}
+
+function picker(sel, cart, onChange) {
+  const el = $(sel);
+  el.innerHTML = state.buffet.map((b) => {
+    const out = b.stock !== null && b.stock <= 0, I = esc(b.id);
+    return `<div class="row item"><div><div class="nm">${esc(b.name)}</div><div class="mu">${money(b.price)}${b.stock !== null ? ' • موجودی ' + fa(b.stock) : ''}</div></div>
+    <div class="step"><button data-i="${I}" data-d="-1">−</button><span data-q="${I}">${fa(cart[b.id] || 0)}</span><button data-i="${I}" data-d="1" ${out ? 'disabled' : ''}>+</button></div></div>`;
+  }).join('') || '<div class="mu">آیتمی در بوفه نیست</div>';
+  el.onclick = (e) => {
+    const bt = e.target.closest('button[data-i]'); if (!bt) return;
+    const id = bt.dataset.i, it = state.buffet.find((x) => x.id === id); if (!it) return;
+    let q = (cart[id] || 0) + Number(bt.dataset.d);
+    if (q < 0) q = 0; if (q > 99) q = 99; if (it.stock !== null && q > it.stock) q = it.stock;
+    if (q) cart[id] = q; else delete cart[id];
+    el.querySelector(`[data-q="${CSS.escape(id)}"]`).textContent = fa(q);
+    onChange();
+  };
+}
+const cartTotal = (cart) => Object.entries(cart).reduce((s, [id, q]) => { const b = state.buffet.find((x) => x.id === id); return s + (b ? b.price * q : 0); }, 0);
+const cartItems = (cart) => Object.entries(cart).map(([id, quantity]) => ({ id, quantity }));
+
+function payBlock(sel, onMethod) {
+  const root = $(sel); let method = 'cash';
+  root.innerHTML = `<div class="seg" data-pm><button data-m="cash" class="on">نقد</button><button data-m="card">کارتخوان</button><button data-m="debt">نسیه</button></div><div data-px></div>`;
+  const px = root.querySelector('[data-px]');
+  const draw = () => {
+    if (method === 'card' && state.cardReaders.length) px.innerHTML = `<select data-rd>${state.cardReaders.map((r) => `<option value="${esc(r.id)}">${esc(r.name)}</option>`).join('')}</select>`;
+    else if (method === 'debt') px.innerHTML = `<select data-db>${state.debtors.slice().sort((a, b) => a.name.localeCompare(b.name, 'fa')).map((d) => `<option value="${esc(d.id)}">${esc(d.name)} (${fa(d.balance)})</option>`).join('')}</select>`;
+    else px.innerHTML = '';
+  };
+  root.querySelector('[data-pm]').onclick = (e) => {
+    const b = e.target.closest('button[data-m]'); if (!b) return;
+    method = b.dataset.m; root.querySelectorAll('[data-pm] button').forEach((x) => x.classList.toggle('on', x === b)); draw();
+    if (onMethod) onMethod(method);
+  };
+  return { get: () => ({ method, cardReaderId: root.querySelector('[data-rd]')?.value, debtorId: root.querySelector('[data-db]')?.value }) };
+}
+
+// ---------- System actions ----------
+async function onSystemAction(a, id) {
+  if (a === 'start') return openStart(id);
+  if (a === 'settle') return openSettle(id);
+  if (a === 'buffet') return openSessionBuffet(id);
+  if (a === 'more') return openMore(id);
+  try { await send({ type: a, systemId: id }); } catch (e) { toast(e.message, true); }
+}
+
+function openStart(id) {
+  const s = sysById(id); let pc = 1;
+  openSheet(`<div class="name">شروع وقت — ${esc(s.name)}</div>
+  <input id="cn" placeholder="نام مشتری (اختیاری)">
+  <div class="mu">تعداد دسته</div><div class="seg" id="pc">${[1, 2, 3, 4].map((n) => `<button data-n="${n}" class="${n === 1 ? 'on' : ''}">${fa(n)}</button>`).join('')}</div>
+  <div class="err" id="err"></div><div class="row"><button class="s" id="x" style="flex:1">انصراف</button><button class="g" id="ok" style="flex:2">شروع</button></div>`);
+  $('#pc').querySelectorAll('button').forEach((b) => (b.onclick = () => { pc = +b.dataset.n; $('#pc').querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === b)); }));
+  $('#x').onclick = closeSheet;
+  $('#ok').onclick = async () => {
+    $('#ok').disabled = true;
+    try { await send({ type: 'start', systemId: id, customerName: $('#cn').value, playersCount: pc }); closeSheet(); }
+    catch (e) { $('#err').textContent = e.message; $('#ok').disabled = false; }
+  };
+}
+
+function openMore(id) {
+  const s = sysById(id);
+  openSheet(`<div class="name" style="margin-bottom:10px">${esc(s.name)}</div>
+  <div style="display:grid;gap:8px"><button data-m="players">تغییر تعداد دسته</button><button data-m="time">ویرایش زمان بازی</button><button data-m="transfer">تعویض / انتقال سیستم</button><button class="s" data-m="x">بستن</button></div>`);
+  $('#sheet').querySelectorAll('button[data-m]').forEach((b) => (b.onclick = () => {
+    const m = b.dataset.m;
+    if (m === 'players') openPlayers(id); else if (m === 'time') openTime(id); else if (m === 'transfer') openTransfer(id); else closeSheet();
+  }));
+}
+
+function openPlayers(id) {
+  const s = sysById(id), cur = s.session.playersCount;
+  openSheet(`<div class="name">تعداد دسته — ${esc(s.name)}</div><div class="seg" id="pc">${[1, 2, 3, 4].map((n) => `<button data-n="${n}" class="${n === cur ? 'on' : ''}">${fa(n)}</button>`).join('')}</div>
+  <div class="err" id="err"></div><button class="s" id="x" style="width:100%">انصراف</button>`);
+  $('#x').onclick = closeSheet;
+  $('#pc').querySelectorAll('button').forEach((b) => (b.onclick = async () => {
+    try { await send({ type: 'players', systemId: id, playersCount: +b.dataset.n }); closeSheet(); toast('تعداد دسته تغییر کرد'); }
+    catch (e) { $('#err').textContent = e.message; }
+  }));
+}
+
+function openTime(id) {
+  const s = sysById(id), cur = Math.floor(elapsed(s.session) / 60000);
+  openSheet(`<div class="name">ویرایش زمان بازی — ${esc(s.name)}</div>
+  <div class="mu">مدت بازی روی این سیستم (دقیقه):</div>
+  <input id="mn" inputmode="numeric" value="${cur}">
+  <div class="err" id="err"></div><div class="row"><button class="s" id="x" style="flex:1">انصراف</button><button id="ok" style="flex:2">ثبت</button></div>`);
+  $('#x').onclick = closeSheet;
+  $('#ok').onclick = async () => {
+    const minutes = parseInt(toLatin($('#mn').value), 10);
+    if (!Number.isInteger(minutes) || minutes < 0 || minutes > 1440) return ($('#err').textContent = 'عدد بین ۰ تا ۱۴۴۰ وارد کنید');
+    $('#ok').disabled = true;
+    try { await send({ type: 'adjustTime', systemId: id, minutes }); closeSheet(); toast('زمان ویرایش شد'); }
+    catch (e) { $('#err').textContent = e.message; $('#ok').disabled = false; }
+  };
+}
+
+function openTransfer(id) {
+  const s = sysById(id), targets = state.systems.filter((x) => x.id !== id && x.status !== 'inactive');
+  openSheet(`<div class="name">انتقال حساب ${esc(s.name)} به…</div>
+  <div class="mu">سیستم فعال انتخاب کنید = جابجایی حساب دو سیستم با هم</div>
+  <div style="display:grid;gap:8px;margin-top:10px">${targets.map((t) => `<button class="${t.status === 'free' ? 'g' : 'a'}" data-t="${esc(t.id)}">${esc(t.name)} — ${t.status === 'free' ? 'آزاد' : 'فعال (جابجایی)'}</button>`).join('') || '<div class="mu">سیستمی نیست</div>'}</div>
+  <div class="err" id="err"></div><button class="s" id="x" style="width:100%">انصراف</button>`);
+  $('#x').onclick = closeSheet;
+  $('#sheet').querySelectorAll('button[data-t]').forEach((b) => (b.onclick = async () => {
+    const t = sysById(b.dataset.t);
+    if (t.status !== 'free' && !confirm(`حساب ${s.name} و ${t.name} با هم جابجا شود؟`)) return;
+    try { await send({ type: 'transfer', sourceId: id, targetId: t.id }); closeSheet(); toast('انتقال انجام شد'); }
+    catch (e) { $('#err').textContent = e.message; }
+  }));
+}
+
+function openSessionBuffet(id) {
+  const s = sysById(id), cart = {}, cur = s.session.buffetItems || [];
+  openSheet(`<div class="name">بوفه — ${esc(s.name)}</div>
+  ${cur.length ? `<div class="mu" style="margin:6px 0">در حساب: ${cur.map((b) => esc(b.name) + ' ×' + fa(b.quantity)).join('، ')}</div>` : ''}
+  <div class="pk" id="pk"></div>
+  <div class="sum big"><span>جمع افزوده‌شده</span><span id="tt">${money(0)}</span></div>
+  <div class="err" id="err"></div><div class="row"><button class="s" id="x" style="flex:1">انصراف</button><button id="ok" style="flex:2" disabled>افزودن به حساب</button></div>`);
+  const upd = () => { $('#tt').textContent = money(cartTotal(cart)); $('#ok').disabled = !Object.keys(cart).length; };
+  picker('#pk', cart, upd);
+  $('#x').onclick = closeSheet;
+  $('#ok').onclick = async () => {
+    $('#ok').disabled = true;
+    try { await send({ type: 'addBuffet', systemId: id, items: cartItems(cart) }); closeSheet(); toast('به حساب اضافه شد'); }
+    catch (e) { $('#err').textContent = e.message; $('#ok').disabled = false; }
+  };
+}
+
+function openSettle(id) {
+  const s = sysById(id), m = (s.session && s.session.metrics) || {}; let round = false;
+  const line = (l, v) => `<div class="sum"><span>${l}</span><span>${money(v)}</span></div>`;
+  openSheet(`<div class="name">تسویه حساب — ${esc(s.name)}</div>
+  <div class="mu">${esc(s.session.customerName || 'بدون نام')} • ${fa(m.durationMinutes || 0)} دقیقه</div>
+  <div style="margin:8px 0">${line('هزینه بازی', m.gamePlayCost)}${line('بوفه', m.buffetCost)}${m.extraServicesCost ? line('خدمات', m.extraServicesCost) : ''}
+  ${line('جمع کل', m.totalCost)}<div id="rnd"></div>${m.partialPaid ? line('علی‌الحساب پرداخت‌شده', -m.partialPaid) : ''}
+  <div class="sum big"><span>قابل پرداخت</span><span id="net"></span></div></div>
+  <label class="chk"><input type="checkbox" id="rc"> رُند کردن به نزدیک‌ترین هزار تومان</label>
+  <div id="pb"></div>
+  <div class="mu">مبلغ نهایی لحظه‌ی ثبت روی کامپیوتر محاسبه می‌شود.</div>
+  <div class="err" id="err"></div><div class="row"><button class="s" id="x" style="flex:1">انصراف</button><button class="r" id="ok" style="flex:2">تأیید با اثر انگشت</button></div>`);
+  const calc = () => {
+    const total = m.totalCost || 0, off = round ? Math.round(total / 1000) * 1000 - total : 0;
+    const net = Math.max(0, Math.max(0, total + off) - (m.partialPaid || 0));
+    $('#net').textContent = money(net); $('#rnd').innerHTML = off ? line('رُند', off) : '';
+    return net;
+  };
+  calc();
+  $('#rc').onchange = (e) => { round = e.target.checked; calc(); };
+  const pb = payBlock('#pb');
+  $('#x').onclick = closeSheet;
+  $('#ok').onclick = async () => {
+    const p = pb.get(), net = calc();
+    $('#ok').disabled = true; $('#err').textContent = '';
+    try {
+      await bio(`تسویه ${s.name} — ${money(net)}`);
+      const r = await send({ type: 'settle', systemId: id, round, ...p });
+      closeSheet(); toast(r.message || 'تسویه شد');
+    } catch (e) { $('#err').textContent = e.message || 'تأیید اثر انگشت انجام نشد'; $('#ok').disabled = false; }
+  };
+}
+
+// ---------- Direct buffet sale tab ----------
+function renderSale() {
+  const el = $('#list');
+  salePay = null;
+  if (!state) { el.innerHTML = '<div class="mu" style="text-align:center;padding:30px">در انتظار داده از کامپیوتر…</div>'; return; }
+  el.innerHTML = `<div class="card"><div class="name">فروش مستقیم بوفه</div><div class="pk" id="pk"></div>
+  <input id="cn" placeholder="نام مشتری (اختیاری)"><div id="pb"></div>
+  <div class="sum big"><span>جمع</span><span id="tt">${money(0)}</span></div>
+  <div class="err" id="err"></div><button id="ok" class="g" style="width:100%" disabled>ثبت فروش</button></div>`;
+  const upd = () => { $('#tt').textContent = money(cartTotal(saleCart)); $('#ok').disabled = !Object.keys(saleCart).length; };
+  picker('#pk', saleCart, upd); upd();
+  salePay = payBlock('#pb');
+  $('#ok').onclick = async () => {
+    const p = salePay.get(), total = cartTotal(saleCart);
+    $('#ok').disabled = true; $('#err').textContent = '';
+    try {
+      if (p.method === 'debt') await bio(`فروش نسیه بوفه — ${money(total)}`);
+      const r = await send({ type: 'directSale', items: cartItems(saleCart), customerName: $('#cn').value, ...p });
+      toast(r.message || 'فروش ثبت شد'); saleCart = {}; render();
+    } catch (e) { $('#err').textContent = e.message || 'تأیید اثر انگشت انجام نشد'; upd(); }
+  };
+}
+
+// ---------- Ledger ----------
+function openLedger(id) {
+  const d = state.debtors.find((x) => x.id === id); let kind = 'debt_added';
+  openSheet(`<div class="row"><div class="name">${esc(d.name)}</div><div class="bal ${d.balance > 0 ? 'pos' : 'zero'}">${fa(d.balance)}</div></div>
+  <div class="seg" id="k"><button data-k="debt_added" class="on">ثبت بدهی</button><button data-k="payment_made">ثبت پرداخت</button></div>
+  <input id="amt" inputmode="numeric" placeholder="مبلغ">
+  <input id="ds" placeholder="توضیحات (اختیاری)">
+  <div class="err" id="err"></div><div class="row"><button class="s" id="x" style="flex:1">انصراف</button><button id="ok" style="flex:2">تأیید با اثر انگشت</button></div>`);
+  $('#k').querySelectorAll('button').forEach((b) => (b.onclick = () => { kind = b.dataset.k; $('#k').querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === b)); }));
+  $('#x').onclick = closeSheet;
+  $('#ok').onclick = async () => {
+    const amount = parseInt(toLatin($('#amt').value), 10);
+    if (!Number.isInteger(amount) || amount <= 0) return ($('#err').textContent = 'مبلغ معتبر وارد کنید');
+    $('#ok').disabled = true; $('#err').textContent = '';
+    try {
+      await bio(`${kind === 'debt_added' ? 'ثبت بدهی' : 'ثبت پرداخت'} ${fa(amount)} برای ${d.name}`);
+      await send({ type: 'ledger', debtorId: id, kind, amount, description: $('#ds').value });
+      closeSheet(); toast('ثبت شد');
+    } catch (e) { $('#err').textContent = e.message || 'تأیید اثر انگشت انجام نشد'; $('#ok').disabled = false; }
+  };
+}
+
+// ---------- Polling ----------
+async function poll() {
+  if (!localStorage.getItem(LS.token)) return;
+  try {
+    const j = await api('/api/state');
+    skew = j.serverTime - Date.now(); state = j.state; online = true;
+  } catch (e) { online = false; }
+  const dot = $('#dot'); if (dot) { dot.className = 'dot ' + (online ? 'ok' : ''); $('#st').textContent = online ? 'متصل' : 'قطع'; }
+  if (tab === 'sale' && state && !salePay && $('#list')) renderSale();
+  if (!document.querySelector('.sheet')) renderList();
+}
+setInterval(poll, 2500);
+render(); poll();
+</script>
+</body>
+</html>

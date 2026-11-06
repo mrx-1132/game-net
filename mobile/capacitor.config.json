@@ -1,0 +1,6 @@
+{
+  "appId": "com.gamenet.remote",
+  "appName": "GameNet Remote",
+  "webDir": "www",
+  "server": { "androidScheme": "http", "cleartext": true }
+}

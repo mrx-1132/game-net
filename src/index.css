@@ -1,0 +1,218 @@
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Vazirmatn", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+body {
+  font-family: var(--font-sans);
+}
+
+/* -------------------------------------------------------------
+   LIGHT MODE REPAINT ENGINE
+   Incredibly thorough, highly polished Swiss-light mode overrides.
+------------------------------------------------------------- */
+.light {
+  background-color: #F8FAFC !important;
+  color: #0F172A !important;
+}
+
+/* 1. Main Background and Canvas Boxes */
+.light .bg-canvas-card,
+.light .bg-slate-950,
+.light .bg-slate-900,
+.light .bg-zinc-950,
+.light .bg-zinc-900 {
+  background-color: #F1F5F9 !important;
+  color: #0F172A !important;
+}
+
+/* Global Light Mode overrides */
+.light [class*="bg-\[#0"],
+.light [class*="bg-\[#1"],
+.light [class*="bg-\[#2"] {
+  background-color: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+  color: #1E293B !important;
+}
+
+/* Modals overlays & wrapper */
+.light .fixed.inset-0 {
+  background-color: rgba(15, 23, 42, 0.4) !important;
+  backdrop-filter: blur(12px) !important;
+}
+
+/* Inner inputs, Selects & Form Textareas */
+.light input,
+.light select,
+.light textarea {
+  background-color: #FFFFFF !important;
+  border: 1px solid #CBD5E1 !important;
+  color: #0F172A !important;
+}
+.light input:focus,
+.light select:focus,
+.light textarea:focus {
+  border-color: #3B82F6 !important;
+  outline: none !important;
+}
+.light input::placeholder,
+.light textarea::placeholder {
+  color: #64748B !important;
+}
+
+/* Global Border overrides */
+.light .border-white\/5,
+.light .border-white\/10,
+.light .border-white\/15,
+.light .border-white\/20,
+.light .border-white\/30,
+.light .border-white\/40,
+.light .border-slate-800,
+.light .border-slate-700,
+.light .border-slate-600,
+.light .border-zinc-800,
+.light .border-zinc-700 {
+  border-color: #E2E8F0 !important;
+}
+
+/* 2. Text colors & labels optimization (Ensure high legibility) */
+.light h1, .light h2, .light h3, .light h4, .light h5, .light h6, .light .text-white {
+  color: #0F172A !important;
+}
+.light .text-slate-50,
+.light .text-slate-100,
+.light .text-slate-200 {
+  color: #0F172A !important;
+}
+.light .text-slate-250,
+.light .text-slate-300,
+.light .text-slate-350 {
+  color: #1E293B !important;
+}
+.light .text-slate-400 {
+  color: #334155 !important;
+}
+.light .text-slate-500 {
+  color: #475569 !important;
+}
+.light .text-slate-600 {
+  color: #64748B !important;
+}
+
+/* Dynamic text override */
+.light .text-slate-500 {
+  color: #475569 !important;
+}
+
+/* Specific button text highlights & states preservation */
+.light button.bg-blue-600,
+.light button.bg-blue-600 *,
+.light button.bg-rose-600,
+.light button.bg-rose-600 *,
+.light button.bg-emerald-600,
+.light button.bg-emerald-600 *,
+.light button.bg-amber-600,
+.light button.bg-amber-600 *,
+.light .bg-blue-600 .text-white,
+.light .bg-rose-650 .text-white {
+  color: #FFFFFF !important;
+}
+
+/* 3. Header, Navigation and Status row */
+.light header {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  border-color: #E2E8F0 !important;
+  color: #0F172A !important;
+}
+.light nav {
+  background-color: #F1F5F9 !important;
+  border-color: #E2E8F0 !important;
+}
+.light nav button[aria-current="page"] {
+  background-color: #EFF6FF !important;
+  color: #1D4ED8 !important;
+  border-color: #BFDBFE !important;
+}
+.light nav button:not([aria-current="page"]) {
+  color: #475569 !important;
+}
+.light nav button:not([aria-current="page"]):hover {
+  background-color: #F1F5F9 !important;
+  color: #0F172A !important;
+}
+
+/* 4. Badges and Indicators colors high contrast adjustment */
+.light .bg-rose-500\/10,
+.light .bg-rose-650\/10,
+.light .bg-rose-600\/10,
+.light .bg-rose-950\/20,
+.light .bg-rose-950\/30 {
+  background-color: #FFE4E6 !important;
+  color: #E11D48 !important;
+  border-color: #FECDD3 !important;
+}
+.light .bg-emerald-500\/10,
+.light .bg-emerald-600\/10,
+.light .bg-emerald-950\/30 {
+  background-color: #D1FAE5 !important;
+  color: #059669 !important;
+  border-color: #A7F3D0 !important;
+}
+.light .bg-blue-650\/15,
+.light .bg-blue-600\/10,
+.light .bg-blue-500\/10,
+.light .bg-blue-600\/15,
+.light .bg-blue-600\/20 {
+  background-color: #EFF6FF !important;
+  color: #2563EB !important;
+  border-color: #BFDBFE !important;
+}
+.light .bg-amber-500\/10,
+.light .bg-amber-500\/15,
+.light .bg-amber-600\/20,
+.light .bg-amber-600\/10 {
+  background-color: #FEF3C7 !important;
+  color: #D97706 !important;
+  border-color: #FDE68A !important;
+}
+
+/* Active system card timer area spec */
+.light [id^="system-card-"] {
+  background-color: #FFFFFF !important;
+}
+
+/* Hover effects */
+.light .hover\:bg-white\/5:hover,
+.light .hover\:bg-slate-800\/50:hover,
+.light .hover\:bg-slate-800:hover {
+  background-color: #F1F5F9 !important;
+}
+
+/* 5. Reports and Charts tables */
+.light table {
+  background-color: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+}
+.light th {
+  background-color: #F1F5F9 !important;
+  color: #475569 !important;
+  border-color: #E2E8F0 !important;
+}
+.light td {
+  border-color: #E2E8F0 !important;
+  color: #1E293B !important;
+}
+.light tr:hover {
+  background-color: #F8FAFC !important;
+}
+
+/* Global footers and credits text */
+.light footer {
+  background-color: #F8FAFC !important;
+  border-color: #E2E8F0 !important;
+  color: #64748B !important;
+}
+

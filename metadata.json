@@ -1,0 +1,6 @@
+{
+  "name": "Game Net Manager",
+  "description": "سیستم مدیریت هوشمند گیم‌نت شامل مدیریت سیستم‌ها، ثبت بوفه، تایمر نرخ‌گذاری و حسابرسی نسیه",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

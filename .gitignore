@@ -1,0 +1,15 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+
+# license server secrets & data
+server/data/
+server/keys/
+*.pem
+!electron/license-public*.pem
+backups/

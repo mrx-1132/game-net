@@ -1,0 +1,11 @@
+{
+  "name": "gamenet-remote",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "setup": "npm i @capacitor/core @capacitor/android capacitor-native-biometric && npm i -D @capacitor/cli && npx cap add android && node patch-android.mjs && npx cap sync android",
+    "sync": "npx cap sync android",
+    "open": "npx cap open android"
+  }
+}
