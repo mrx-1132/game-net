@@ -37,16 +37,28 @@
 
 با SSH وارد سرور شوید:
 
+ریپازیتوری خصوصی است و گیت‌هاب رمز حساب را برای git قبول نمی‌کند؛ از **Deploy Key** استفاده کنید
+(کلیدی که فقط اجازه خواندن همین ریپازیتوری را دارد):
+
 ```bash
 sudo apt update && sudo apt install -y git
-git clone https://github.com/mrx-1132/game-net.git
+ssh-keygen -t ed25519 -f ~/.ssh/gamenet_deploy -N "" -C "gamenet-server"
+cat ~/.ssh/gamenet_deploy.pub
+```
+
+خطی که با `ssh-ed25519` شروع می‌شود را کپی کنید ← گیت‌هاب ← ریپازیتوری `game-net` ← **Settings** ←
+**Deploy keys** ← **Add deploy key** ← بچسبانید (تیک Allow write access **نزنید**) ← **Add key**.
+
+```bash
+GIT_SSH_COMMAND="ssh -i ~/.ssh/gamenet_deploy -o IdentitiesOnly=yes" git clone git@github.com:mrx-1132/game-net.git
 cd game-net
+git config core.sshCommand "ssh -i ~/.ssh/gamenet_deploy -o IdentitiesOnly=yes"
 git checkout feature/secure-licensing
 sudo bash deploy/install-ubuntu.sh license.yourdomain.ir you@example.com
 ```
 
-- ریپازیتوری خصوصی است: موقع clone، نام کاربری گیت‌هاب و یک **Personal Access Token**
-  (گیت‌هاب ← Settings ← Developer settings ← Tokens) به‌جای رمز می‌خواهد.
+- اگر پرسید `Are you sure you want to continue connecting?` بنویسید `yes`.
+- بعداً `git pull` بدون پرسیدن چیزی کار می‌کند.
 - اسکریپت رمز پنل مدیریت را می‌پرسد (حداقل ۱۰ کاراکتر؛ جایی یادداشت کنید).
 - به سایت فعلی شما دست نمی‌زند. اگر پورت 80 دست Apache/Docker باشد، بدون تغییر متوقف می‌شود.
 

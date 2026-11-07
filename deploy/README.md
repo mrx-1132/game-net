@@ -61,8 +61,7 @@ cd game-net
 sudo bash deploy/install-ubuntu.sh license.yourdomain.ir you@example.com
 ```
 
-> اگر ریپازیتوری خصوصی است، موقع clone نام کاربری گیت‌هاب و یک
-> Personal Access Token (به‌جای رمز) می‌خواهد.
+> ریپازیتوری خصوصی است: برای clone از Deploy Key استفاده کنید (مرحله ۳ فایل `SETUP-GUIDE.md`).
 
 اسکریپت این کارها را انجام می‌دهد:
 
