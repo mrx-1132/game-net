@@ -21,25 +21,15 @@
     "license:restore": "node server/tools/backup.mjs import"
   },
   "dependencies": {
-    "@google/genai": "^2.4.0",
-    "@tailwindcss/vite": "^4.1.14",
-    "@vitejs/plugin-react": "^5.0.4",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "dotenv": "^17.2.3",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.3",
-    "lucide-react": "^0.546.0",
-    "motion": "^12.23.24",
-    "pg": "^8.23.0",
-    "qrcode": "^1.5.4",
-    "react": "^19.0.1",
-    "react-dom": "^19.0.1",
-    "sql.js": "^1.14.1",
-    "vite": "^6.2.3",
-    "xlsx": "^0.18.5"
+    "pg": "^8.23.0"
   },
   "devDependencies": {
+    "@tailwindcss/vite": "^4.1.14",
     "@types/bcryptjs": "^3.0.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^4.17.21",
@@ -48,14 +38,21 @@
     "@types/pg": "^8.23.1",
     "@types/qrcode": "^1.5.5",
     "@types/sql.js": "^1.4.11",
+    "@vitejs/plugin-react": "^5.0.4",
     "autoprefixer": "^10.4.21",
     "electron": "^31.0.0",
     "electron-builder": "^24.13.3",
     "esbuild": "^0.25.0",
+    "lucide-react": "^0.546.0",
+    "qrcode": "^1.5.4",
+    "react": "^19.0.1",
+    "react-dom": "^19.0.1",
+    "sql.js": "^1.14.1",
     "tailwindcss": "^4.1.14",
     "tsx": "^4.21.0",
     "typescript": "~5.8.2",
-    "vite": "^6.2.3"
+    "vite": "^6.2.3",
+    "xlsx": "^0.18.5"
   },
   "build": {
     "appId": "com.gamenet.app",
@@ -72,9 +69,17 @@
     "win": {
       "target": [
         {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        },
+        {
           "target": "portable",
           "arch": [
-            "x64"
+            "x64",
+            "ia32"
           ]
         }
       ],
@@ -82,6 +87,18 @@
       "signAndEditExecutable": false,
       "sign": null,
       "forceCodeSigning": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "GameNet Manager",
+      "artifactName": "GameNet-Manager-Setup-${version}.${ext}"
+    },
+    "portable": {
+      "artifactName": "GameNet-Manager-Portable-${version}.${ext}"
     }
   }
 }

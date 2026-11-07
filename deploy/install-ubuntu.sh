@@ -116,8 +116,10 @@ rsync -a --delete \
   --exclude 'mobile/android' --exclude 'mobile/node_modules' --exclude '.env*' "$SRC_DIR/" "$APP_DIR/"
 cd "$APP_DIR"
 say "نصب وابستگی‌ها و بیلد پنل مدیریت (چند دقیقه)"
-npm install --omit=dev --no-audit --no-fund --loglevel=error
+npm install --no-audit --no-fund --loglevel=error
 NODE_OPTIONS=--max-old-space-size=1024 npx vite build --logLevel error
+# ابزارهای بیلد بعد از ساخت پنل لازم نیستند
+npm prune --omit=dev --no-audit --no-fund --loglevel=error
 chown -R root:root "$APP_DIR"
 
 # ---------- 5) کلید امضا ----------
