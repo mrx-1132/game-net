@@ -105,6 +105,8 @@ echo "Node: $NODE_BIN ($("$NODE_BIN" -v))"
 # ---------- 3) کاربر و پوشه‌ها ----------
 id -u "$APP_USER" >/dev/null 2>&1 || useradd --system --home "$STATE_DIR" --shell /usr/sbin/nologin "$APP_USER"
 install -d -o "$APP_USER" -g "$APP_USER" -m 700 "$STATE_DIR" "$STATE_DIR/data" "$STATE_DIR/keys" "$BACKUP_DIR"
+# اگر اطلاعات از سرور دیگری منتقل شده باشد، مالک فایل‌ها را درست کن
+chown -R "$APP_USER:$APP_USER" "$STATE_DIR"
 install -d -o root -g root -m 755 "$APP_DIR"
 
 # ---------- 4) کپی برنامه و بیلد ----------

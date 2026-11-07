@@ -127,15 +127,29 @@ sudo bash deploy/install-ubuntu.sh license.yourdomain.ir you@example.com
 
 ## انتقال از این سرور به سرور دیگر
 
-1. از پنل مدیریت دکمه «بکاپ» را بزنید (یا آخرین فایل در `/var/backups/gamenet-license`).
-2. روی سرور جدید **قبل از** اجرای اسکریپت نصب، کلید خصوصی قبلی را بگذارید:
-   ```bash
-   sudo mkdir -p /var/lib/gamenet-license/keys
-   sudo nano /var/lib/gamenet-license/keys/license-private.pem   # محتوای کلید قبلی
-   ```
-   اسکریپت کلید موجود را نگه می‌دارد و کلید جدید نمی‌سازد.
-3. اسکریپت نصب را اجرا کنید.
-4. در پنل مدیریت سرور جدید دکمه «بازیابی» و انتخاب فایل بکاپ.
-5. رکورد A دامنه را به IP سرور جدید عوض کنید.
+ساده‌ترین راه: کل پوشه اطلاعات (کلیدها + دیتابیس + تنظیمات و رمز پنل) را منتقل کنید.
 
-برنامه‌ها چیزی حس نمی‌کنند؛ اگر چند ساعت هم طول بکشد، تا ۷ روز بدون سرور کار می‌کنند.
+**روی سرور قدیم:**
+```bash
+sudo tar czf ~/gamenet-backup.tgz -C / var/lib/gamenet-license etc/gamenet-license.env
+scp ~/gamenet-backup.tgz root@NEW_SERVER_IP:/root/
+```
+
+**در ابر آروان:** رکورد A زیردامنه `license` را به IP سرور جدید عوض کنید (ابر خاموش).
+
+**روی سرور جدید** (اول Deploy Key جدید بسازید و در گیت‌هاب اضافه کنید، مثل نصب اول):
+```bash
+sudo tar xzf /root/gamenet-backup.tgz -C /
+GIT_SSH_COMMAND="ssh -i ~/.ssh/gamenet_deploy -o IdentitiesOnly=yes" git clone git@github.com:mrx-1132/game-net.git
+cd game-net && git config core.sshCommand "ssh -i ~/.ssh/gamenet_deploy -o IdentitiesOnly=yes"
+git checkout feature/secure-licensing
+sudo bash deploy/install-ubuntu.sh license.yourdomain.ir you@example.com
+```
+اسکریپت کلید و تنظیمات موجود را نگه می‌دارد، رمز نمی‌پرسد و کلید جدید نمی‌سازد.
+
+**بعد از اطمینان، روی سرور قدیم:** `sudo systemctl disable --now gamenet-license`
+
+راه جایگزین: در پنل مدیریت «بکاپ» بگیرید، فقط کلید خصوصی را قبل از نصب در
+`/var/lib/gamenet-license/keys/license-private.pem` سرور جدید بگذارید، نصب کنید و در پنل جدید «بازیابی» بزنید.
+
+برنامه‌ها چیزی حس نمی‌کنند؛ اگر انتقال چند ساعت هم طول بکشد، تا ۷ روز بدون سرور کار می‌کنند.
