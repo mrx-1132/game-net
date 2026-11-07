@@ -517,14 +517,14 @@ export default function AdminApp() {
             <div className="space-y-1">
               <label className="text-xs text-slate-300 font-bold block">نام کاربری مدیر:</label>
               <div className="relative">
-                <User className="w-4 h-4 absolute left-3 top-3.5 text-slate-500" />
+                <User className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" />
                 <input
                   type="text"
                   dir="ltr"
                   required
                   value={adminUsername}
                   onChange={(e) => setAdminUsername(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-surface-080a0f border border-white/10 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500 text-xs text-left"
+                  className="w-full pl-10 pr-3.5 py-2.5 bg-surface-080a0f border border-white/10 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500 text-xs text-left"
                 />
               </div>
             </div>
@@ -532,7 +532,7 @@ export default function AdminApp() {
             <div className="space-y-1">
               <label className="text-xs text-slate-300 font-bold block">رمز عبور مدیر سیستم:</label>
               <div className="relative">
-                <Lock className="w-4 h-4 absolute left-3 top-3.5 text-slate-500" />
+                <Lock className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" />
                 <input
                   type="password"
                   dir="ltr"
@@ -540,7 +540,7 @@ export default function AdminApp() {
                   value={adminPassword}
                   onChange={(e) => setAdminPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full px-3.5 py-2.5 bg-surface-080a0f border border-white/10 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500 text-xs text-left"
+                  className="w-full pl-10 pr-3.5 py-2.5 bg-surface-080a0f border border-white/10 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500 text-xs text-left"
                 />
               </div>
             </div>

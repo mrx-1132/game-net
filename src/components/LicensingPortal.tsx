@@ -293,7 +293,7 @@ export default function LicensingPortal({
                   <div className="space-y-1">
                     <label className="text-[10px] text-slate-400 font-bold block">نام کاربری اشتراک:</label>
                     <div className="relative">
-                      <User className="w-4 h-4 absolute left-3 top-3 text-slate-500" />
+                      <User className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" />
                       <input
                         type="text"
                         dir="ltr"
@@ -301,7 +301,7 @@ export default function LicensingPortal({
                         autoComplete="username"
                         value={loginUsername}
                         onChange={(e) => setLoginUsername(e.target.value)}
-                        className="w-full px-4 py-2.5 bg-slate-950 border border-white/10 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-indigo-500 font-mono text-xs text-left"
+                        className="w-full pl-10 pr-4 py-2.5 bg-slate-950 border border-white/10 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-indigo-500 font-mono text-xs text-left"
                       />
                     </div>
                   </div>
@@ -312,7 +312,8 @@ export default function LicensingPortal({
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute left-3 top-3.5 text-slate-500 hover:text-slate-300"
+                        className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 z-10"
+                        aria-label={showPassword ? 'پنهان کردن رمز' : 'نمایش رمز'}
                       >
                         {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
@@ -324,7 +325,7 @@ export default function LicensingPortal({
                         value={loginPassword}
                         onChange={(e) => setLoginPassword(e.target.value)}
                         placeholder="••••••••"
-                        className="w-full px-4 py-2.5 bg-slate-950 border border-white/10 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-indigo-500 font-mono text-xs text-left"
+                        className="w-full pl-10 pr-4 py-2.5 bg-slate-950 border border-white/10 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-indigo-500 font-mono text-xs text-left"
                       />
                     </div>
                   </div>
