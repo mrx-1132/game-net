@@ -5,6 +5,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { signToken, verifyTokenSignature, loadSigningKey } from './keys.mjs';
 import { exportBackup, importBackup } from './store.mjs';
+import { adminTotp } from './totp.mjs';
 
 const DAY = 24 * 3600 * 1000;
 const TOKEN_TTL_DAYS = Math.max(1, Math.min(30, Number(process.env.LICENSE_TOKEN_TTL_DAYS) || 7));
@@ -205,10 +206,18 @@ export function createLicenseRouter(store) {
     }
     const username = str(req.body?.username, 100).toLowerCase();
     const password = typeof req.body?.password === 'string' ? req.body.password.slice(0, 200) : '';
-    const ok = await bcrypt.compare(password, ADMIN_PASSWORD_HASH);
-    if (!ok || username !== ADMIN_USERNAME) {
-      return res.status(401).json({ success: false, message: 'اطلاعات ورود مدیر صحیح نیست.' });
+    const code = typeof req.body?.code === 'string' ? req.body.code.replace(/\D/g, '').slice(0, 6) : '';
+    const twoFactor = adminTotp.enabled();
+    // اگر ورود دومرحله‌ای فعال است و کد نیامده، قبل از بررسی رمز کد را بخواه (تا درستی رمز لو نرود)
+    if (twoFactor && !code) {
+      return res.status(401).json({ success: false, needCode: true, message: 'کد ۶ رقمی برنامه Authenticator را وارد کنید.' });
     }
+    const ok = await bcrypt.compare(password, ADMIN_PASSWORD_HASH);
+    if (!ok || username !== ADMIN_USERNAME || (twoFactor && !adminTotp.verify(code))) {
+      console.warn(`admin login failed from ${req.ip}`);
+      return res.status(401).json({ success: false, needCode: twoFactor, message: 'اطلاعات ورود مدیر صحیح نیست.' });
+    }
+    console.log(`admin login from ${req.ip}`);
     const token = jwt.sign({ role: 'admin' }, ADMIN_JWT_SECRET, { expiresIn: '4h' });
     res.json({ success: true, token, role: 'admin' });
   });
@@ -221,6 +230,37 @@ export function createLicenseRouter(store) {
     } catch { /* fallthrough */ }
     res.status(401).json({ success: false, message: 'نشست مدیریت نامعتبر یا منقضی شده است.' });
   };
+
+  // ===== Two-factor login (TOTP) =====
+  router.get('/admin/2fa', requireAdmin, (_req, res) => res.json({ success: true, enabled: adminTotp.enabled() }));
+
+  router.post('/admin/2fa/setup', requireAdmin, (req, res) => {
+    if (adminTotp.enabled()) return res.status(400).json({ success: false, message: 'ورود دومرحله‌ای از قبل فعال است.' });
+    const host = String(req.hostname || 'license').slice(0, 100);
+    const { secret, uri } = adminTotp.startSetup(ADMIN_USERNAME, `GameNet ${host}`);
+    res.json({ success: true, secret, uri });
+  });
+
+  router.post('/admin/2fa/enable', requireAdmin, adminLoginLimiter, (req, res) => {
+    const code = String(req.body?.code || '').replace(/\D/g, '');
+    if (!adminTotp.confirmSetup(code)) {
+      return res.status(400).json({ success: false, message: 'کد درست نیست یا زمان تنظیم تمام شده؛ دوباره امتحان کنید.' });
+    }
+    console.log('admin 2FA enabled');
+    res.json({ success: true, message: 'ورود دومرحله‌ای فعال شد.' });
+  });
+
+  router.post('/admin/2fa/disable', requireAdmin, adminLoginLimiter, async (req, res) => {
+    const password = typeof req.body?.password === 'string' ? req.body.password.slice(0, 200) : '';
+    const code = String(req.body?.code || '').replace(/\D/g, '');
+    const ok = await bcrypt.compare(password, ADMIN_PASSWORD_HASH);
+    if (!ok || !adminTotp.verify(code)) {
+      return res.status(400).json({ success: false, message: 'رمز یا کد درست نیست.' });
+    }
+    adminTotp.disable();
+    console.log('admin 2FA disabled');
+    res.json({ success: true, message: 'ورود دومرحله‌ای غیرفعال شد.' });
+  });
 
   router.get('/admin/licenses', requireAdmin, async (_req, res) => {
     const counts = await store.countDevicesByLicense();

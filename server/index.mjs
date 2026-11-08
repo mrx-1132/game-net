@@ -71,9 +71,21 @@ export async function startStandaloneServer() {
 
   const distPath = path.join(__dirname, '../dist');
   if (fs.existsSync(distPath)) {
-    app.use(express.static(distPath));
-    app.get(['/admin', '/admin/'], (_req, res) => res.sendFile(path.join(distPath, 'admin.html')));
-    app.get('*', (_req, res) => res.sendFile(path.join(distPath, 'index.html')));
+    // آدرس پنل مدیریت: پیش‌فرض /admin؛ با ADMIN_PATH=/panel-xxxx مخفی می‌شود
+    const adminPath = ('/' + String(process.env.ADMIN_PATH || 'admin').replace(/^\/+|\/+$/g, '')).replace(/[^\w\-/]/g, '');
+    const sendAdmin = (_req, res) => {
+      res.set('Cache-Control', 'no-store');
+      res.set('X-Robots-Tag', 'noindex, nofollow');
+      res.sendFile(path.join(distPath, 'admin.html'));
+    };
+    // admin.html فقط از آدرس پنل در دسترس است، نه مستقیم
+    app.use((req, res, next) => (req.path === '/admin.html' ? res.status(404).end() : next()));
+    app.use(express.static(distPath, { index: false }));
+    // آدرس با / آخر، مسیر نسبی فایل‌های پنل را خراب می‌کند؛ به آدرس بدون / بفرست
+    app.get(adminPath, (req, res) => (req.path.endsWith('/') ? res.redirect(301, adminPath) : sendAdmin(req, res)));
+    app.get('/', (_req, res) => res.sendFile(path.join(distPath, 'index.html')));
+    app.get('*', (_req, res) => res.status(404).send('Not found'));
+    console.log(`🔑 Admin panel path: ${adminPath}`);
   } else {
     app.get('/', (_req, res) => res.json({ status: 'active', service: 'GameNet License Server' }));
   }

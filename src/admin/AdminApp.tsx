@@ -20,8 +20,13 @@ import {
   fetchLicenseDevices,
   revokeLicenseDevice,
   downloadLicenseBackup,
-  restoreLicenseBackup
+  restoreLicenseBackup,
+  getAdmin2fa,
+  startAdmin2faSetup,
+  enableAdmin2fa,
+  disableAdmin2fa
 } from '../services/licenseService';
+import QRCode from 'qrcode';
 
 function toPersianDigits(n: number | string): string {
   const farsiDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
@@ -49,6 +54,17 @@ export default function AdminApp() {
   const [adminPassword, setAdminPassword] = useState('');
   const [loginError, setLoginError] = useState('');
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [needCode, setNeedCode] = useState(false);
+  const [loginCode, setLoginCode] = useState('');
+
+  // Security (2FA) modal
+  const [showSecurity, setShowSecurity] = useState(false);
+  const [twoFaEnabled, setTwoFaEnabled] = useState<boolean | null>(null);
+  const [twoFaSetup, setTwoFaSetup] = useState<{ secret: string; qr: string } | null>(null);
+  const [twoFaCode, setTwoFaCode] = useState('');
+  const [twoFaPassword, setTwoFaPassword] = useState('');
+  const [twoFaError, setTwoFaError] = useState('');
+  const [twoFaBusy, setTwoFaBusy] = useState(false);
 
   // Server URL & Connection Status
   const [serverUrl, setServerUrl] = useState<string>(() => getLicenseApiBaseUrl());
@@ -221,12 +237,18 @@ export default function AdminApp() {
     setLoginError('');
     setIsLoggingIn(true);
     try {
-      const res = await loginAdmin(adminUsername, adminPassword);
+      const res = await loginAdmin(adminUsername, adminPassword, needCode ? loginCode : undefined);
       if (res.success && res.token) {
         setAdminToken(res.token);
         setStoredAdminToken(res.token);
         setAdminPassword('');
+        setLoginCode('');
+        setNeedCode(false);
+      } else if (res.needCode && !needCode) {
+        // ورود دومرحله‌ای فعال است: فیلد کد را نشان بده
+        setNeedCode(true);
       } else {
+        setLoginCode('');
         setLoginError(res.message || 'اطلاعات ورود مدیر صحیح نیست.');
       }
     } catch (err: any) {
@@ -447,6 +469,44 @@ export default function AdminApp() {
     }
   };
 
+  // Security (2FA)
+  const openSecurity = async () => {
+    setShowSecurity(true);
+    setTwoFaSetup(null); setTwoFaCode(''); setTwoFaPassword(''); setTwoFaError('');
+    setTwoFaEnabled(null);
+    try { setTwoFaEnabled((await getAdmin2fa()).enabled); } catch { setTwoFaError('خطا در ارتباط با سرور.'); }
+  };
+
+  const beginTwoFa = async () => {
+    setTwoFaBusy(true); setTwoFaError('');
+    try {
+      const r = await startAdmin2faSetup();
+      if (!r.success || !r.uri || !r.secret) { setTwoFaError(r.message || 'خطا'); return; }
+      const qr = await QRCode.toDataURL(r.uri, { margin: 1, width: 220, color: { dark: '#0f172a', light: '#ffffff' } });
+      setTwoFaSetup({ secret: r.secret, qr });
+    } finally { setTwoFaBusy(false); }
+  };
+
+  const confirmTwoFa = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setTwoFaBusy(true); setTwoFaError('');
+    try {
+      const r = await enableAdmin2fa(twoFaCode);
+      if (r.success) { setTwoFaEnabled(true); setTwoFaSetup(null); setTwoFaCode(''); notifySuccess(r.message); }
+      else setTwoFaError(r.message);
+    } finally { setTwoFaBusy(false); }
+  };
+
+  const turnOffTwoFa = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setTwoFaBusy(true); setTwoFaError('');
+    try {
+      const r = await disableAdmin2fa(twoFaPassword, twoFaCode);
+      if (r.success) { setTwoFaEnabled(false); setTwoFaCode(''); setTwoFaPassword(''); notifySuccess(r.message); }
+      else setTwoFaError(r.message);
+    } finally { setTwoFaBusy(false); }
+  };
+
   // -------------------------------------------------------------
   // VIEW: Admin Login Screen
   // -------------------------------------------------------------
@@ -462,7 +522,7 @@ export default function AdminApp() {
               <Shield className="w-7 h-7" />
             </div>
             <h1 className="text-lg font-black text-white tracking-wide">سامانه مدیریت مرکزی لایسنس‌ها</h1>
-            <p className="text-xs text-slate-400">پنل اختصاصی مدیر سیستم گیم‌نت (Railway License Server)</p>
+            <p className="text-xs text-slate-400">پنل اختصاصی مدیر سیستم گیم‌نت</p>
           </div>
 
           {/* Server Connection Status Pill */}
@@ -545,6 +605,25 @@ export default function AdminApp() {
               </div>
             </div>
 
+            {needCode && (
+              <div className="space-y-1">
+                <label className="text-xs text-slate-300 font-bold block">کد ۶ رقمی برنامه Authenticator:</label>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  autoFocus
+                  maxLength={6}
+                  dir="ltr"
+                  required
+                  value={loginCode}
+                  onChange={(e) => setLoginCode(e.target.value.replace(/\D/g, ''))}
+                  placeholder="123456"
+                  className="w-full px-3.5 py-2.5 bg-surface-080a0f border border-amber-500/40 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500 text-lg tracking-[0.5em] text-center font-mono"
+                />
+              </div>
+            )}
+
             {loginError && (
               <div className="p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-300 text-xs flex items-center gap-2">
                 <AlertTriangle className="w-4 h-4 shrink-0" />
@@ -572,7 +651,7 @@ export default function AdminApp() {
           </form>
 
           <div className="pt-2 text-center text-[10px] text-slate-500">
-            احراز هویت سرور مرکزی با توکن امنیتی JWT و تطبیق مستقیم با PostgreSQL Railway
+            ورود امن با رمز و در صورت فعال بودن، کد دومرحله‌ای
           </div>
         </div>
       </div>
@@ -607,6 +686,16 @@ export default function AdminApp() {
             <span className={`w-2 h-2 rounded-full ${serverPingStatus === 'online' ? 'bg-emerald-400' : 'bg-rose-500'}`} />
             <span className="text-[11px] text-slate-300 font-mono">{serverInfo?.database || 'PostgreSQL'}</span>
           </div>
+
+          <button
+            type="button"
+            onClick={openSecurity}
+            className="px-3 py-1.5 bg-surface-121622 hover:bg-surface-1a2030 text-sky-300 rounded-xl border border-white/10 text-xs font-bold flex items-center gap-1.5 cursor-pointer"
+            title="امنیت ورود (ورود دومرحله‌ای)"
+          >
+            <Shield className="w-3.5 h-3.5" />
+            <span className="hidden md:inline">امنیت</span>
+          </button>
 
           <button
             type="button"
@@ -1323,6 +1412,94 @@ export default function AdminApp() {
           </div>
         </div>
       )}
+      {showSecurity && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4" dir="rtl">
+          <div className="w-full max-w-md bg-surface-0f131c border border-white/10 rounded-2xl p-5 space-y-4 shadow-2xl">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-black text-white flex items-center gap-2">
+                <Shield className="w-4 h-4 text-sky-400" />
+                ورود دومرحله‌ای
+              </h3>
+              <button type="button" onClick={() => setShowSecurity(false)} className="text-slate-400 hover:text-white cursor-pointer">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <p className="text-[11px] text-slate-400 leading-relaxed">
+              با فعال بودن این گزینه، برای ورود به پنل علاوه بر رمز، کد ۶ رقمی برنامه Google Authenticator
+              (یا Microsoft Authenticator) روی گوشی شما لازم است. حتی اگر کسی رمز را بداند، بدون گوشی وارد نمی‌شود.
+            </p>
+
+            {twoFaEnabled === null && !twoFaError && (
+              <div className="py-4 text-center"><RefreshCw className="w-5 h-5 animate-spin inline text-sky-400" /></div>
+            )}
+
+            {twoFaEnabled === false && !twoFaSetup && (
+              <button
+                type="button"
+                onClick={beginTwoFa}
+                disabled={twoFaBusy}
+                className="w-full py-2.5 bg-sky-600 hover:bg-sky-500 disabled:opacity-60 text-white font-bold rounded-xl text-xs cursor-pointer"
+              >
+                فعال‌سازی ورود دومرحله‌ای
+              </button>
+            )}
+
+            {twoFaSetup && (
+              <form onSubmit={confirmTwoFa} className="space-y-3">
+                <div className="text-[11px] text-slate-300 leading-6">
+                  ۱. برنامه <b>Google Authenticator</b> را روی گوشی نصب کنید.<br />
+                  ۲. در برنامه دکمه <b>+</b> ← <b>Scan a QR code</b> و این QR را اسکن کنید.<br />
+                  ۳. کد ۶ رقمی که برنامه نشان می‌دهد را پایین وارد کنید.
+                </div>
+                <div className="flex justify-center">
+                  <img src={twoFaSetup.qr} alt="QR" width={220} height={220} className="rounded-xl" style={{ background: '#ffffff', padding: 6 }} />
+                </div>
+                <div className="text-[10px] text-slate-500 text-center">
+                  اگر اسکن نشد، این کلید را دستی وارد کنید:
+                  <div className="font-mono text-slate-300 break-all mt-1 select-all" dir="ltr">{twoFaSetup.secret}</div>
+                </div>
+                <input
+                  type="text" inputMode="numeric" autoComplete="one-time-code" maxLength={6} dir="ltr" required
+                  value={twoFaCode} onChange={(e) => setTwoFaCode(e.target.value.replace(/\D/g, ''))}
+                  placeholder="123456"
+                  className="w-full px-3 py-2.5 bg-surface-06080d border border-white/10 rounded-xl text-white text-lg tracking-[0.5em] text-center font-mono"
+                />
+                <button type="submit" disabled={twoFaBusy || twoFaCode.length !== 6} className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-60 text-white font-bold rounded-xl text-xs cursor-pointer">
+                  تأیید و فعال‌سازی
+                </button>
+              </form>
+            )}
+
+            {twoFaEnabled === true && (
+              <form onSubmit={turnOffTwoFa} className="space-y-3">
+                <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-300 text-xs font-bold flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4" /> ورود دومرحله‌ای فعال است.
+                </div>
+                <div className="text-[11px] text-slate-400">برای غیرفعال کردن، رمز مدیر و کد فعلی برنامه را وارد کنید:</div>
+                <input
+                  type="password" required dir="ltr" value={twoFaPassword} onChange={(e) => setTwoFaPassword(e.target.value)}
+                  placeholder="رمز مدیر"
+                  className="w-full px-3 py-2 bg-surface-06080d border border-white/10 rounded-xl text-white text-xs"
+                />
+                <input
+                  type="text" inputMode="numeric" maxLength={6} dir="ltr" required
+                  value={twoFaCode} onChange={(e) => setTwoFaCode(e.target.value.replace(/\D/g, ''))}
+                  placeholder="کد ۶ رقمی"
+                  className="w-full px-3 py-2 bg-surface-06080d border border-white/10 rounded-xl text-white text-xs text-center font-mono tracking-widest"
+                />
+                <button type="submit" disabled={twoFaBusy} className="w-full py-2 bg-rose-600/20 hover:bg-rose-600 text-rose-300 hover:text-white border border-rose-500/30 font-bold rounded-xl text-xs cursor-pointer">
+                  غیرفعال کردن
+                </button>
+              </form>
+            )}
+
+            {twoFaError && (
+              <div className="p-3 bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs rounded-xl">{twoFaError}</div>
+            )}
+          </div>
+        </div>
+      )}
+
       {devicesLicense && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4" dir="rtl">
           <div className="w-full max-w-lg bg-surface-0f131c border border-white/10 rounded-2xl p-5 space-y-4 shadow-2xl">

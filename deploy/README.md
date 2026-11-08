@@ -105,6 +105,34 @@ sudo cat /var/lib/gamenet-license/keys/license-private.pem
 
 محتوا را در جای امن (مثلاً یک فایل رمزدار یا مدیر رمز) ذخیره کنید و جایی منتشر نکنید.
 
+## امنیت پنل مدیریت
+
+### ۱) ورود دومرحله‌ای (حتماً فعال کنید)
+در پنل ← دکمه **امنیت** ← **فعال‌سازی ورود دومرحله‌ای** ← QR را با برنامه **Google Authenticator**
+(یا Microsoft Authenticator) اسکن کنید و کد ۶ رقمی را وارد کنید.
+از این به بعد ورود به پنل = رمز + کد گوشی. هر کد فقط یک بار و ۳۰ ثانیه معتبر است.
+
+اگر گوشی گم شد، روی سرور:
+```bash
+sudo bash -c 'set -a; . /etc/gamenet-license.env; cd /opt/gamenet-license && runuser -u gamenet -- node server/tools/admin-2fa.mjs disable'
+```
+بعد با رمز وارد شوید و دوباره فعال کنید.
+
+### ۲) آدرس مخفی برای پنل
+به‌جای `/admin` یک آدرس تصادفی بگذارید تا کسی صفحه ورود را پیدا نکند:
+```bash
+echo "ADMIN_PATH=/panel-$(openssl rand -hex 6)" | sudo tee -a /etc/gamenet-license.env
+sudo systemctl restart gamenet-license
+grep ADMIN_PATH /etc/gamenet-license.env
+```
+آدرس جدید پنل: `https://license.yourdomain.ir/panel-xxxxxxxxxxxx` (همانی که دستور آخر نشان می‌دهد). آن را
+بوکمارک کنید. از این به بعد `/admin` صفحه «Not found» نشان می‌دهد.
+
+### چیزهای دیگری که از قبل فعال است
+- محدودیت تعداد تلاش: ۱۰ تلاش ورود در ۱۵ دقیقه برای هر IP
+- رمز با bcrypt ذخیره می‌شود و نشست پنل بعد از ۴ ساعت تمام می‌شود
+- هر ورود موفق و ناموفق با IP در لاگ ثبت می‌شود: `journalctl -u gamenet-license | grep "admin login"`
+
 ## آپدیت
 
 ```bash

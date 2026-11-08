@@ -241,13 +241,38 @@ function adminCall<T = any>(path: string, init: RequestInit = {}) {
   return api<T>(path, init, getStoredAdminToken());
 }
 
-export async function loginAdmin(username: string, password: string): Promise<{ success: boolean; message: string; token?: string }> {
+export async function loginAdmin(
+  username: string,
+  password: string,
+  code?: string
+): Promise<{ success: boolean; message: string; token?: string; needCode?: boolean }> {
   try {
-    const { data } = await api('/admin/login', { method: 'POST', body: JSON.stringify({ username, password }) });
-    return { success: !!data.success, message: data.message || '', token: data.token };
+    const { data } = await api('/admin/login', { method: 'POST', body: JSON.stringify({ username, password, code: code || undefined }) });
+    return { success: !!data.success, message: data.message || '', token: data.token, needCode: !!data.needCode };
   } catch {
     return { success: false, message: 'اتصال به سرور لایسنس برقرار نشد.' };
   }
+}
+
+// ---- ورود دومرحله‌ای (TOTP) ----
+export async function getAdmin2fa(): Promise<{ enabled: boolean }> {
+  const { data } = await adminCall('/admin/2fa');
+  return { enabled: !!data.enabled };
+}
+
+export async function startAdmin2faSetup(): Promise<{ success: boolean; message?: string; secret?: string; uri?: string }> {
+  const { data } = await adminCall('/admin/2fa/setup', { method: 'POST', body: '{}' });
+  return data;
+}
+
+export async function enableAdmin2fa(code: string): Promise<{ success: boolean; message: string }> {
+  const { data } = await adminCall('/admin/2fa/enable', { method: 'POST', body: JSON.stringify({ code }) });
+  return data;
+}
+
+export async function disableAdmin2fa(password: string, code: string): Promise<{ success: boolean; message: string }> {
+  const { data } = await adminCall('/admin/2fa/disable', { method: 'POST', body: JSON.stringify({ password, code }) });
+  return data;
 }
 
 export function logoutAdmin(): void {
