@@ -849,7 +849,7 @@ export default function AdminApp() {
         <div className="bg-surface-0e121a border border-white/5 rounded-2xl overflow-hidden shadow-xl">
           <div className="p-3.5 bg-surface-121622 border-b border-white/5 flex items-center justify-between text-xs font-bold text-slate-300">
             <span>لیست لایسنس‌ها ({toPersianDigits(filteredLicenses.length)} مورد)</span>
-            {isLoadingLicenses && <span className="text-[11px] text-amber-400 animate-pulse">در حال فراخوانی از Railway...</span>}
+            {isLoadingLicenses && <span className="text-[11px] text-amber-400 animate-pulse">در حال دریافت از سرور...</span>}
           </div>
 
           <div className="overflow-x-auto">
