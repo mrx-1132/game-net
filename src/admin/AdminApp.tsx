@@ -482,7 +482,7 @@ export default function AdminApp() {
     try {
       const r = await startAdmin2faSetup();
       if (!r.success || !r.uri || !r.secret) { setTwoFaError(r.message || 'خطا'); return; }
-      const qr = await QRCode.toDataURL(r.uri, { margin: 1, width: 220, color: { dark: '#0f172a', light: '#ffffff' } });
+      const qr = await QRCode.toDataURL(r.uri, { margin: 4, width: 260, errorCorrectionLevel: 'L', color: { dark: '#000000', light: '#ffffff' } });
       setTwoFaSetup({ secret: r.secret, qr });
     } finally { setTwoFaBusy(false); }
   };
@@ -1452,11 +1452,21 @@ export default function AdminApp() {
                   ۳. کد ۶ رقمی که برنامه نشان می‌دهد را پایین وارد کنید.
                 </div>
                 <div className="flex justify-center">
-                  <img src={twoFaSetup.qr} alt="QR" width={220} height={220} className="rounded-xl" style={{ background: '#ffffff', padding: 6 }} />
+                  <img src={twoFaSetup.qr} alt="QR" width={260} height={260} className="rounded-lg" style={{ background: '#ffffff' }} />
                 </div>
-                <div className="text-[10px] text-slate-500 text-center">
-                  اگر اسکن نشد، این کلید را دستی وارد کنید:
-                  <div className="font-mono text-slate-300 break-all mt-1 select-all" dir="ltr">{twoFaSetup.secret}</div>
+                <div className="p-3 bg-surface-06080d border border-white/10 rounded-xl text-[11px] text-slate-400 leading-6">
+                  اگر اسکن نشد: در برنامه <b>+</b> ← <b>Enter a setup key</b> ← نام: <b dir="ltr">GameNet</b> ←
+                  این کلید را وارد کنید (نوع: <b>Time based</b>):
+                  <div className="flex items-center gap-2 mt-1">
+                    <div className="flex-1 font-mono text-slate-200 break-all select-all text-xs" dir="ltr">{twoFaSetup.secret.replace(/(.{4})/g, '$1 ').trim()}</div>
+                    <button
+                      type="button"
+                      onClick={() => { navigator.clipboard?.writeText(twoFaSetup.secret).then(() => notifySuccess('کلید کپی شد.')).catch(() => {}); }}
+                      className="px-2 py-1 bg-white/5 hover:bg-white/10 text-slate-300 rounded-lg text-[10px] cursor-pointer shrink-0"
+                    >
+                      کپی
+                    </button>
+                  </div>
                 </div>
                 <input
                   type="text" inputMode="numeric" autoComplete="one-time-code" maxLength={6} dir="ltr" required

@@ -236,8 +236,7 @@ export function createLicenseRouter(store) {
 
   router.post('/admin/2fa/setup', requireAdmin, (req, res) => {
     if (adminTotp.enabled()) return res.status(400).json({ success: false, message: 'ورود دومرحله‌ای از قبل فعال است.' });
-    const host = String(req.hostname || 'license').slice(0, 100);
-    const { secret, uri } = adminTotp.startSetup(ADMIN_USERNAME, `GameNet ${host}`);
+    const { secret, uri } = adminTotp.startSetup(ADMIN_USERNAME, 'GameNet');
     res.json({ success: true, secret, uri });
   });
 

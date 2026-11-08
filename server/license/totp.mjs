@@ -81,8 +81,10 @@ export const adminTotp = {
     const secret = base32Encode(crypto.randomBytes(20));
     s.pending = { secret, at: Date.now() };
     write(s);
-    const label = encodeURIComponent(`${issuer}:${account}`);
-    const uri = `otpauth://totp/${label}?secret=${secret}&issuer=${encodeURIComponent(issuer)}&algorithm=SHA1&digits=6&period=30`;
+    // ساده‌ترین شکل استاندارد (بدون فاصله و پارامتر اضافه) تا همه برنامه‌های Authenticator آن را بخوانند
+    const clean = (v) => String(v).replace(/[^A-Za-z0-9._-]/g, '').slice(0, 40) || 'GameNet';
+    const iss = clean(issuer), acc = clean(account);
+    const uri = `otpauth://totp/${iss}:${acc}?secret=${secret}&issuer=${iss}`;
     return { secret, uri };
   },
   confirmSetup(code) {
