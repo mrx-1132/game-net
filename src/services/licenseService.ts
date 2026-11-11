@@ -357,3 +357,60 @@ export async function restoreLicenseBackup(file: File): Promise<{ success: boole
   const { data } = await adminCall('/admin/restore', { method: 'POST', body: JSON.stringify({ confirm: 'REPLACE_ALL', backup }) });
   return data;
 }
+
+// ---------------------------------------------------------------------------
+// Online updates (admin panel)
+// ---------------------------------------------------------------------------
+export type UpdateTarget = { type: 'all' } | { type: 'licenses'; ids: string[] };
+
+export interface UpdateRelease {
+  version: string;
+  notes: string;
+  createdAt: string;
+  active: boolean;
+  target: UpdateTarget;
+  files: Record<string, { name: string; size: number; sha512: string }>;
+  downloads: number;
+}
+
+export async function fetchUpdateReleases(): Promise<UpdateRelease[]> {
+  const { data } = await adminCall('/admin/updates');
+  if (!data.success) throw new Error(data.message || 'خطا در دریافت لیست آپدیت‌ها.');
+  return data.releases;
+}
+
+/** آپلود یک فایل نصب با نمایش درصد پیشرفت */
+export function uploadUpdateFile(version: string, file: File, onProgress: (pct: number) => void): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    const q = `version=${encodeURIComponent(version)}&name=${encodeURIComponent(file.name)}`;
+    xhr.open('POST', `${getLicenseApiBaseUrl()}/api/admin/updates/upload?${q}`);
+    xhr.setRequestHeader('Authorization', `Bearer ${getStoredAdminToken() || ''}`);
+    xhr.setRequestHeader('Content-Type', 'application/octet-stream');
+    xhr.upload.onprogress = (e) => { if (e.lengthComputable) onProgress(Math.round((e.loaded / e.total) * 100)); };
+    xhr.onload = () => {
+      let msg = '';
+      try { msg = JSON.parse(xhr.responseText).message || ''; } catch { /* ignore */ }
+      if (xhr.status === 200) resolve();
+      else if (xhr.status === 413) reject(new Error('حجم فایل برای سرور زیاد است (تنظیم Nginx). اسکریپت نصب سرور را دوباره اجرا کنید.'));
+      else reject(new Error(msg || `خطای آپلود (${xhr.status})`));
+    };
+    xhr.onerror = () => reject(new Error('اتصال در حین آپلود قطع شد.'));
+    xhr.send(file);
+  });
+}
+
+export async function publishUpdate(manifest: string, signature: string, target: UpdateTarget): Promise<{ success: boolean; message: string }> {
+  const { data } = await adminCall('/admin/updates', { method: 'POST', body: JSON.stringify({ manifest, signature, target }) });
+  return data;
+}
+
+export async function patchUpdateRelease(version: string, patch: { active?: boolean; target?: UpdateTarget }): Promise<{ success: boolean; message: string }> {
+  const { data } = await adminCall(`/admin/updates/${encodeURIComponent(version)}`, { method: 'PATCH', body: JSON.stringify(patch) });
+  return data;
+}
+
+export async function deleteUpdateRelease(version: string): Promise<{ success: boolean; message: string }> {
+  const { data } = await adminCall(`/admin/updates/${encodeURIComponent(version)}`, { method: 'DELETE' });
+  return data;
+}

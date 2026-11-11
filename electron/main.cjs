@@ -50,10 +50,11 @@ app.on('child-process-gone', (_e, d) => {
   }
 });
 
-let startRemoteServer, createLicenseManager;
+let startRemoteServer, createLicenseManager, createUpdater;
 try {
   ({ startRemoteServer } = require('./remote-server.cjs'));
   ({ createLicenseManager } = require('./license.cjs'));
+  ({ createUpdater } = require('./updater.cjs'));
 } catch (e) {
   fatal('بارگذاری اجزای برنامه ناموفق بود', e);
 }
@@ -141,6 +142,11 @@ if (!gotTheLock) {
       createWindow();
       // ریموت فقط با اشتراک فعالی که امکان ریموت دارد کار می‌کند
       startRemoteServer(() => mainWindow, { isAllowed: () => license.hasFeature('remote') });
+      try {
+        createUpdater({ license, getWindow: () => mainWindow, log });
+      } catch (e) {
+        log('updater init failed', e); // آپدیت نباید جلوی کار برنامه را بگیرد
+      }
       log('ready');
     } catch (e) {
       fatal('راه‌اندازی برنامه ناموفق بود', e);

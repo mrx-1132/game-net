@@ -12,6 +12,11 @@ server/data/
 server/keys/
 *.pem
 !electron/license-public*.pem
+!electron/update-public*.pem
+# کلید خصوصی امضای آپدیت (فقط روی کامپیوتر توسعه‌دهنده)
+update-signing/
+release/
+server/updates/
 backups/
 
 # local package-manager lockfile (project uses bun.lock)

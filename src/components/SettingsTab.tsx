@@ -13,6 +13,7 @@ import { getSmsApiKey, setSmsApiKey, getSmsCredit, sendDirectSms, DEFAULT_SMS_AP
 import { sendTelegramMessage } from '../services/telegramService';
 import LogoUploadModal from './LogoUploadModal';
 import RemoteAccessPanel from './RemoteAccessPanel';
+import { UpdateStatusRow } from './UpdateBanner';
 
 interface SettingsTabProps {
   showRemote?: boolean;
@@ -2379,6 +2380,8 @@ export default function SettingsTab({
             {lic.isSyncingWithRealHost && (
               <p className="text-[10px] text-amber-400 font-bold animate-pulse text-right">{lic.syncStatusText}</p>
             )}
+
+            <UpdateStatusRow />
           </div>
 
           {/* Master Developer Console Access */}

@@ -25,3 +25,14 @@ contextBridge.exposeInMainWorld('licenseBridge', {
     return () => ipcRenderer.removeListener('license:changed', h);
   },
 });
+
+contextBridge.exposeInMainWorld('updateBridge', {
+  status: () => ipcRenderer.invoke('update:status'),
+  check: () => ipcRenderer.invoke('update:check'),
+  install: () => ipcRenderer.invoke('update:install'),
+  onChange: (cb) => {
+    const h = (_e, s) => cb(s);
+    ipcRenderer.on('update:changed', h);
+    return () => ipcRenderer.removeListener('update:changed', h);
+  },
+});

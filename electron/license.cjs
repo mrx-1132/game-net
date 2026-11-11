@@ -292,6 +292,10 @@ function createLicenseManager({ getWindow }) {
 
   return {
     status,
+    // برای آپدیت‌کننده: همان سرورها و توکن امضاشده لایسنس
+    servers,
+    getToken: () => state.token || null,
+    deviceId,
     hasFeature: (name) => {
       const s = status();
       return s.state === 'active' && !!(s.features && s.features[name]);

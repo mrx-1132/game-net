@@ -104,7 +104,7 @@ echo "Node: $NODE_BIN ($("$NODE_BIN" -v))"
 
 # ---------- 3) کاربر و پوشه‌ها ----------
 id -u "$APP_USER" >/dev/null 2>&1 || useradd --system --home "$STATE_DIR" --shell /usr/sbin/nologin "$APP_USER"
-install -d -o "$APP_USER" -g "$APP_USER" -m 700 "$STATE_DIR" "$STATE_DIR/data" "$STATE_DIR/keys" "$BACKUP_DIR"
+install -d -o "$APP_USER" -g "$APP_USER" -m 700 "$STATE_DIR" "$STATE_DIR/data" "$STATE_DIR/keys" "$STATE_DIR/updates" "$BACKUP_DIR"
 # اگر اطلاعات از سرور دیگری منتقل شده باشد، مالک فایل‌ها را درست کن
 chown -R "$APP_USER:$APP_USER" "$STATE_DIR"
 install -d -o root -g root -m 755 "$APP_DIR"
@@ -195,6 +195,8 @@ say "تنظیم Nginx برای $DOMAIN"
 if [[ -f "$NGINX_SITE" ]] && grep -q "ssl_certificate" "$NGINX_SITE"; then
   # گواهی قبلاً گرفته شده؛ فقط پورت را به‌روز کن
   sed -i -E "s#proxy_pass http://127\.0\.0\.1:[0-9]+;#proxy_pass http://127.0.0.1:$APP_PORT;#" "$NGINX_SITE"
+  # نسخه‌های قبلی اسکریپت حجم آپلود را ۲۵ مگ گذاشته بودند؛ برای آپدیت برنامه بیشتر لازم است
+  sed -i -E "s#client_max_body_size [0-9]+m;.*#client_max_body_size 400m;#" "$NGINX_SITE"
 else
   sed -e "s/__DOMAIN__/$DOMAIN/g" -e "s/__PORT__/$APP_PORT/g" deploy/nginx-gamenet-license.conf > "$NGINX_SITE"
 fi

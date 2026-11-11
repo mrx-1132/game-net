@@ -25,6 +25,7 @@ import {
   hasDesktopLicense,
 } from '../services/licenseService';
 import defaultLogo from '../assets/images/gamenet-logo.png';
+import UpdateBanner from './UpdateBanner';
 
 const REMEMBERED_USERNAME = 'gamenet_remembered_username_v2';
 const CONSOLE_FLAG = 'gamenet_dev_console_unlocked';
@@ -374,6 +375,7 @@ export default function LicensingPortal({
           </div>
         ) : (
           <div className="animate-in fade-in duration-300">
+            <UpdateBanner />
             {children}
           </div>
         )}

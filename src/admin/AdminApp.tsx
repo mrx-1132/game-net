@@ -27,6 +27,7 @@ import {
   disableAdmin2fa
 } from '../services/licenseService';
 import QRCode from 'qrcode';
+import UpdatesModal from './UpdatesModal';
 
 function toPersianDigits(n: number | string): string {
   const farsiDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
@@ -59,6 +60,7 @@ export default function AdminApp() {
 
   // Security (2FA) modal
   const [showSecurity, setShowSecurity] = useState(false);
+  const [showUpdates, setShowUpdates] = useState(false);
   const [twoFaEnabled, setTwoFaEnabled] = useState<boolean | null>(null);
   const [twoFaSetup, setTwoFaSetup] = useState<{ secret: string; qr: string } | null>(null);
   const [twoFaCode, setTwoFaCode] = useState('');
@@ -686,6 +688,16 @@ export default function AdminApp() {
             <span className={`w-2 h-2 rounded-full ${serverPingStatus === 'online' ? 'bg-emerald-400' : 'bg-rose-500'}`} />
             <span className="text-[11px] text-slate-300 font-mono">{serverInfo?.database || 'PostgreSQL'}</span>
           </div>
+
+          <button
+            type="button"
+            onClick={() => setShowUpdates(true)}
+            className="px-3 py-1.5 bg-surface-121622 hover:bg-surface-1a2030 text-emerald-300 rounded-xl border border-white/10 text-xs font-bold flex items-center gap-1.5 cursor-pointer"
+            title="آپدیت آنلاین برنامه ویندوز"
+          >
+            <Upload className="w-3.5 h-3.5" />
+            <span className="hidden md:inline">آپدیت‌ها</span>
+          </button>
 
           <button
             type="button"
@@ -1412,6 +1424,8 @@ export default function AdminApp() {
           </div>
         </div>
       )}
+      {showUpdates && <UpdatesModal licenses={licenses} onClose={() => setShowUpdates(false)} notify={notifySuccess} />}
+
       {showSecurity && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4" dir="rtl">
           <div className="w-full max-w-md bg-surface-0f131c border border-white/10 rounded-2xl p-5 space-y-4 shadow-2xl">
