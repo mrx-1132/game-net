@@ -2241,7 +2241,15 @@ export default function App() {
     return { error: null as string | null, items };
   };
 
-  useRemoteBridge({ systems, debtors, buffetItems, cardReaders, rates }, {
+  useRemoteBridge({ systems, debtors, buffetItems, cardReaders, rates, presetTimerMinutes, alarmIntervalSeconds }, {
+    timer: (systemId, limitType, value, device) => {
+      const sys = systems.find((s) => s.id === systemId);
+      if (!sys?.activeSession) return 'نشست فعالی وجود ندارد';
+      handleUpdateCustomTimer(systemId, limitType, limitType === 'none' ? undefined : value, false);
+      const label = limitType === 'none' ? 'خاموش' : limitType === 'time' ? `${value} دقیقه` : `${(value || 0).toLocaleString('fa-IR')} تومان`;
+      addSystemLog(`تایمر دلخواه از موبایل: ${label} (${device})`, 'system', sys.name);
+      return { message: limitType === 'none' ? 'تایمر خاموش شد' : 'تایمر تنظیم شد' };
+    },
     start: (systemId, customerName, playersCount, device) => {
       const sys = systems.find((s) => s.id === systemId);
       if (!sys) return 'سیستم پیدا نشد';

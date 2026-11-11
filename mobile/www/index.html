@@ -53,6 +53,12 @@ input,select{width:100%;padding:12px;border-radius:12px;border:1px solid var(--l
 .conn{background:var(--warn-bg);border-radius:14px;padding:12px;margin:12px 16px 0;font-size:13px;line-height:1.8}.conn .acts{margin-top:8px}
 .menu{display:grid;gap:8px}.menu button{text-align:right}
 #menuBtn{background:var(--soft);color:var(--tx);padding:6px 10px;border-radius:10px;font-size:15px;margin-inline-start:6px}
+.tline{font-size:13px;margin:6px 0 2px;padding:7px 10px;border-radius:10px;background:var(--soft)}
+.tline.done{background:#dc262626;color:var(--bad-tx);font-weight:800;animation:blink 1.2s infinite}
+@keyframes blink{50%{opacity:.55}}
+#alarm{position:fixed;inset:0;background:#7f1d1dcc;display:flex;align-items:center;justify-content:center;z-index:45;padding:20px}
+#alarm>div{background:var(--hdr);color:var(--tx);border-radius:20px;padding:20px;width:100%;max-width:420px;text-align:center;box-shadow:0 10px 40px #0008}
+#alarm .big{font-size:44px;line-height:1}#alarm .an{font-size:18px;font-weight:900;margin:10px 0 4px}
 .chk{display:flex;align-items:center;gap:8px;margin:10px 0;font-size:14px}.chk input{width:auto;margin:0}
 #themeBtn{background:var(--soft);color:var(--tx);padding:6px 10px;border-radius:10px;font-size:15px;margin-inline-start:10px}
 #toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(24px + env(safe-area-inset-bottom));background:#065f46;color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;font-weight:700;z-index:50;display:none;max-width:90%;text-align:center}
@@ -205,7 +211,8 @@ async function bio(reason) {
   return true;
 }
 
-function unpair() { localStorage.removeItem(LS.token); localStorage.removeItem(PIN_KEY); localStorage.removeItem(PIN_FAIL); state = null; render(); }
+function unpair() {
+  try { const L = LN(); if (L) L.getPending().then((p) => p.notifications.length && L.cancel({ notifications: p.notifications.map((n) => ({ id: n.id })) })); lnSig = ''; } catch { /* ignore */ } localStorage.removeItem(LS.token); localStorage.removeItem(PIN_KEY); localStorage.removeItem(PIN_FAIL); state = null; render(); }
 function openSheet(html) { $('#sheet').innerHTML = `<div class="sheet"><div>${html}</div></div>`; }
 function closeSheet() { $('#sheet').innerHTML = ''; }
 
@@ -296,6 +303,7 @@ function renderList() {
         <button class="s" data-a="more" data-id="${I}">⋯</button>`;
       return `<div class="card"><div class="row"><div class="name">${esc(s.name)}</div><span class="badge ${cls}">${label}</span></div>
       ${ses ? `<div class="mu">${esc(ses.customerName || 'بدون نام')} • ${fa(ses.playersCount)} دسته</div><div class="timer" data-s="${I}">${fmt(elapsed(ses))}</div>
+      ${timerLine(s)}
       ${mt ? `<div class="cost">جمع حساب: <b>${money(mt.totalCost)}</b> <span class="mu">(بازی ${money(mt.gamePlayCost)} • بوفه ${money(mt.buffetCost)})</span></div>` : ''}` : ''}
       <div class="acts">${act}</div></div>`;
     }).join('') || '<div class="mu">سیستمی ثبت نشده</div>';
@@ -309,10 +317,18 @@ function renderList() {
   }
 }
 
-setInterval(() => document.querySelectorAll('.timer').forEach((t) => {
-  const s = sysById(t.dataset.s);
-  if (s && s.session) t.textContent = fmt(elapsed(s.session));
-}), 1000);
+setInterval(() => {
+  document.querySelectorAll('.timer').forEach((t) => {
+    const s = sysById(t.dataset.s);
+    if (s && s.session) t.textContent = fmt(elapsed(s.session));
+  });
+  const now = Date.now() + skew;
+  document.querySelectorAll('.tleft').forEach((t) => {
+    const left = Number(t.dataset.end) - now;
+    t.textContent = left > 0 ? fmt(left) : 'تمام شد';
+  });
+  checkAlarms();
+}, 1000);
 
 // ---------- Helpers: send / picker / pay ----------
 async function send(body) {
@@ -385,11 +401,157 @@ function openStart(id) {
 function openMore(id) {
   const s = sysById(id);
   openSheet(`<div class="name" style="margin-bottom:10px">${esc(s.name)}</div>
-  <div style="display:grid;gap:8px"><button data-m="players">تغییر تعداد دسته</button><button data-m="time">ویرایش زمان بازی</button><button data-m="transfer">تعویض / انتقال سیستم</button><button class="s" data-m="x">بستن</button></div>`);
+  <div style="display:grid;gap:8px"><button data-m="timer">⏱ تایمر دلخواه</button><button data-m="players">تغییر تعداد دسته</button><button data-m="time">ویرایش زمان بازی</button><button data-m="transfer">تعویض / انتقال سیستم</button><button class="s" data-m="x">بستن</button></div>`);
   $('#sheet').querySelectorAll('button[data-m]').forEach((b) => (b.onclick = () => {
     const m = b.dataset.m;
-    if (m === 'players') openPlayers(id); else if (m === 'time') openTime(id); else if (m === 'transfer') openTransfer(id); else closeSheet();
+    if (m === 'timer') openTimer(id); else if (m === 'players') openPlayers(id); else if (m === 'time') openTime(id); else if (m === 'transfer') openTransfer(id); else closeSheet();
   }));
+}
+
+// ---------- تایمر دلخواه مشتری ----------
+function timerDone(s) {
+  const t = s.session && s.session.timer;
+  if (!t) return false;
+  return t.reached || (!!t.endsAt && !s.session.pausedTime && t.endsAt <= Date.now() + skew);
+}
+function timerLine(s) {
+  const t = s.session && s.session.timer;
+  if (!t) return '';
+  const target = t.type === 'time' ? `${fa(t.value)} دقیقه` : money(t.value);
+  if (timerDone(s)) return `<div class="tline done">⏰ وقت تمام شد — تایمر ${target}</div>`;
+  let rest = '';
+  if (s.session.pausedTime) rest = '<span class="mu">(متوقف)</span>';
+  else if (t.endsAt) rest = `باقی‌مانده <b class="tleft" dir="ltr" data-end="${t.endsAt}">${fmt(t.endsAt - (Date.now() + skew))}</b>`;
+  return `<div class="tline">⏱ تایمر ${target} ${rest ? '— ' + rest : ''}</div>`;
+}
+
+function openTimer(id) {
+  const s = sysById(id);
+  if (!s || !s.session) return;
+  const cur = s.session.timer || { type: 'none' };
+  let type = cur.type || 'none';
+  const presets = (state.settings && state.settings.presetTimerMinutes) || [30, 45, 60];
+  openSheet(`<div class="name">تایمر دلخواه — ${esc(s.name)}</div>
+  <div class="mu" style="margin:4px 0">وقتی زمان یا هزینه بازی به این مقدار برسد، روی کامپیوتر و همین گوشی هشدار داده می‌شود.</div>
+  <div class="seg" id="tt"><button data-t="none">غیرفعال</button><button data-t="time">زمان (دقیقه)</button><button data-t="amount">مبلغ (تومان)</button></div>
+  <div id="tv"></div><div class="err" id="err"></div>
+  <div class="row"><button class="s" id="x" style="flex:1">انصراف</button><button id="ok" style="flex:2">ثبت</button></div>`);
+  const draw = () => {
+    $('#tt').querySelectorAll('button').forEach((b) => b.classList.toggle('on', b.dataset.t === type));
+    const val = cur.type === type && cur.value ? cur.value : '';
+    if (type === 'none') $('#tv').innerHTML = '<div class="mu" style="margin:8px 0">تایمر خاموش است.</div>';
+    else if (type === 'time') {
+      $('#tv').innerHTML = `<div class="seg">${presets.map((m) => `<button data-p="${m}">${fa(m)} دقیقه</button>`).join('')}</div>
+        <input id="tval" inputmode="numeric" placeholder="کل زمان بازی به دقیقه" value="${esc(val)}">`;
+      $('#tv').querySelectorAll('[data-p]').forEach((b) => (b.onclick = () => { $('#tval').value = b.dataset.p; }));
+    } else {
+      $('#tv').innerHTML = `<input id="tval" inputmode="numeric" placeholder="مبلغ هزینه بازی (تومان)" value="${esc(val)}">`;
+    }
+  };
+  $('#tt').querySelectorAll('button').forEach((b) => (b.onclick = () => { type = b.dataset.t; draw(); }));
+  draw();
+  $('#x').onclick = closeSheet;
+  $('#ok').onclick = async () => {
+    const body = { type: 'timer', systemId: id, limitType: type };
+    if (type !== 'none') {
+      const v = parseInt(toLatin($('#tval').value), 10);
+      if (!Number.isInteger(v) || v <= 0 || (type === 'time' && v > 1440)) return ($('#err').textContent = 'مقدار معتبر وارد کنید');
+      body.value = v;
+    }
+    $('#ok').disabled = true; $('#err').textContent = '';
+    try { const r = await send(body); closeSheet(); toast(r.message || 'ثبت شد'); }
+    catch (e) { $('#err').textContent = e.message; $('#ok').disabled = false; }
+  };
+}
+
+// هشدار داخل برنامه: صدا + لرزش + پنجره، تا وقتی «متوجه شدم» زده نشود (هر چند ثانیه تکرار)
+const ACK_KEY = 'gn_timer_ack';
+let acks = new Set((() => { try { return JSON.parse(localStorage.getItem(ACK_KEY)) || []; } catch { return []; } })());
+let lastRing = { t: 0, key: '' };
+let audioCtx = null;
+document.addEventListener('pointerdown', () => {
+  try { audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)(); audioCtx.resume(); } catch { /* no audio */ }
+}, { passive: true });
+const timerKey = (s) => `${s.id}|${s.session.startTime}|${s.session.timer.type}|${s.session.timer.value}`;
+
+function ring() {
+  try { navigator.vibrate && navigator.vibrate([400, 150, 400, 150, 800]); } catch { /* ignore */ }
+  if (!audioCtx) return;
+  const t0 = audioCtx.currentTime;
+  [[784, 0], [1047, 0.18], [784, 0.5], [1047, 0.68]].forEach(([f, d]) => {
+    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.type = 'sine'; o.frequency.value = f;
+    g.gain.setValueAtTime(0.3, t0 + d); g.gain.exponentialRampToValueAtTime(0.001, t0 + d + 0.35);
+    o.connect(g); g.connect(audioCtx.destination); o.start(t0 + d); o.stop(t0 + d + 0.4);
+  });
+}
+
+function checkAlarms() {
+  const box = $('#alarm');
+  if (!state || !localStorage.getItem(LS.token)) { if (box) box.remove(); return; }
+  const due = state.systems.filter((s) => timerDone(s) && !acks.has(timerKey(s)));
+  if (!due.length) { if (box) box.remove(); return; }
+  const key = due.map(timerKey).join(',');
+  let el = box;
+  if (!el || el.dataset.key !== key) {
+    if (el) el.remove();
+    el = document.createElement('div');
+    el.id = 'alarm'; el.dataset.key = key;
+    el.innerHTML = `<div><div class="big">⏰</div>${due.map((s) => `<div class="an">پایان وقت ${esc(s.name)}</div>
+      <div class="mu">${esc(s.session.customerName || '')} — تایمر ${s.session.timer.type === 'time' ? fa(s.session.timer.value) + ' دقیقه' : money(s.session.timer.value)}</div>`).join('')}
+      <button id="ack" style="width:100%;margin-top:16px">متوجه شدم</button></div>`;
+    document.body.appendChild(el);
+    el.querySelector('#ack').onclick = () => {
+      due.forEach((s) => acks.add(timerKey(s)));
+      try { localStorage.setItem(ACK_KEY, JSON.stringify([...acks].slice(-200))); } catch { /* ignore */ }
+      el.remove();
+    };
+  }
+  const every = ((state.settings && state.settings.alarmIntervalSeconds) || 45) * 1000;
+  if (lastRing.key !== key || Date.now() - lastRing.t >= every) { ring(); lastRing = { t: Date.now(), key }; }
+}
+
+// اندروید: اعلان سیستمی در زمان پایان، حتی وقتی اپ بسته است
+const LN = () => NATIVE && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications;
+let lnReady = false, lnSig = '';
+async function lnInit() {
+  const L = LN();
+  if (!L || lnReady) return;
+  try {
+    const p = await L.requestPermissions();
+    if (p && p.display && p.display !== 'granted') return;
+    try { await L.createChannel({ id: 'timer', name: 'پایان وقت سیستم‌ها', importance: 5, vibration: true, visibility: 1 }); } catch { /* old android */ }
+    lnReady = true;
+  } catch { /* plugin unavailable */ }
+}
+function nid(id) { let h = 7; for (const c of String(id)) h = (h * 31 + c.charCodeAt(0)) | 0; return (Math.abs(h) % 2000000000) + 1; }
+async function syncNotifications() {
+  const L = LN();
+  if (!L || !state) return;
+  await lnInit();
+  if (!lnReady) return;
+  const list = [];
+  for (const s of state.systems) {
+    const t = s.session && s.session.timer;
+    if (!t || t.reached || !t.endsAt || s.session.pausedTime) continue;
+    const at = t.endsAt - skew;
+    if (at <= Date.now() + 1000) continue;
+    list.push({
+      id: nid(s.id),
+      title: `⏰ پایان وقت ${s.name}`,
+      body: t.type === 'time' ? `${fa(t.value)} دقیقه بازی تمام شد.` : `هزینه بازی به ${money(t.value)} رسید.`,
+      schedule: { at: new Date(at), allowWhileIdle: true },
+      channelId: 'timer',
+    });
+  }
+  const sig = JSON.stringify(list.map((n) => [n.id, Math.round(+n.schedule.at / 5000)]));
+  if (sig === lnSig) return;
+  lnSig = sig;
+  try {
+    const pending = await L.getPending();
+    if (pending.notifications.length) await L.cancel({ notifications: pending.notifications.map((n) => ({ id: n.id })) });
+    if (list.length) await L.schedule({ notifications: list });
+  } catch { lnSig = ''; }
 }
 
 function openPlayers(id) {
@@ -647,6 +809,7 @@ async function poll() {
   try {
     const j = await api('/api/state');
     skew = j.serverTime - Date.now(); state = j.state; online = true; failCount = 0;
+    syncNotifications();
   } catch (e) {
     online = false; failCount++;
     // اندروید: بعد از ~۱۰ ثانیه قطعی، کامپیوتر را در شبکه پیدا کن (شاید IP عوض شده)

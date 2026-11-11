@@ -15,6 +15,7 @@ export type RemoteCommand = { id: string; device: string } & (
   | { type: 'addBuffet'; systemId: string; items: Items }
   | { type: 'settle'; systemId: string; method: Method; cardReaderId?: string; debtorId?: string; round?: boolean }
   | { type: 'directSale'; items: Items; customerName: string; method: Method; cardReaderId?: string; debtorId?: string }
+  | { type: 'timer'; systemId: string; limitType: 'none' | 'time' | 'amount'; value?: number }
 );
 
 // null = موفق، string = متن خطا، {message} = موفق همراه پیام برای گوشی
@@ -31,6 +32,7 @@ export interface RemoteActions {
   addBuffet: (systemId: string, items: Items, device: string) => RemoteResult;
   settle: (systemId: string, opts: { method: Method; cardReaderId?: string; debtorId?: string; round?: boolean }, device: string) => RemoteResult;
   directSale: (items: Items, customerName: string, opts: { method: Method; cardReaderId?: string; debtorId?: string }, device: string) => RemoteResult;
+  timer: (systemId: string, limitType: 'none' | 'time' | 'amount', value: number | undefined, device: string) => RemoteResult;
 }
 
 export interface RemoteData {
@@ -39,6 +41,8 @@ export interface RemoteData {
   buffetItems: BuffetItem[];
   cardReaders: CardReader[];
   rates: RatesTable;
+  presetTimerMinutes?: number[];
+  alarmIntervalSeconds?: number;
 }
 
 declare global {
@@ -55,7 +59,35 @@ declare global {
   }
 }
 
+// تایمر دلخواه مشتری: کی تمام می‌شود (به ساعت این کامپیوتر)
+// برای تایمر مبلغی، زمانی که هزینه بازی به مبلغ هدف می‌رسد با جستجوی دودویی پیدا می‌شود
+function timerInfo(a: System['activeSession'], r: RatesTable[keyof RatesTable] | undefined, now: number) {
+  if (!a || !r) return null;
+  const type = a.customTimerLimitType || 'none';
+  const value = Number(a.customTimerValue) || 0;
+  if (type === 'none' || value <= 0) return null;
+  const m = getSessionMetrics(a, r, now);
+  const reached = type === 'time' ? m.elapsedMs >= value * 60000 : m.gamePlayCost >= value;
+  let endsAt: number | null = null;
+  if (!reached && !a.pausedTime) {
+    if (type === 'time') {
+      endsAt = Math.round(now + (value * 60000 - m.elapsedMs));
+    } else {
+      let lo = 0, hi = 24 * 3600 * 1000;
+      if (getSessionMetrics(a, r, now + hi).gamePlayCost >= value) {
+        for (let i = 0; i < 30; i++) {
+          const mid = (lo + hi) / 2;
+          if (getSessionMetrics(a, r, now + mid).gamePlayCost >= value) hi = mid; else lo = mid;
+        }
+        endsAt = Math.round(now + hi);
+      }
+    }
+  }
+  return { type, value, reached, notified: !!a.customTimerNotified, endsAt };
+}
+
 function buildSnapshot(d: RemoteData) {
+  const now = Date.now();
   return {
     systems: d.systems.map((s) => {
       const a = s.activeSession;
@@ -79,6 +111,7 @@ function buildSnapshot(d: RemoteData) {
         status: s.status,
         session: a
           ? {
+              timer: timerInfo(a, r, now),
               customerName: a.customerName,
               startTime: a.startTime,
               pausedTime: a.pausedTime ?? null,
@@ -93,6 +126,7 @@ function buildSnapshot(d: RemoteData) {
     debtors: d.debtors.map((x) => ({ id: x.id, name: x.name, phone: x.phone, balance: x.balance })),
     buffet: d.buffetItems.map((b) => ({ id: b.id, name: b.name, price: b.price, stock: b.stock ?? null, category: b.category ?? null })),
     cardReaders: d.cardReaders.map((c) => ({ id: c.id, name: c.name })),
+    settings: { presetTimerMinutes: d.presetTimerMinutes || [30, 45, 60], alarmIntervalSeconds: d.alarmIntervalSeconds || 45 },
   };
 }
 
@@ -107,7 +141,7 @@ export function useRemoteBridge(data: RemoteData, actions: RemoteActions) {
   // هر تغییر state + هر ۳ ثانیه (برای به‌روز ماندن مبلغ‌های لحظه‌ای)
   useEffect(() => {
     push();
-  }, [data.systems, data.debtors, data.buffetItems, data.cardReaders, data.rates]);
+  }, [data.systems, data.debtors, data.buffetItems, data.cardReaders, data.rates, data.presetTimerMinutes, data.alarmIntervalSeconds]);
 
   useEffect(() => {
     if (!window.remoteBridge) return;
@@ -133,6 +167,7 @@ export function useRemoteBridge(data: RemoteData, actions: RemoteActions) {
           case 'addBuffet': res = a.addBuffet(cmd.systemId, cmd.items, cmd.device); break;
           case 'settle': res = a.settle(cmd.systemId, { method: cmd.method, cardReaderId: cmd.cardReaderId, debtorId: cmd.debtorId, round: cmd.round }, cmd.device); break;
           case 'directSale': res = a.directSale(cmd.items, cmd.customerName, { method: cmd.method, cardReaderId: cmd.cardReaderId, debtorId: cmd.debtorId }, cmd.device); break;
+          case 'timer': res = a.timer(cmd.systemId, cmd.limitType, cmd.value, cmd.device); break;
           default: res = 'دستور ناشناخته';
         }
       } catch (e: any) {

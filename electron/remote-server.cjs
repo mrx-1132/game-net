@@ -48,6 +48,13 @@ function validate(b) {
     case 'start':
       if (!str(b.systemId, 100) || ![1, 2, 3, 4].includes(b.playersCount)) return null;
       return { type: 'start', systemId: b.systemId, customerName: text(b.customerName, 60), playersCount: b.playersCount };
+    case 'timer': {
+      if (!str(b.systemId, 100) || !['none', 'time', 'amount'].includes(b.limitType)) return null;
+      if (b.limitType === 'none') return { type: 'timer', systemId: b.systemId, limitType: 'none' };
+      const max = b.limitType === 'time' ? 1440 : 1e10;
+      if (!Number.isInteger(b.value) || b.value <= 0 || b.value > max) return null;
+      return { type: 'timer', systemId: b.systemId, limitType: b.limitType, value: b.value };
+    }
     case 'pause':
     case 'resume':
       if (!str(b.systemId, 100)) return null;
