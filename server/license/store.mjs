@@ -34,6 +34,8 @@ function normalizeLicense(r) {
     status: r.status === 'suspended' ? 'suspended' : 'active',
     max_devices: Number.isInteger(Number(r.max_devices)) && Number(r.max_devices) > 0 ? Number(r.max_devices) : 1,
     features: features && typeof features === 'object' ? { remote: features.remote !== false } : { remote: true },
+    // شناسه حساب در سیستم بیرونی (مثلاً سایت فروش) — برای ساخت/تمدید از طریق API
+    external_id: r.external_id ? String(r.external_id) : null,
     created_at: iso(r.created_at) || new Date().toISOString(),
   };
 }
@@ -93,6 +95,9 @@ class FileStore {
     const u = String(username || '').trim().toLowerCase();
     return this.data.licenses.find((l) => l.username.toLowerCase() === u) || null;
   }
+  async getLicenseByExternalId(externalId) {
+    return this.data.licenses.find((l) => l.external_id && l.external_id === String(externalId)) || null;
+  }
   async saveLicense(lic) {
     const l = normalizeLicense(lic);
     const i = this.data.licenses.findIndex((x) => x.id === l.id);
@@ -139,7 +144,7 @@ class FileStore {
 
 // ---------- PostgreSQL store ----------
 const LICENSE_COLS = ['id', 'username', 'password_hash', 'business_name', 'owner_name', 'phone_number',
-  'subscription_type', 'start_date', 'end_date', 'status', 'max_devices', 'features', 'created_at'];
+  'subscription_type', 'start_date', 'end_date', 'status', 'max_devices', 'features', 'external_id', 'created_at'];
 const DEVICE_COLS = ['id', 'license_id', 'device_hash', 'name', 'activated_at', 'last_seen', 'last_ip'];
 
 function upsertSql(table, cols) {
@@ -178,6 +183,8 @@ class PgStore {
       );
       ALTER TABLE licenses ADD COLUMN IF NOT EXISTS max_devices INTEGER NOT NULL DEFAULT 1;
       ALTER TABLE licenses ADD COLUMN IF NOT EXISTS features JSONB NOT NULL DEFAULT '{"remote": true}';
+      ALTER TABLE licenses ADD COLUMN IF NOT EXISTS external_id VARCHAR(64);
+      CREATE UNIQUE INDEX IF NOT EXISTS licenses_external_id_key ON licenses (external_id) WHERE external_id IS NOT NULL;
       CREATE TABLE IF NOT EXISTS license_devices (
         id VARCHAR(64) PRIMARY KEY,
         license_id VARCHAR(64) NOT NULL REFERENCES licenses(id) ON DELETE CASCADE,
@@ -200,6 +207,10 @@ class PgStore {
   }
   async getLicenseByUsername(username) {
     const r = await this.pool.query('SELECT * FROM licenses WHERE LOWER(username) = $1', [String(username || '').trim().toLowerCase()]);
+    return r.rows[0] ? normalizeLicense(r.rows[0]) : null;
+  }
+  async getLicenseByExternalId(externalId) {
+    const r = await this.pool.query('SELECT * FROM licenses WHERE external_id = $1', [String(externalId)]);
     return r.rows[0] ? normalizeLicense(r.rows[0]) : null;
   }
   async saveLicense(lic) {

@@ -25,6 +25,7 @@ export interface LicenseUser {
   isExpired?: boolean;
   maxDevices?: number;
   deviceCount?: number;
+  externalId?: string | null;
   features?: { remote: boolean };
   createdAtISO?: string;
 }
@@ -444,5 +445,21 @@ export function uploadAndroidApk(file: File, note: string, onProgress: (pct: num
 
 export async function deleteAndroidApk(): Promise<{ success: boolean; message: string }> {
   const { data } = await adminCall('/admin/android', { method: 'DELETE' });
+  return data;
+}
+
+// ---- کلیدهای API (اتصال سایت فروش) ----
+export interface ApiKeyInfo { id: string; name: string; prefix: string; createdAt: string; lastUsedAt: string | null; revoked: boolean }
+
+export async function fetchApiKeys(): Promise<ApiKeyInfo[]> {
+  const { data } = await adminCall('/admin/api-keys');
+  return data.keys || [];
+}
+export async function createApiKey(name: string): Promise<{ success: boolean; key?: string; message: string }> {
+  const { data } = await adminCall('/admin/api-keys', { method: 'POST', body: JSON.stringify({ name }) });
+  return data;
+}
+export async function revokeApiKey(id: string): Promise<{ success: boolean; message: string }> {
+  const { data } = await adminCall(`/admin/api-keys/${encodeURIComponent(id)}`, { method: 'DELETE' });
   return data;
 }

@@ -7,6 +7,7 @@ import { signToken, verifyTokenSignature, loadSigningKey } from './keys.mjs';
 import { exportBackup, importBackup } from './store.mjs';
 import { adminTotp } from './totp.mjs';
 import { mountUpdateRoutes, mountAndroidRoutes } from './updates.mjs';
+import { mountApiV1, apiKeys } from './api-v1.mjs';
 
 const DAY = 24 * 3600 * 1000;
 const TOKEN_TTL_DAYS = Math.max(1, Math.min(30, Number(process.env.LICENSE_TOKEN_TTL_DAYS) || 7));
@@ -73,6 +74,7 @@ export function toPublicLicense(l, deviceCount) {
     maxDevices: l.max_devices,
     features: l.features,
     deviceCount: deviceCount ?? undefined,
+    externalId: l.external_id || null,
     createdAtISO: l.created_at,
   };
 }
@@ -241,6 +243,23 @@ export function createLicenseRouter(store) {
   });
 
   mountAndroidRoutes(router, { requireAdmin });
+
+  // ===== API برای سایت / سیستم‌های بیرونی =====
+  mountApiV1(router, { store, toPublicLicense, rateLimit });
+
+  router.get('/admin/api-keys', requireAdmin, (_req, res) => res.json({ success: true, keys: apiKeys.list() }));
+  router.post('/admin/api-keys', requireAdmin, (req, res) => {
+    const name = str(req.body?.name, 60);
+    if (!name) return res.status(400).json({ success: false, message: 'یک نام برای کلید بنویسید (مثلاً «سایت»).' });
+    const k = apiKeys.create(name);
+    console.log(`api key created: ${name}`);
+    res.json({ success: true, key: k.key, message: 'کلید ساخته شد. فقط همین یک بار نمایش داده می‌شود.' });
+  });
+  router.delete('/admin/api-keys/:id', requireAdmin, (req, res) => {
+    const ok = apiKeys.revoke(req.params.id);
+    if (ok) console.log('api key revoked');
+    res.status(ok ? 200 : 404).json({ success: ok, message: ok ? 'کلید باطل شد.' : 'کلید پیدا نشد.' });
+  });
 
   // ===== Two-factor login (TOTP) =====
   router.get('/admin/2fa', requireAdmin, (_req, res) => res.json({ success: true, enabled: adminTotp.enabled() }));

@@ -28,6 +28,7 @@ import {
 } from '../services/licenseService';
 import QRCode from 'qrcode';
 import UpdatesModal from './UpdatesModal';
+import ApiKeysSection from './ApiKeysSection';
 
 function toPersianDigits(n: number | string): string {
   const farsiDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
@@ -895,7 +896,10 @@ export default function AdminApp() {
                     return (
                       <tr key={lic.id} className="hover:bg-white/[0.02] transition-colors">
                         <td className="p-3.5">
-                          <div className="font-bold text-white text-xs">{lic.businessName}</div>
+                          <div className="font-bold text-white text-xs flex items-center gap-1.5">
+                            {lic.businessName}
+                            {lic.externalId && <span className="px-1.5 py-0.5 rounded-md bg-sky-500/10 text-sky-300 text-[9px] font-bold" title="ساخته‌شده از طریق سایت">سایت</span>}
+                          </div>
                           <div className="text-[10px] text-slate-400 flex items-center gap-1 mt-0.5">
                             <span>{lic.ownerName || 'بدون مالک ثبت شده'}</span>
                             {lic.phoneNumber && (
@@ -1428,7 +1432,7 @@ export default function AdminApp() {
 
       {showSecurity && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4" dir="rtl">
-          <div className="w-full max-w-md bg-surface-0f131c border border-white/10 rounded-2xl p-5 space-y-4 shadow-2xl">
+          <div className="w-full max-w-md max-h-[92vh] overflow-auto bg-surface-0f131c border border-white/10 rounded-2xl p-5 space-y-4 shadow-2xl">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-black text-white flex items-center gap-2">
                 <Shield className="w-4 h-4 text-sky-400" />
@@ -1520,6 +1524,8 @@ export default function AdminApp() {
             {twoFaError && (
               <div className="p-3 bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs rounded-xl">{twoFaError}</div>
             )}
+
+            <ApiKeysSection notify={notifySuccess} />
           </div>
         </div>
       )}
