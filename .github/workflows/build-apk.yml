@@ -65,7 +65,12 @@ jobs:
           mkdir -p ../dist-apk
           if [ "$SIGNED" = "true" ]; then
             BT=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
-            echo "$KS_B64" | base64 -d > "$RUNNER_TEMP/release.p12"
+            # فاصله، خط جدید و کاراکترهای اضافه‌ای که موقع کپی وارد می‌شوند حذف شوند
+            printf '%s' "$KS_B64" | tr -cd 'A-Za-z0-9+/=' | base64 -d > "$RUNNER_TEMP/release.p12" || {
+              echo "::error::ANDROID_KEYSTORE_BASE64 خراب است (ناقص کپی شده). مقدار آن را دوباره از فایل gamenet-android-signing.txt کامل کپی کنید."; exit 1; }
+            KS_PASS=$(printf '%s' "$KS_PASS" | tr -d ' \r\n\t'); KS_ALIAS=$(printf '%s' "$KS_ALIAS" | tr -d ' \r\n\t'); export KS_PASS
+            keytool -list -storetype PKCS12 -keystore "$RUNNER_TEMP/release.p12" -storepass "$KS_PASS" -alias "$KS_ALIAS" >/dev/null 2>&1 || {
+              echo "::error::کلید باز نشد: ANDROID_KEYSTORE_PASSWORD یا ANDROID_KEY_ALIAS اشتباه است (یا ANDROID_KEYSTORE_BASE64 ناقص)."; exit 1; }
             "$BT/zipalign" -p -f 4 android/app/build/outputs/apk/release/app-release-unsigned.apk "$RUNNER_TEMP/aligned.apk"
             "$BT/apksigner" sign --ks "$RUNNER_TEMP/release.p12" --ks-type PKCS12 \
               --ks-pass env:KS_PASS --key-pass env:KS_PASS --ks-key-alias "$KS_ALIAS" \
