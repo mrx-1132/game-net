@@ -86,8 +86,7 @@
         }
       ],
       "icon": "public/icon.ico",
-      "signAndEditExecutable": false,
-      "sign": null,
+      "signAndEditExecutable": true,
       "forceCodeSigning": false
     },
     "nsis": {
@@ -97,7 +96,10 @@
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "shortcutName": "GameNet Manager",
-      "artifactName": "GameNet-Manager-Setup-${version}.${ext}"
+      "artifactName": "GameNet-Manager-Setup-${version}.${ext}",
+      "installerIcon": "public/icon.ico",
+      "uninstallerIcon": "public/icon.ico",
+      "installerHeaderIcon": "public/icon.ico"
     },
     "portable": {
       "artifactName": "GameNet-Manager-Portable-${version}.${ext}"
