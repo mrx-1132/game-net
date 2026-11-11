@@ -70,6 +70,8 @@ const LS = { url: 'gn_url', token: 'gn_token', name: 'gn_dev', theme: 'gn_theme'
 const NATIVE = !!(window.Capacitor && (window.Capacitor.isNativePlatform ? window.Capacitor.isNativePlatform() : true));
 const WEB = !NATIVE && /^https?:$/.test(location.protocol);
 const IOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const ANDROID = /Android/i.test(navigator.userAgent);
+let apkLink = null; // لینک دانلود اپ اندروید از سرور لایسنس (از /api/ping کامپیوتر)
 const STANDALONE = navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
 const CONFIRM_LABEL = NATIVE ? 'تأیید با اثر انگشت' : 'تأیید با رمز';
 const apiBase = () => (WEB ? location.origin : localStorage.getItem(LS.url));
@@ -209,6 +211,10 @@ function closeSheet() { $('#sheet').innerHTML = ''; }
 
 // ---------- Setup ----------
 function installTip() {
+  if (WEB && ANDROID && apkLink) {
+    return `<div class="tip"><b>اپ اندروید:</b> برای اثر انگشت و پیدا شدن خودکار کامپیوتر، اپ را نصب کنید:
+    <a href="${esc(apkLink)}" style="color:var(--bl);font-weight:800">دانلود GameNet Remote</a> (با اینترنت گوشی).</div>`;
+  }
   if (!WEB || !IOS || STANDALONE) return '';
   return `<div class="tip"><b>نصب روی آیفون:</b> در Safari دکمه اشتراک‌گذاری (مربع با فلش رو به بالا) پایین صفحه را بزنید و
   <b>Add to Home Screen</b> را انتخاب کنید. بعد برنامه را از صفحه اصلی گوشی باز کنید و آن‌جا جفت‌سازی کنید
@@ -653,6 +659,11 @@ async function poll() {
 }
 setInterval(poll, 2500);
 render(); poll();
+if (WEB && ANDROID) {
+  fetch('/api/ping').then((r) => r.json()).then((j) => {
+    if (j && typeof j.apk === 'string' && /^https:\/\//.test(j.apk)) { apkLink = j.apk; if (!localStorage.getItem(LS.token)) render(); }
+  }).catch(() => {});
+}
 </script>
 </body>
 </html>

@@ -141,7 +141,11 @@ if (!gotTheLock) {
       const license = createLicenseManager({ getWindow: () => mainWindow });
       createWindow();
       // ریموت فقط با اشتراک فعالی که امکان ریموت دارد کار می‌کند
-      startRemoteServer(() => mainWindow, { isAllowed: () => license.hasFeature('remote') });
+      startRemoteServer(() => mainWindow, {
+        isAllowed: () => license.hasFeature('remote'),
+        // لینک دانلود اپ اندروید روی سرور لایسنس (برای QR در تنظیمات ریموت)
+        getApkUrl: () => { const base = license.servers()[0]; return base ? `${base}/remote.apk` : null; },
+      });
       try {
         createUpdater({ license, getWindow: () => mainWindow, log });
       } catch (e) {

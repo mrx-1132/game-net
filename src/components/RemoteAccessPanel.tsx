@@ -7,13 +7,14 @@ import '../remote/useRemoteBridge';
 // - آیفون و هر گوشی دیگر: نسخه وب از همین کامپیوتر (http://IP:4747) — با اسکن QR
 export default function RemoteAccessPanel() {
   const bridge = window.remoteBridge;
-  const [info, setInfo] = useState<{ port: number; addresses: string[] } | null>(null);
+  const [info, setInfo] = useState<{ port: number; addresses: string[]; apkUrl?: string | null } | null>(null);
   const [pair, setPair] = useState<{ code: string; expiresAt: number } | null>(null);
   const [devices, setDevices] = useState<{ id: string; name: string; lastSeen: string | null }[]>([]);
   const [now, setNow] = useState(Date.now());
   const [pairError, setPairError] = useState('');
   const [addr, setAddr] = useState('');
   const [qr, setQr] = useState('');
+  const [apkQr, setApkQr] = useState('');
 
   const refresh = async () => {
     if (!bridge) return;
@@ -32,6 +33,14 @@ export default function RemoteAccessPanel() {
   const left = pair ? Math.max(0, Math.round((pair.expiresAt - now) / 1000)) : 0;
   const codeActive = !!pair && left > 0;
   const webUrl = info && addr ? `http://${addr}:${info.port}/${codeActive ? `?code=${pair!.code}` : ''}` : '';
+
+  useEffect(() => {
+    const url = info?.apkUrl;
+    if (!url) { setApkQr(''); return; }
+    QRCode.toDataURL(url, { margin: 2, width: 200, errorCorrectionLevel: 'M', color: { dark: '#000000', light: '#ffffff' } })
+      .then(setApkQr)
+      .catch(() => setApkQr(''));
+  }, [info?.apkUrl]);
 
   useEffect(() => {
     if (!webUrl) { setQr(''); return; }
@@ -82,7 +91,7 @@ export default function RemoteAccessPanel() {
             </div>
 
             <div className="text-xs leading-6 text-slate-300 space-y-1">
-              <div><strong className="text-white">اندروید:</strong> اپ GameNet Remote را باز کنید، آدرس بالا و کد را وارد کنید.</div>
+              <div><strong className="text-white">اندروید:</strong> با QR «دانلود اپ اندروید» اپ را نصب کنید، بعد آدرس بالا و کد را در اپ وارد کنید.</div>
               <div><strong className="text-white">آیفون (یا هر گوشی بدون اپ):</strong> با دوربین گوشی QR را اسکن کنید. در Safari با «Add to Home Screen» مثل یک برنامه نصب می‌شود.</div>
             </div>
 
@@ -100,20 +109,24 @@ export default function RemoteAccessPanel() {
             </div>
           </div>
 
-          {qr && (
-            <div className="flex flex-col items-center gap-2">
-              <img
-                src={qr}
-                alt="QR ریموت"
-                width={200}
-                height={200}
-                className="rounded-xl"
-                style={{ background: '#ffffff', padding: 6 }}
-              />
-              <div className="text-[11px] text-slate-400 text-center">
-                {codeActive ? 'کد جفت‌سازی داخل QR است' : 'برای جفت‌سازی سریع‌تر، اول کد بسازید'}
-              </div>
-              <div className="text-[10px] font-mono text-slate-500" dir="ltr">{webUrl}</div>
+          {(qr || apkQr) && (
+            <div className="flex flex-wrap justify-center gap-4">
+              {apkQr && (
+                <div className="flex flex-col items-center gap-2">
+                  <div className="text-[11px] font-bold text-emerald-300">دانلود اپ اندروید</div>
+                  <img src={apkQr} alt="QR دانلود اپ اندروید" width={170} height={170} className="rounded-xl" style={{ background: '#ffffff' }} />
+                  <div className="text-[10px] text-slate-500 text-center max-w-[170px]">با اینترنت گوشی اسکن و نصب کنید</div>
+                </div>
+              )}
+              {qr && (
+                <div className="flex flex-col items-center gap-2">
+                  <div className="text-[11px] font-bold text-sky-300">آیفون / بدون اپ</div>
+                  <img src={qr} alt="QR ریموت" width={170} height={170} className="rounded-xl" style={{ background: '#ffffff', padding: 6 }} />
+                  <div className="text-[10px] text-slate-500 text-center max-w-[170px]">
+                    {codeActive ? 'کد جفت‌سازی داخل QR است' : 'برای جفت‌سازی سریع‌تر، اول کد بسازید'}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

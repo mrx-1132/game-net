@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { X, Upload, RefreshCw, Trash2, CheckCircle2, AlertTriangle, Users, Globe, Download } from 'lucide-react';
+import { X, Upload, RefreshCw, Trash2, CheckCircle2, AlertTriangle, Users, Globe, Download, Smartphone } from 'lucide-react';
 import {
   LicenseUser,
   UpdateRelease,
@@ -9,6 +9,11 @@ import {
   publishUpdate,
   patchUpdateRelease,
   deleteUpdateRelease,
+  AndroidApkInfo,
+  fetchAndroidApk,
+  uploadAndroidApk,
+  deleteAndroidApk,
+  getLicenseApiBaseUrl,
 } from '../services/licenseService';
 
 type MFile = { name: string; size: number };
@@ -63,6 +68,66 @@ function TargetPicker({ licenses, value, onChange }: { licenses: LicenseUser[]; 
           <div className="text-[10px] text-slate-500">{ids.length} مشتری انتخاب شده</div>
         </div>
       )}
+    </div>
+  );
+}
+
+// اپ اندروید ریموت: یک APK روی سرور با لینک ثابت /remote.apk
+function AndroidApkSection({ notify, onError }: { notify: (m: string) => void; onError: (m: string) => void }) {
+  const [apk, setApk] = useState<AndroidApkInfo | null | undefined>(undefined);
+  const [pct, setPct] = useState<number | null>(null);
+  const link = `${getLicenseApiBaseUrl()}/remote.apk`;
+  const load = () => fetchAndroidApk().then(setApk).catch(() => setApk(null));
+  useEffect(() => { load(); }, []);
+
+  const onPick = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files && e.target.files[0];
+    e.target.value = '';
+    if (!file) return;
+    if (!/\.apk$/i.test(file.name)) { onError('یک فایل .apk انتخاب کنید.'); return; }
+    setPct(0);
+    try {
+      await uploadAndroidApk(file, '', setPct);
+      notify('اپ اندروید روی سرور قرار گرفت. مشتری‌ها از QR داخل برنامه دانلودش می‌کنند.');
+      load();
+    } catch (err: any) {
+      onError(err?.message || 'خطا در آپلود.');
+    } finally {
+      setPct(null);
+    }
+  };
+
+  return (
+    <div className="bg-surface-06080d border border-white/10 rounded-2xl p-4 space-y-3">
+      <div className="text-xs font-bold text-white flex items-center gap-2"><Smartphone className="w-4 h-4 text-emerald-400" /> اپ اندروید ریموت</div>
+      <div className="text-[11px] text-slate-400 leading-6">
+        APK را از گیت‌هاب ← Releases ← <b>GameNet Remote (Android)</b> دانلود و اینجا آپلود کنید.
+        برنامه ویندوز مشتری‌ها در تنظیمات ← ریموت موبایل یک QR برای دانلود همین فایل نشان می‌دهد.
+      </div>
+      {apk === undefined ? null : apk ? (
+        <div className="text-[11px] text-slate-300 flex flex-wrap items-center gap-x-3 gap-y-1">
+          <span className="text-emerald-300 font-bold">روی سرور است</span>
+          <span>{fmtSize(apk.size)}</span>
+          <span>آپلود: {fmtDate(apk.uploadedAt)}</span>
+          <span>دانلود: {apk.downloads}</span>
+          <a href={link} className="font-mono text-sky-300 underline" dir="ltr">{link}</a>
+          <button
+            type="button"
+            onClick={async () => { if (!window.confirm('اپ اندروید از سرور حذف شود؟')) return; const r = await deleteAndroidApk(); r.success ? (notify(r.message), load()) : onError(r.message); }}
+            className="p-1 bg-rose-500/10 hover:bg-rose-600 text-rose-400 hover:text-white rounded-lg cursor-pointer"
+            title="حذف"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      ) : (
+        <div className="text-[11px] text-amber-300">هنوز اپ اندروید روی سرور قرار نگرفته است.</div>
+      )}
+      <label className="flex items-center justify-center gap-2 py-2.5 border border-dashed border-white/20 rounded-xl text-xs text-slate-300 cursor-pointer hover:bg-white/5">
+        {pct !== null ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+        {pct !== null ? `در حال آپلود… ${pct}%` : apk ? 'جایگزینی با APK جدید' : 'انتخاب فایل GameNet-Remote.apk'}
+        <input type="file" accept=".apk,application/vnd.android.package-archive" className="hidden" onChange={onPick} disabled={pct !== null} />
+      </label>
     </div>
   );
 }
@@ -144,10 +209,12 @@ export default function UpdatesModal({ licenses, onClose, notify }: Props) {
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-black text-white flex items-center gap-2">
             <Download className="w-4 h-4 text-emerald-400" />
-            آپدیت آنلاین برنامه ویندوز
+            آپدیت برنامه ویندوز و اپ اندروید
           </h3>
           <button type="button" onClick={onClose} className="text-slate-400 hover:text-white cursor-pointer"><X className="w-4 h-4" /></button>
         </div>
+
+        <AndroidApkSection notify={notify} onError={setError} />
 
         {/* انتشار نسخه جدید */}
         <div className="bg-surface-06080d border border-white/10 rounded-2xl p-4 space-y-3">

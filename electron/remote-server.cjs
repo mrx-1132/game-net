@@ -66,7 +66,7 @@ function safeEq(a, b) {
   return x.length === y.length && crypto.timingSafeEqual(x, y);
 }
 
-function startRemoteServer(getWindow, { isAllowed = () => true } = {}) {
+function startRemoteServer(getWindow, { isAllowed = () => true, getApkUrl = () => null } = {}) {
   const NOT_ALLOWED = 'ریموت موبایل در اشتراک فعلی این برنامه فعال نیست.';
   const devicesFile = path.join(app.getPath('userData'), 'remote-devices.json');
   let devices = [];
@@ -103,7 +103,7 @@ function startRemoteServer(getWindow, { isAllowed = () => true } = {}) {
     for (const list of Object.values(os.networkInterfaces())) {
       for (const i of list || []) if (i.family === 'IPv4' && !i.internal) addresses.push(i.address);
     }
-    return { port: PORT, addresses };
+    return { port: PORT, addresses, apkUrl: getApkUrl() };
   });
   ipcMain.handle('remote:pair-code', () => {
     if (!isAllowed()) throw new Error(NOT_ALLOWED);
@@ -171,7 +171,7 @@ function startRemoteServer(getWindow, { isAllowed = () => true } = {}) {
     res.sendFile(path.join(WEB_DIR, path.basename(req.path)));
   });
 
-  api.get('/api/ping', (_req, res) => res.json({ ok: true, app: 'gamenet-manager', id: serverId }));
+  api.get('/api/ping', (_req, res) => res.json({ ok: true, app: 'gamenet-manager', id: serverId, apk: getApkUrl() }));
 
   // اثبات هویت کامپیوتر به گوشی، بدون اینکه گوشی توکنش را بفرستد:
   // گوشی kid = sha256(sha256(token)) و یک nonce می‌فرستد؛ فقط کامپیوتری که هش توکن را دارد

@@ -207,3 +207,72 @@ export function mountUpdateRoutes(router, { store, requireAdmin, licenseProblem,
     res.sendFile(path.join(UPDATES_DIR, version, name), { acceptRanges: true });
   });
 }
+
+// ---------------------------------------------------------------------------
+// اپ اندروید ریموت: یک فایل APK روی سرور با لینک ثابت /remote.apk
+// (برنامه ویندوز QR همین لینک را نشان می‌دهد تا مشتری اپ را خودش دانلود کند)
+// ---------------------------------------------------------------------------
+const ANDROID_DIR = path.join(UPDATES_DIR, 'android');
+const APK_FILE = path.join(ANDROID_DIR, 'GameNet-Remote.apk');
+const APK_META = path.join(ANDROID_DIR, 'meta.json');
+const MAX_APK_BYTES = 200 * 1024 * 1024;
+
+function readApkMeta() {
+  try { return fs.existsSync(APK_FILE) ? JSON.parse(fs.readFileSync(APK_META, 'utf8')) : null; } catch { return null; }
+}
+
+export function serveAndroidApk(_req, res) {
+  if (!fs.existsSync(APK_FILE)) {
+    return res.status(404).type('text/html; charset=utf-8')
+      .send('<meta name="viewport" content="width=device-width"><p dir="rtl" style="font-family:sans-serif;padding:20px">اپ اندروید هنوز روی سرور قرار نگرفته است.</p>');
+  }
+  const meta = readApkMeta();
+  if (meta) { meta.downloads = (meta.downloads || 0) + 1; try { fs.writeFileSync(APK_META, JSON.stringify(meta, null, 2)); } catch { /* ignore */ } }
+  res.set('Cache-Control', 'no-cache');
+  res.set('Content-Type', 'application/vnd.android.package-archive');
+  res.set('Content-Disposition', 'attachment; filename="GameNet-Remote.apk"');
+  res.sendFile(APK_FILE);
+}
+
+export function mountAndroidRoutes(router, { requireAdmin }) {
+  router.get('/admin/android', requireAdmin, (_req, res) => res.json({ success: true, apk: readApkMeta() }));
+
+  router.post('/admin/android/upload', requireAdmin, (req, res) => {
+    const name = String(req.query.name || 'app.apk').replace(/[^A-Za-z0-9._ -]/g, '').slice(0, 120);
+    const note = String(req.query.note || '').slice(0, 200);
+    fs.mkdirSync(ANDROID_DIR, { recursive: true });
+    const part = `${APK_FILE}.part`;
+    const out = fs.createWriteStream(part);
+    const hash = crypto.createHash('sha256');
+    let bytes = 0, head = null, failed = false;
+    const fail = (code, message) => {
+      if (failed) return; failed = true;
+      out.destroy(); fs.rm(part, { force: true }, () => {});
+      if (!res.headersSent) res.status(code).json({ success: false, message });
+    };
+    req.on('data', (chunk) => {
+      if (!head) head = chunk.subarray(0, 4);
+      bytes += chunk.length;
+      hash.update(chunk);
+      if (bytes > MAX_APK_BYTES) { fail(413, 'حجم فایل بیش از حد مجاز است.'); req.destroy(); }
+    });
+    req.on('aborted', () => fail(400, 'آپلود قطع شد.'));
+    req.pipe(out);
+    out.on('error', () => fail(500, 'خطا در ذخیره فایل.'));
+    out.on('finish', () => {
+      if (failed) return;
+      // APK در واقع یک فایل zip است (با PK شروع می‌شود)
+      if (!head || head[0] !== 0x50 || head[1] !== 0x4b) return fail(400, 'این فایل APK اندروید نیست.');
+      fs.renameSync(part, APK_FILE);
+      const meta = { originalName: name, note, size: bytes, sha256: hash.digest('hex'), uploadedAt: new Date().toISOString(), downloads: 0 };
+      fs.writeFileSync(APK_META, JSON.stringify(meta, null, 2));
+      console.log(`android apk uploaded (${bytes} bytes)`);
+      res.json({ success: true, message: 'اپ اندروید روی سرور قرار گرفت.', apk: meta });
+    });
+  });
+
+  router.delete('/admin/android', requireAdmin, (_req, res) => {
+    fs.rmSync(ANDROID_DIR, { recursive: true, force: true });
+    res.json({ success: true, message: 'اپ اندروید از سرور حذف شد.' });
+  });
+}

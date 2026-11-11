@@ -47,7 +47,7 @@ declare global {
       pushState: (s: unknown) => void;
       reply: (r: { id: string; ok: boolean; error: string | null; message?: string }) => void;
       onCommand: (cb: (c: RemoteCommand) => void) => () => void;
-      getInfo: () => Promise<{ port: number; addresses: string[] }>;
+      getInfo: () => Promise<{ port: number; addresses: string[]; apkUrl?: string | null }>;
       newPairCode: () => Promise<{ code: string; expiresAt: number }>;
       listDevices: () => Promise<{ id: string; name: string; createdAt: string; lastSeen: string | null }[]>;
       revokeDevice: (id: string) => Promise<boolean>;

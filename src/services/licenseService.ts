@@ -414,3 +414,35 @@ export async function deleteUpdateRelease(version: string): Promise<{ success: b
   const { data } = await adminCall(`/admin/updates/${encodeURIComponent(version)}`, { method: 'DELETE' });
   return data;
 }
+
+// ---- اپ اندروید ریموت روی سرور (/remote.apk) ----
+export interface AndroidApkInfo { originalName: string; note: string; size: number; sha256: string; uploadedAt: string; downloads: number }
+
+export async function fetchAndroidApk(): Promise<AndroidApkInfo | null> {
+  const { data } = await adminCall('/admin/android');
+  return data.apk || null;
+}
+
+export function uploadAndroidApk(file: File, note: string, onProgress: (pct: number) => void): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', `${getLicenseApiBaseUrl()}/api/admin/android/upload?name=${encodeURIComponent(file.name)}&note=${encodeURIComponent(note)}`);
+    xhr.setRequestHeader('Authorization', `Bearer ${getStoredAdminToken() || ''}`);
+    xhr.setRequestHeader('Content-Type', 'application/octet-stream');
+    xhr.upload.onprogress = (e) => { if (e.lengthComputable) onProgress(Math.round((e.loaded / e.total) * 100)); };
+    xhr.onload = () => {
+      let msg = '';
+      try { msg = JSON.parse(xhr.responseText).message || ''; } catch { /* ignore */ }
+      if (xhr.status === 200) resolve();
+      else if (xhr.status === 413) reject(new Error('حجم فایل برای سرور زیاد است. اسکریپت نصب سرور را دوباره اجرا کنید.'));
+      else reject(new Error(msg || `خطای آپلود (${xhr.status})`));
+    };
+    xhr.onerror = () => reject(new Error('اتصال در حین آپلود قطع شد.'));
+    xhr.send(file);
+  });
+}
+
+export async function deleteAndroidApk(): Promise<{ success: boolean; message: string }> {
+  const { data } = await adminCall('/admin/android', { method: 'DELETE' });
+  return data;
+}

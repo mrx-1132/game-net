@@ -6,7 +6,7 @@ import jwt from 'jsonwebtoken';
 import { signToken, verifyTokenSignature, loadSigningKey } from './keys.mjs';
 import { exportBackup, importBackup } from './store.mjs';
 import { adminTotp } from './totp.mjs';
-import { mountUpdateRoutes } from './updates.mjs';
+import { mountUpdateRoutes, mountAndroidRoutes } from './updates.mjs';
 
 const DAY = 24 * 3600 * 1000;
 const TOKEN_TTL_DAYS = Math.max(1, Math.min(30, Number(process.env.LICENSE_TOKEN_TTL_DAYS) || 7));
@@ -239,6 +239,8 @@ export function createLicenseRouter(store) {
     licenseProblem,
     limiter: rateLimit({ windowMs: 60 * 60 * 1000, max: 120 }),
   });
+
+  mountAndroidRoutes(router, { requireAdmin });
 
   // ===== Two-factor login (TOTP) =====
   router.get('/admin/2fa', requireAdmin, (_req, res) => res.json({ success: true, enabled: adminTotp.enabled() }));

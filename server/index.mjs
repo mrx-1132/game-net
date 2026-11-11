@@ -8,6 +8,7 @@ import { fileURLToPath } from 'url';
 import { createStore } from './license/store.mjs';
 import { createLicenseRouter } from './license/routes.mjs';
 import { loadSigningKey } from './license/keys.mjs';
+import { serveAndroidApk } from './license/updates.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = parseInt(process.env.PORT || process.env.APP_PORT || process.env.LICENSE_PORT || '3000', 10);
@@ -67,6 +68,8 @@ export async function startStandaloneServer() {
   });
 
   app.use('/api', createLicenseRouter(store));
+  // لینک ثابت دانلود اپ اندروید ریموت (برای QR داخل برنامه ویندوز)
+  app.get('/remote.apk', serveAndroidApk);
   app.use('/api', (_req, res) => res.status(404).json({ success: false, message: 'مسیر پیدا نشد.' }));
 
   const distPath = path.join(__dirname, '../dist');
