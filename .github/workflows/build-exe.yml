@@ -45,7 +45,7 @@ jobs:
           node-version: 20
 
       - name: نصب وابستگی‌ها
-        run: bun install --frozen-lockfile
+        run: bun install
 
       - name: تعیین نسخه (در صورت ورود دستی)
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.version != '' }}
