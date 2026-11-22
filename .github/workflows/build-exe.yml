@@ -36,13 +36,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
 
       - name: نصب وابستگی‌ها
-        run: npm ci
+        run: bun install --frozen-lockfile
 
       - name: تعیین نسخه (در صورت ورود دستی)
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.version != '' }}
