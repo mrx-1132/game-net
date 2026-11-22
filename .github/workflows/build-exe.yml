@@ -1,0 +1,68 @@
+name: Build Windows EXE (GameNet Manager)
+
+# با هر تغییر در کد برنامه ویندوز، نسخه exe را می‌سازد و در بخش Releases می‌گذارد.
+# - خودکار: push به main یا feature/secure-licensing (به‌جز تغییرات پوشه mobile)
+# - دستی: تب Actions ← Run workflow (با امکان تعیین نسخه)
+# خروجی: GameNet-Manager-Setup-<نسخه>.exe (نصب) و GameNet-Manager-Portable-<نسخه>.exe (بدون نصب)
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'نسخه (مثلاً 1.2.1) — خالی بگذار برای همان نسخه package.json'
+        required: false
+  push:
+    branches: [main, feature/secure-licensing]
+    paths:
+      - 'src/**'
+      - 'electron/**'
+      - 'public/**'
+      - 'index.html'
+      - 'package.json'
+      - 'vite.config.ts'
+      - '.github/workflows/build-exe.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-exe-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: نصب وابستگی‌ها
+        run: npm ci
+
+      - name: تعیین نسخه (در صورت ورود دستی)
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.version != '' }}
+        run: npm version ${{ inputs.version }} --no-git-tag-version
+
+      - name: بیلد رابط کاربری و پکیج ویندوز
+        run: npx electron-builder --win --publish never
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: آپلود در Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ github.event.inputs.version || 'auto' }}-build${{ github.run_number }}
+          name: GameNet Manager ${{ github.event.inputs.version || format('build {0}', github.run_number) }}
+          files: |
+            dist-electron/*.exe
+            dist-electron/*.yml
+          body: |
+            نسخه ویندوز GameNet Manager
+            - Setup: نصب معمولی روی ویندوز
+            - Portable: اجرا بدون نصب
+          fail_on_unmatched_files: false
