@@ -9,7 +9,8 @@ import {
 import * as XLSX from 'xlsx';
 import initSqlJs from 'sql.js';
 import { DailyWorkingDayBackup, SessionHistory, DirectBuffetSale, SystemLog } from '../types';
-import { formatCurrency, formatDatePersian, toPersianDigits } from '../utils';
+import { formatCurrency, formatDatePersian, toPersianDigits, serializeBackupPayload } from '../utils';
+import { isEncryptedBackup, decryptBackup, EncryptedBackupEnvelope } from '../backupCrypto';
 import InvoiceReceiptModal, { InvoiceReceiptData } from './InvoiceReceiptModal';
 
 let sqlPromise: Promise<any> | null = null;
@@ -91,6 +92,7 @@ export default function BackupsTab({
   // Admin password verification modal state for database import
   const [pendingRestore, setPendingRestore] = useState<{
     payload: any;
+    encrypted?: EncryptedBackupEnvelope;
     fileName: string;
     summaryLines: string[];
   } | null>(null);
@@ -113,7 +115,7 @@ export default function BackupsTab({
   const [exportFormat, setExportFormat] = useState<'xlsx' | 'db' | 'json'>('db');
 
   // 1. Export database payload to chosen format (.xlsx, .db, .json)
-  const handleExportDatabaseFile = (formatToUse?: 'xlsx' | 'db' | 'json') => {
+  const handleExportDatabaseFile = async (formatToUse?: 'xlsx' | 'db' | 'json') => {
     const selectedFmt = formatToUse || exportFormat;
     
     // Clean Persian date string for filename
@@ -278,7 +280,7 @@ export default function BackupsTab({
         telegramConfig
       };
       
-      const jsonString = JSON.stringify(backupPayload, null, 2);
+      const jsonString = await serializeBackupPayload(backupPayload);
       const blob = new Blob([jsonString], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -318,6 +320,20 @@ export default function BackupsTab({
         if (text.startsWith('{') || text.startsWith('[')) {
           try {
             const parsed = JSON.parse(text);
+            if (isEncryptedBackup(parsed)) {
+              setPendingRestore({
+                payload: null,
+                encrypted: parsed,
+                fileName: file.name,
+                summaryLines: [
+                  'فایل پشتیبان رمزنگاری‌شده سیستم',
+                  `فایل: ${file.name}`
+                ]
+              });
+              setAdminPasswordInput('');
+              setPasswordModalError('');
+              return;
+            }
             if (parsed && typeof parsed === 'object') {
               const requiredKeys = ['rates', 'systems', 'buffetItems', 'debtors', 'history', 'directSales', 'dailyBackups'];
               const numKeysPassed = requiredKeys.filter(key => key in parsed).length;
@@ -1502,12 +1518,30 @@ export default function BackupsTab({
 
             {/* Password Input Form */}
             <form
-              onSubmit={(e) => {
+              onSubmit={async (e) => {
                 e.preventDefault();
                 setPasswordModalError('');
                 const trimmed = adminPasswordInput.trim();
                 if (!trimmed) {
                   setPasswordModalError('لطفاً رمز عبور مدیریت را وارد نمایید.');
+                  return;
+                }
+
+                const finishRestore = (data: any) => {
+                  onImportFullBackup(data);
+                  setImportStatus({ success: true, error: undefined });
+                  setTimeout(() => setImportStatus(null), 5000);
+                  setPendingRestore(null);
+                  setAdminPasswordInput('');
+                  if (fileInputRef.current) fileInputRef.current.value = '';
+                };
+
+                if (pendingRestore.encrypted) {
+                  try {
+                    finishRestore(await decryptBackup(pendingRestore.encrypted, adminPasswordInput));
+                  } catch {
+                    setPasswordModalError('رمز عبور وارد شده اشتباه است یا فایل خراب است!');
+                  }
                   return;
                 }
 
@@ -1518,13 +1552,7 @@ export default function BackupsTab({
                   return;
                 }
 
-                // Correct password!
-                onImportFullBackup(pendingRestore.payload);
-                setImportStatus({ success: true, error: undefined });
-                setTimeout(() => setImportStatus(null), 5000);
-                setPendingRestore(null);
-                setAdminPasswordInput('');
-                if (fileInputRef.current) fileInputRef.current.value = '';
+                finishRestore(pendingRestore.payload);
               }}
               className="space-y-4"
             >

@@ -1,4 +1,5 @@
 import { ActiveSession, RateConfig } from './types';
+import { encryptBackup } from './backupCrypto';
 
 /**
  * Helper to convert Persian or Arabic digits to Latin/English digits
@@ -207,9 +208,19 @@ export function getGameplaySegments(
 }
 
 /**
- * Automatically triggers browser download of the full database state as a .db file
+ * Serializes a backup payload. When the payload carries the system admin password the whole file is
+ * encrypted with it (AES-GCM), so opening the file elsewhere shows nothing readable.
  */
-export function downloadDatabaseBackupPayload(payload: any, filenamePrefix = 'gamenet_backup') {
+export async function serializeBackupPayload(payload: any): Promise<string> {
+  const secret = payload && typeof payload.adminPassword === 'string' ? payload.adminPassword : '';
+  if (!secret) return JSON.stringify(payload, null, 2);
+  return JSON.stringify(await encryptBackup(payload, secret));
+}
+
+/**
+ * Automatically triggers browser download of the full database state as a (encrypted) .db file
+ */
+export async function downloadDatabaseBackupPayload(payload: any, filenamePrefix = 'gamenet_backup') {
   try {
     const dateStr = new Date().toLocaleDateString('fa-IR', {
       year: 'numeric',
@@ -218,7 +229,7 @@ export function downloadDatabaseBackupPayload(payload: any, filenamePrefix = 'ga
     }).replace(/\//g, '-');
     const safeDateStr = toLatinDigits(dateStr);
 
-    const jsonString = JSON.stringify(payload, null, 2);
+    const jsonString = await serializeBackupPayload(payload);
     const blob = new Blob([jsonString], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
