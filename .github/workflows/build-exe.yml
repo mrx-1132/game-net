@@ -64,7 +64,12 @@ jobs:
           echo "APP_VERSION=$VERSION" >> "$GITHUB_ENV"
           npm version "$VERSION" --no-git-tag-version --allow-same-version
 
-      - name: بیلد رابط کاربری و پکیج ویندوز
+      - name: بیلد رابط کاربری
+        run: |
+          npm run build
+          test -f dist/index.html
+
+      - name: پکیج ویندوز
         run: npx electron-builder --win --publish never
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
