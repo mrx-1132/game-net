@@ -75,17 +75,24 @@ export function getSessionMetrics(
 
   if (elapsedMs < 0) elapsedMs = 0;
 
-  const durationMinutes = (elapsedMs > 0 ? Math.ceil(elapsedMs / 60000) : 0) + (session.previousDurationMinutes || 0);
+  // زمان سپری‌شده روی سیستم‌های قبلی (مثلاً پس از جابجایی مشتری) باید ادامه یابد
+  const prevElapsedMs = session.previousElapsedMs || 0;
+  if (prevElapsedMs > 0) {
+    elapsedMs += prevElapsedMs;
+  }
+
+  const durationMinutes = elapsedMs > 0 ? Math.ceil(elapsedMs / 60000) : 0;
 
   // Calculate gameplay cost based on completed 1-minute blocks
   // Do not show or calculate cost until the entire session reaches at least one minute
   const completedMinutes = Math.floor(elapsedMs / 60000);
+  const billedMinutesBefore = Math.floor(prevElapsedMs / 60000);
   let gamePlayCost = session.previousGamePlayCost || 0;
 
-  if (completedMinutes >= 1) {
+  if (completedMinutes > billedMinutesBefore) {
     const changes = session.playerCountChanges || [{ playersCount: session.playersCount, atElapsedMs: 0 }];
     
-    for (let m = 1; m <= completedMinutes; m++) {
+    for (let m = billedMinutesBefore + 1; m <= completedMinutes; m++) {
       const t = m * 60000;
       // Find the player count at the end of this minute block
       let blockPlayersCount: 1 | 2 | 3 | 4 = changes[0]?.playersCount || 1;

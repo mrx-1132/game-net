@@ -17,6 +17,7 @@ export interface SessionBuffetItem {
   name: string;
   price: number;
   quantity: number;
+  priority?: number; // sorting priority copied from the catalog item (higher first)
 }
 
 export interface PlayerCountHistoryItem {

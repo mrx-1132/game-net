@@ -25,6 +25,8 @@ interface GroupSettleModalProps {
   }) => void;
   cardReaders: CardReader[];
   cashDivisors?: number[];
+  onRemoveBuffetItem?: (systemId: string, itemId: string, qtyToRemove?: number) => void;
+  onRemoveExtraServiceItem?: (systemId: string, itemId: string, qtyToRemove?: number) => void;
   userRole?: 'admin' | 'user';
   userPermissions?: UserPermissions;
 }
@@ -38,6 +40,8 @@ export default function GroupSettleModal({
   onSettleGroup,
   cardReaders = [],
   cashDivisors = [2, 3, 4],
+  onRemoveBuffetItem,
+  onRemoveExtraServiceItem,
   userRole = 'user',
   userPermissions,
 }: GroupSettleModalProps) {
@@ -83,6 +87,9 @@ export default function GroupSettleModal({
         totalCost: 0,
         partialPaid: 0,
         netCost: 0,
+        buffetItems: [],
+        extraServices: [],
+        extraServicesCost: 0,
       };
     }
     const sysRates = rates[sys.type];
@@ -99,12 +106,16 @@ export default function GroupSettleModal({
       totalCost: metrics.totalCost,
       partialPaid,
       netCost: Math.max(0, metrics.totalCost - partialPaid),
+      buffetItems: sys.activeSession.buffetItems || [],
+      extraServices: sys.activeSession.extraServices || [],
+      extraServicesCost: metrics.extraServicesCost,
     };
   });
 
   const totalGamePlayCostSum = systemCalculations.reduce((acc, cur) => acc + cur.gamePlayCost, 0);
   const totalBuffetCostSum = systemCalculations.reduce((acc, cur) => acc + cur.buffetCost, 0);
-  const cleanTotalCostSum = totalGamePlayCostSum + totalBuffetCostSum;
+  const totalExtraServicesCostSum = systemCalculations.reduce((acc, cur) => acc + (cur.extraServicesCost || 0), 0);
+  const cleanTotalCostSum = totalGamePlayCostSum + totalBuffetCostSum + totalExtraServicesCostSum;
   const totalPartialPaidSum = systemCalculations.reduce((acc, cur) => acc + cur.partialPaid, 0);
 
   const finalTotalCost = Math.max(0, cleanTotalCostSum + roundingOffset);
@@ -416,22 +427,62 @@ export default function GroupSettleModal({
             <div className="text-[11px] text-slate-400 font-bold block">ریز جزئیات دستگاه‌های انتخاب شده:</div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-48 overflow-y-auto pr-1">
               {systemCalculations.map((calc) => (
-                <div key={calc.id} className="p-3 bg-surface-151921/60 border border-white/5 rounded-xl flex items-center justify-between text-xs transition-hover hover:border-white/10">
-                  <div className="space-y-0.5">
-                    <span className="font-bold text-white text-xs">{calc.name}</span>
-                    <div className="text-[9px] text-slate-400 font-mono">({calc.type}) • {calc.durationMinutes} دقیقه بازی</div>
-                    {calc.partialPaid > 0 && (
-                      <div className="text-[10px] text-emerald-400 font-bold mt-0.5">
-                        🟢 علی‌الحساب: -{formatCurrency(calc.partialPaid)} (مانده: {formatCurrency(calc.netCost)})
+                <div key={calc.id} className="p-3 bg-surface-151921/60 border border-white/5 rounded-xl text-xs transition-hover hover:border-white/10">
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <span className="font-bold text-white text-xs">{calc.name}</span>
+                      <div className="text-[9px] text-slate-400 font-mono">({calc.type}) • {calc.durationMinutes} دقیقه بازی</div>
+                      {calc.partialPaid > 0 && (
+                        <div className="text-[10px] text-emerald-400 font-bold mt-0.5">
+                          🟢 علی‌الحساب: -{formatCurrency(calc.partialPaid)} (مانده: {formatCurrency(calc.netCost)})
+                        </div>
+                      )}
+                    </div>
+                    <div className="text-right space-y-0.5">
+                      <div className="font-mono text-blue-400 font-bold text-xs">{formatCurrency(calc.totalCost)}</div>
+                      <div className="text-[9px] text-slate-500">
+                        بازی: {calc.gamePlayCost.toLocaleString()} • بوفه: {calc.buffetCost.toLocaleString()}
                       </div>
-                    )}
-                  </div>
-                  <div className="text-right space-y-0.5">
-                    <div className="font-mono text-blue-400 font-bold text-xs">{formatCurrency(calc.totalCost)}</div>
-                    <div className="text-[9px] text-slate-500">
-                      بازی: {calc.gamePlayCost.toLocaleString()} • بوفه: {calc.buffetCost.toLocaleString()}
                     </div>
                   </div>
+                  {(calc.buffetItems.length > 0 || calc.extraServices.length > 0) && (
+                    <div className="mt-2 pt-2 border-t border-white/5 space-y-1.5">
+                      {onRemoveBuffetItem && [...calc.buffetItems]
+                        .sort((a, b) => (b.priority || 0) - (a.priority || 0) || a.name.localeCompare(b.name, 'fa'))
+                        .map((item, idx) => (
+                        <div key={`b-${idx}`} className="flex justify-between items-center text-[10px] text-slate-300 py-1 px-2 bg-surface-0b0e14/60 rounded-lg border border-white/5">
+                          <div className="flex items-center gap-1.5">
+                            <button
+                              type="button"
+                              onClick={() => onRemoveBuffetItem(calc.id, item.id)}
+                              className="p-1 text-rose-400 hover:text-rose-300 hover:bg-rose-500/20 rounded-md transition-colors cursor-pointer"
+                              title="حذف خوراکی اشتباهی و بازگشت به انبار"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </button>
+                            <span>🍿 {item.name} <span className="text-slate-400">({item.quantity} عدد)</span></span>
+                          </div>
+                          <span className="font-mono text-white font-bold">{formatCurrency(item.price * item.quantity)}</span>
+                        </div>
+                      ))}
+                      {onRemoveExtraServiceItem && calc.extraServices.map((item, idx) => (
+                        <div key={`e-${idx}`} className="flex justify-between items-center text-[10px] text-slate-300 py-1 px-2 bg-surface-0b0e14/60 rounded-lg border border-white/5">
+                          <div className="flex items-center gap-1.5">
+                            <button
+                              type="button"
+                              onClick={() => onRemoveExtraServiceItem(calc.id, item.id)}
+                              className="p-1 text-rose-400 hover:text-rose-300 hover:bg-rose-500/20 rounded-md transition-colors cursor-pointer"
+                              title="حذف این سرویس یا تجهیزات جانبی"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </button>
+                            <span>🛠️ {item.name} <span className="text-slate-400">({item.quantity} عدد)</span></span>
+                          </div>
+                          <span className="font-mono text-white font-bold">{formatCurrency(item.price * item.quantity)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

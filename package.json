@@ -3,7 +3,7 @@
   "description": "Game Net Management System",
   "author": "AT Team",
   "private": true,
-  "version": "1.2.0",
+  "version": "2.0.0",
   "type": "module",
   "main": "electron/main.cjs",
   "scripts": {

@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { System, RateConfig, UserPermissions, CardReader, PartialPayment } from '../types';
 import { formatCurrency, formatDuration, getSessionMetrics, getGameplaySegments, toPersianDigits } from '../utils';
+import { playAlarmSound } from '../utils/alarmSound';
 import PartialPaymentModal from './PartialPaymentModal';
 import InvoiceReceiptModal, { InvoiceReceiptData } from './InvoiceReceiptModal';
 
@@ -224,39 +225,8 @@ export default function SystemCard({
     }
   }
 
-  // Synthesize sound
-  const playChimeSound = () => {
-    try {
-      const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
-      if (!AudioContext) return;
-      const ctx = new AudioContext();
-      const nowCtx = ctx.currentTime;
-      
-      const osc1 = ctx.createOscillator();
-      const gain1 = ctx.createGain();
-      osc1.type = 'sine';
-      osc1.frequency.setValueAtTime(783.99, nowCtx); // G5
-      gain1.gain.setValueAtTime(0.25, nowCtx);
-      gain1.gain.exponentialRampToValueAtTime(0.001, nowCtx + 0.4);
-      osc1.connect(gain1);
-      gain1.connect(ctx.destination);
-      osc1.start(nowCtx);
-      osc1.stop(nowCtx + 0.4);
-      
-      const osc2 = ctx.createOscillator();
-      const gain2 = ctx.createGain();
-      osc2.type = 'sine';
-      osc2.frequency.setValueAtTime(1046.50, nowCtx + 0.15); // C6
-      gain2.gain.setValueAtTime(0.25, nowCtx + 0.15);
-      gain2.gain.exponentialRampToValueAtTime(0.001, nowCtx + 0.6);
-      osc2.connect(gain2);
-      gain2.connect(ctx.destination);
-      osc2.start(nowCtx + 0.15);
-      osc2.stop(nowCtx + 0.6);
-    } catch (e) {
-      console.error('Audio chime failed to play', e);
-    }
-  };
+  // Play alarm via shared helper (respects the user's custom sound choice)
+  const playChimeSound = () => playAlarmSound();
 
   // Browser notification helper
   const triggerBrowserNotification = (title: string, body: string) => {
@@ -506,7 +476,7 @@ export default function SystemCard({
         <div className="flex items-center gap-3 w-full lg:w-1/4 pr-2">
           <div className={`bg-surface-0b0e14 border border-white/5 shrink-0 ${s.iconBox}`}>
             <Monitor className={`${s.iconSize} ${
-              isActive ? (isPaused ? 'text-amber-500' : 'text-blue-500') : system.status === 'free' ? 'text-emerald-500' : 'text-slate-600'
+              isActive ? (isPaused ? 'text-amber-500' : 'text-accent') : system.status === 'free' ? 'text-emerald-500' : 'text-slate-600'
             }`} />
           </div>
           <div>
@@ -1143,7 +1113,7 @@ export default function SystemCard({
               <button
                 type="button"
                 onClick={() => onStartSession(system.id)}
-                className={`bg-blue-600/10 text-blue-400 border border-blue-600/20 hover:bg-blue-600 hover:text-white flex items-center transition-all cursor-pointer ${s.btn}`}
+                className={`bg-accent/10 text-accent border border-accent/25 hover:bg-accent hover:text-[#05221a] flex items-center transition-all cursor-pointer ${s.btn}`}
               >
                 <Play className={`fill-current ${s.btnIcon}`} />
                 <span>شروع بازی</span>
@@ -1655,7 +1625,7 @@ export default function SystemCard({
           {/* Console Type Icon graphic */}
           <div className={`bg-surface-0b0e14 border border-white/5 ${g.iconBox}`}>
             <Monitor className={`${g.iconSize} ${
-              isActive ? (isPaused ? 'text-amber-500' : isLimitReached ? 'text-rose-500 animate-pulse' : 'text-blue-500') : system.status === 'free' ? 'text-emerald-500' : 'text-slate-600'
+              isActive ? (isPaused ? 'text-amber-500' : isLimitReached ? 'text-rose-500 animate-pulse' : 'text-accent') : system.status === 'free' ? 'text-emerald-500' : 'text-slate-600'
             }`} />
           </div>
         </div>
@@ -2129,7 +2099,7 @@ export default function SystemCard({
             <button
               type="button"
               onClick={() => onStartSession(system.id)}
-              className={`bg-blue-600/10 text-blue-400 border border-blue-600/20 hover:bg-blue-600 hover:text-white rounded-xl transition-all font-bold active:scale-[0.97] flex items-center justify-center cursor-pointer ${g.btnUpper}`}
+              className={`bg-accent/10 text-accent border border-accent/25 hover:bg-accent hover:text-[#05221a] rounded-xl transition-all font-bold active:scale-[0.97] flex items-center justify-center cursor-pointer ${g.btnUpper}`}
             >
               <Play className={`fill-current ${g.btnIcon}`} />
               شروع بازی

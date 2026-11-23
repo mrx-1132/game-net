@@ -532,7 +532,9 @@ export default function SettleSessionModal({
                 <span className="text-[9px] text-amber-400/80">برای حذف خوراکی اشتباهی روی آیکون سطل زباله کلیک کنید</span>
               </div>
               <div className="p-3 bg-surface-0b0e14 border border-white/5 rounded-xl space-y-2">
-                {session.buffetItems.map((item, idx) => (
+                {[...session.buffetItems]
+                  .sort((a, b) => (b.priority || 0) - (a.priority || 0) || a.name.localeCompare(b.name, 'fa'))
+                  .map((item, idx) => (
                   <div key={idx} className="flex justify-between items-center text-slate-300 py-1 px-2.5 bg-surface-151921/60 rounded-lg border border-white/5">
                     <div className="flex items-center gap-2">
                       {onRemoveBuffetItem && (

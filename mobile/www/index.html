@@ -4,7 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>GameNet Remote</title>
-<meta name="theme-color" content="#0F1219" id="themeColor">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#0B0E12" id="themeColor">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -12,8 +14,8 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="manifest" href="manifest.webmanifest">
 <style>
-/* تم تیره (پیش‌فرض) */
-:root{--bg:#0B0E14;--card:#141923;--line:#ffffff14;--tx:#F7FAFC;--mu:#8b95a7;--bl:#2563eb;--gr:#059669;--rd:#dc2626;--am:#d97706;
+/* تم تیره (پیش‌فرض) — هماهنگ با طرح «کنسول اپراتور» برنامه کامپیوتر */
+:root{--bg:#0B0E12;--card:#11161D;--line:#ffffff14;--tx:#E6EDF3;--mu:#8b95a7;--bl:#2563eb;--gr:#2DD4A7;--rd:#dc2626;--am:#d97706;
   --hdr:#0F1219;--soft:#ffffff14;--soft2:#ffffff0d;--ok-bg:#05966933;--ok-tx:#34d399;--warn-bg:#d9770633;--warn-tx:#fbbf24;--bad-tx:#f87171;--scrim:#000a;color-scheme:dark}
 /* تم روشن: با تنظیم «روشن»، یا «خودکار» وقتی گوشی روی حالت روشن است */
 :root[data-theme="light"]{--bg:#eef2f6;--card:#ffffff;--line:#0f172a1a;--tx:#0f172a;--mu:#5b6576;--hdr:#ffffff;--soft:#0f172a0f;--soft2:#0f172a0a;
@@ -21,7 +23,7 @@
 @media (prefers-color-scheme: light){:root:not([data-theme="dark"]){--bg:#eef2f6;--card:#ffffff;--line:#0f172a1a;--tx:#0f172a;--mu:#5b6576;--hdr:#ffffff;--soft:#0f172a0f;--soft2:#0f172a0a;
   --ok-bg:#d1fae5;--ok-tx:#047857;--warn-bg:#fef3c7;--warn-tx:#b45309;--bad-tx:#dc2626;--scrim:#0f172a66;color-scheme:light}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,Tahoma,sans-serif;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:Vazirmatn,system-ui,Tahoma,sans-serif;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
 header{position:sticky;top:0;background:var(--hdr);border-bottom:1px solid var(--line);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;z-index:5}
 .dot{width:9px;height:9px;border-radius:50%;background:var(--rd);display:inline-block;margin-left:6px}.dot.ok{background:var(--gr)}
 .tabs{display:flex;gap:8px;padding:12px 16px 0}
@@ -33,7 +35,7 @@ main{padding:12px 16px 40px}
 .name{font-weight:800;font-size:16px}.mu{color:var(--mu);font-size:12px}
 .badge{font-size:11px;padding:3px 8px;border-radius:99px;background:var(--soft)}
 .b-active{background:var(--ok-bg);color:var(--ok-tx)}.b-paused{background:var(--warn-bg);color:var(--warn-tx)}.b-inactive{background:var(--soft2);color:var(--mu)}
-.timer{font-family:ui-monospace,monospace;font-size:22px;font-weight:800;margin:8px 0 4px;direction:ltr;text-align:right}
+.timer{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:22px;font-weight:800;margin:8px 0 4px;direction:ltr;text-align:right}
 .cost{font-size:13px;margin-bottom:6px}
 .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.acts button{flex:1;min-width:70px;padding:10px 6px;font-size:13px}
 button{font:inherit;border:0;border-radius:12px;padding:11px 14px;font-weight:700;color:#fff;background:var(--bl)}

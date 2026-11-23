@@ -132,7 +132,14 @@ export default function AddBuffetItemModal({
                 <span className="text-amber-400 font-normal text-[9px]">حذف موارد ثبت‌شده اشتباه</span>
               </div>
               <div className="space-y-1 max-h-28 overflow-y-auto pr-1">
-                {session.buffetItems.map((attached) => (
+                {[...session.buffetItems]
+                  .sort((a, b) => {
+                    const pA = buffetItems.find((bi) => bi.id === a.id)?.priority || 0;
+                    const pB = buffetItems.find((bi) => bi.id === b.id)?.priority || 0;
+                    if (pB !== pA) return pB - pA;
+                    return a.name.localeCompare(b.name, 'fa');
+                  })
+                  .map((attached) => (
                   <div key={attached.id} className="flex justify-between items-center bg-surface-07090d p-1.5 rounded-lg border border-white/5 text-[10px]">
                     <span className="text-slate-200">
                       {attached.name} <span className="text-slate-500">({attached.quantity} عدد)</span>

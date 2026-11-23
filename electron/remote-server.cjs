@@ -161,8 +161,8 @@ function startRemoteServer(getWindow, { isAllowed = () => true, getApkUrl = () =
     start_url: '/',
     scope: '/',
     display: 'standalone',
-    background_color: '#0B0E14',
-    theme_color: '#0F1219',
+    background_color: '#0B0E12',
+    theme_color: '#0B0E12',
     icons: [
       { src: '/icon-192.png', sizes: '192x192', type: 'image/png' },
       { src: '/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' },

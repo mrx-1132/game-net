@@ -6,6 +6,11 @@
   --font-sans: "Vazirmatn", "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 
+  /* توکن‌های طرح «کنسول تاریک اپراتور» */
+  --color-console-bg: #0B0E12;
+  --color-accent: #2DD4A7;
+  --color-heading: #E6EDF3;
+
   /* سطوح تیره برنامه؛ در تم روشن از src/theme-light.css مقدار می‌گیرند */
   --color-fg: #f7fafc;
   --color-surface-2b354c: #2b354c;
@@ -63,6 +68,15 @@
 
 body {
   font-family: var(--font-sans);
+}
+
+/* سطر بالای عنوان با فونت مونو (کنسول اپراتور) */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-accent);
 }
 
 /* ---------- Light theme ---------- */

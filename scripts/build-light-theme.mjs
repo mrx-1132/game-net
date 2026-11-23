@@ -23,7 +23,9 @@ const surfaces = [...indexCss.matchAll(/--color-surface-([0-9a-f]{6}):\s*#([0-9a
 const NEUTRALS = ['slate', 'gray', 'zinc', 'neutral', 'stone'];
 const ACCENTS = ['red', 'orange', 'amber', 'yellow', 'lime', 'green', 'emerald', 'teal', 'cyan', 'sky', 'blue', 'indigo', 'violet', 'purple', 'fuchsia', 'pink', 'rose'];
 const BRIGHT = new Set(['orange', 'amber', 'yellow', 'lime', 'green', 'emerald', 'teal', 'cyan', 'sky']);
-const INVERT = { 50: 950, 100: 900, 200: 800, 300: 700, 400: 600, 500: 500, 600: 400, 700: 300, 800: 200, 900: 100, 950: 50 };
+// سایه‌های میانی (که در تم تیره به‌عنوان متن کم‌رنگ استفاده می‌شوند) در تم روشن
+// باید به‌قدر کافی تیره بیفتند تا خوانا بمانند.
+const INVERT = { 50: 950, 100: 900, 200: 800, 300: 800, 400: 700, 500: 700, 600: 800, 700: 900, 800: 200, 900: 100, 950: 50 };
 
 const INK = '#0f172a';
 const LIGHT = { base: '#eef2f6', card: '#ffffff', raised: '#e2e8f0' };
@@ -41,7 +43,7 @@ for (const n of NEUTRALS) for (const [k, v] of Object.entries(palette[n] || {}))
 for (const h of ACCENTS) {
   const p = palette[h];
   if (!p) continue;
-  const map = BRIGHT.has(h) ? { 200: 800, 300: 800, 400: 700, 900: 100, 950: 50 } : { 200: 800, 300: 700, 400: 600, 900: 100, 950: 50 };
+  const map = BRIGHT.has(h) ? { 200: 800, 300: 800, 400: 700, 900: 100, 950: 50 } : { 200: 800, 300: 800, 400: 700, 900: 100, 950: 50 };
   for (const [from, to] of Object.entries(map)) {
     lightVars.push(`--color-${h}-${from}: ${p[to]};`);
     keepVars.push(`--color-${h}-${from}: ${p[from]};`);
@@ -51,7 +53,15 @@ for (const s of surfaces) {
   lightVars.push(`--color-surface-${s}: ${tier(s)};`);
   keepVars.push(`--color-surface-${s}: #${s};`);
 }
-lightVars.push(`--color-white: ${INK};`, `--color-fg: ${INK};`);
+lightVars.push(
+  `--color-white: ${INK};`,
+  `--color-fg: ${INK};`,
+  // توکن‌های طرح «کنسول تاریک اپراتور» باید در تم روشن معکوس شوند
+  '--color-console-bg: #eef2f6;',
+  `--color-heading: ${INK};`,
+  // اکسنت روی سفید کم‌کنتراست است؛ نسخه تیره‌تر
+  '--color-accent: #06795e;',
+);
 keepVars.push('--color-white: #fff;', '--color-fg: #f7fafc;');
 
 // عناصری با پس‌زمینه رنگی پررنگ: متن سفید بماند

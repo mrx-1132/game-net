@@ -97,7 +97,7 @@ export default function StartSessionModal({
           <div className="flex gap-3 pt-4 border-t border-white/5">
             <button
               type="submit"
-              className="flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-lg shadow-blue-500/10 text-xs"
+              className="flex-1 py-3 bg-accent hover:bg-accent/90 text-[#05221a] font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-lg shadow-accent/20 text-xs"
             >
               <Play className="w-3.5 h-3.5 fill-current" />
               <span>شروع جلسه فعال</span>

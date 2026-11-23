@@ -7,6 +7,9 @@ import {
 } from 'lucide-react';
 import { RatesTable, System, SystemType, CardReader, UserPermissions, Operator, ExtraServicePreset, TelegramConfig } from '../types';
 import { formatCurrency, toPersianDigits, sha256Hash } from '../utils';
+import { ALARM_SOUND_OPTIONS, getStoredAlarmSoundId, storeAlarmSoundId, getStoredCustomSoundData, storeCustomSoundData, playAlarmSound, type AlarmSoundId } from '../utils/alarmSound';
+import { Volume2, Volume1 } from 'lucide-react';
+import { getStoredAlarmVolume, storeAlarmVolume } from '../utils/alarmSound';
 import { useLicensing } from './LicensingPortal';
 import defaultLogo from '../assets/images/gamenet-logo.png';
 import { getSmsApiKey, setSmsApiKey, getSmsCredit, sendDirectSms, DEFAULT_SMS_API_KEY, getSmsLineNumber, setSmsLineNumber, getSmsLines } from '../services/smsService';
@@ -263,6 +266,11 @@ export default function SettingsTab({
 
   // Alarm repetition settings local state
   const [localAlarmInterval, setLocalAlarmInterval] = useState(alarmIntervalSeconds || 45);
+  const [localAlarmVolume, setLocalAlarmVolume] = useState<number>(() => getStoredAlarmVolume());
+  const [localAlarmSound, setLocalAlarmSound] = useState<AlarmSoundId>(() => getStoredAlarmSoundId());
+  const [localCustomSoundData, setLocalCustomSoundData] = useState<string | null>(() => getStoredCustomSoundData());
+  const [customSoundName, setCustomSoundName] = useState<string>('');
+  const customFileRef = React.useRef<HTMLInputElement>(null);
   const [alarmSuccess, setAlarmSuccess] = useState(false);
 
   // Admin Auto-Logout settings local state
@@ -1245,6 +1253,108 @@ export default function SettingsTab({
               <span>پیکربندی تکرار آلارم با موفقیت روی {localAlarmInterval} ثانیه‌ای ذخیره شد.</span>
             </div>
           )}
+
+          {/* Alarm Volume */}
+          <div className="space-y-1.5 pt-4 border-t border-white/5">
+            <label className="text-[10px] text-slate-400 block font-medium">بلندی صدای آلارم ({toPersianDigits(localAlarmVolume)}٪):</label>
+            <div className="flex items-center gap-2">
+              <Volume1 className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+              <input
+                type="range"
+                min={0}
+                max={100}
+                step={5}
+                value={localAlarmVolume}
+                onChange={(e) => {
+                  const v = parseInt(e.target.value, 10);
+                  setLocalAlarmVolume(v);
+                  storeAlarmVolume(v);
+                }}
+                onMouseUp={() => playAlarmSound(localAlarmSound, localCustomSoundData, localAlarmVolume)}
+                onTouchEnd={() => playAlarmSound(localAlarmSound, localCustomSoundData, localAlarmVolume)}
+                className="flex-1 accent-blue-600 cursor-pointer"
+              />
+              <Volume2 className="w-4 h-4 text-slate-500 shrink-0" />
+            </div>
+            <p className="text-[10px] text-slate-500">صفر = بی‌صدا. هنگام جابه‌جایی، نمونه صدا با همان بلندی پخش می‌شود.</p>
+          </div>
+
+          {/* Alarm Sound Personalization */}
+          <div className="space-y-1.5 pt-4 border-t border-white/5">
+            <label className="text-[10px] text-slate-400 block font-medium">صدای آلارم پایان وقت:</label>
+            <div className="flex gap-2 flex-wrap items-center">
+              <select
+                value={localAlarmSound}
+                onChange={(e) => {
+                  const id = e.target.value as AlarmSoundId;
+                  setLocalAlarmSound(id);
+                  storeAlarmSoundId(id);
+                }}
+                className="flex-1 min-w-40 px-3 py-2 bg-surface-0b0e14 border border-white/10 rounded-lg text-white text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+              >
+                {ALARM_SOUND_OPTIONS.map((o) => (
+                  <option key={o.id} value={o.id}>{o.name}</option>
+                ))}
+              </select>
+              <button
+                type="button"
+                onClick={() => playAlarmSound(localAlarmSound, localCustomSoundData)}
+                className="px-3 py-2 bg-surface-0b0e14 border border-white/10 hover:border-white/25 text-slate-200 font-bold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer text-xs shrink-0"
+                title="پخش نمونه صدا"
+              >
+                <Volume2 className="w-3.5 h-3.5" />
+                <span>آزمایش</span>
+              </button>
+            </div>
+            {localAlarmSound === 'custom' && (
+              <div className="space-y-1.5 pt-1">
+                <label className="text-[10px] text-slate-500 block">
+                  فایل صوتی دلخواه (mp3/wav — روی همین سیستم ذخیره می‌شود):
+                </label>
+                <div className="flex gap-2 items-center flex-wrap">
+                  <input
+                    type="file"
+                    accept="audio/*"
+                    onChange={(e) => {
+                      const f = e.target.files?.[0];
+                      if (!f) return;
+                      const reader = new FileReader();
+                      reader.onload = () => {
+                        const dataUrl = String(reader.result);
+                        setLocalCustomSoundData(dataUrl);
+                        storeCustomSoundData(dataUrl);
+                        setCustomSoundName(f.name);
+                      };
+                      reader.readAsDataURL(f);
+                    }}
+                    className="hidden"
+                    ref={customFileRef}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => customFileRef.current?.click()}
+                    className="px-3 py-2 bg-surface-0b0e14 border border-dashed border-white/20 hover:border-blue-500/60 text-slate-300 rounded-lg text-[11px] font-bold cursor-pointer transition-all flex items-center gap-1.5"
+                  >
+                    <Upload className="w-3.5 h-3.5" />
+                    <span>انتخاب فایل صوتی</span>
+                  </button>
+                  {customSoundName && <span className="text-[10px] text-emerald-400 font-bold truncate max-w-40">{customSoundName}</span>}
+                </div>
+                {localCustomSoundData && (
+                  <button
+                    type="button"
+                    onClick={() => { setLocalCustomSoundData(null); storeCustomSoundData(null); setCustomSoundName(''); }}
+                    className="text-[10px] text-rose-400 hover:text-rose-300 font-bold cursor-pointer"
+                  >
+                    حذف فایل شخصی
+                  </button>
+                )}
+              </div>
+            )}
+            <p className="text-[10px] text-slate-500 leading-normal pt-1">
+              صدای انتخابی روی همین سیستم ذخیره می‌شود و هر بار آلارم پایان وقت/مبلغ پخش می‌شود.
+            </p>
+          </div>
 
           {/* Admin Auto-Logout Setting */}
           <div className="space-y-1.5 pt-4 border-t border-white/5">

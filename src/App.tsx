@@ -1087,6 +1087,7 @@ export default function App() {
                 name: sel.name,
                 price: sel.price,
                 quantity: sel.quantity,
+                priority: buffetItems.find((bi) => bi.id === sel.id)?.priority || 0,
               });
             }
           });
@@ -1210,6 +1211,7 @@ export default function App() {
                 name: sel.name,
                 price: sel.price,
                 quantity: sel.quantity,
+                priority: extraServicePresets.find((s) => s.id === sel.id)?.priority || 0,
               });
             }
           });
@@ -2430,7 +2432,7 @@ export default function App() {
 
   return (
     <LicensingPortal theme={theme} adminPassword={adminPassword} adminUsername={adminUsername}>
-      <div className={`min-h-screen bg-surface-0b0e14 text-fg flex flex-col font-sans selection:bg-blue-500/30 selection:text-white antialiased ${theme === 'light' ? 'light' : ''}`} dir="rtl">
+      <div className={`min-h-screen bg-console-bg text-fg flex flex-col font-sans selection:bg-accent/30 selection:text-white antialiased overflow-x-clip ${theme === 'light' ? 'light' : ''}`} dir="rtl">
       
       {/* Dynamic Top Status Strip Bar */}
       <header className="bg-surface-0f1219/90 border-b border-white/5 shrink-0 sticky top-0 z-40 shadow-xl shadow-black/20 backdrop-blur-md">
@@ -2440,7 +2442,7 @@ export default function App() {
           <div className="flex items-center gap-3">
             <div className="relative shrink-0">
               {appLogo ? (
-                <div className="w-11 h-11 rounded-xl overflow-hidden bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-900/30 shrink-0 border border-white/10">
+                <div className="w-11 h-11 rounded-xl overflow-hidden bg-accent flex items-center justify-center shadow-lg shadow-black/30 shrink-0 border border-white/10">
                   <img
                     src={appLogo}
                     alt={appName || 'لوگوی گیم‌نت'}
@@ -2457,7 +2459,7 @@ export default function App() {
               )}
             </div>
             <div>
-              <h1 className="text-base sm:text-lg font-black tracking-tight text-white">{appName || 'سامانه هوشمند مدیریت گیم‌نت'}</h1>
+              <h1 className="text-base sm:text-lg font-black tracking-tight text-white" style={{ fontFamily: 'var(--font-mono)' }}>{appName || 'سامانه هوشمند مدیریت گیم‌نت'}</h1>
             </div>
           </div>
 
@@ -2540,7 +2542,7 @@ export default function App() {
                   <button
                     type="button"
                     onClick={() => setIsLoginModalOpen(true)}
-                    className="px-3.5 py-2 bg-blue-600/10 hover:bg-blue-600 border border-blue-500/25 text-blue-400 hover:text-white font-bold text-[11px] rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shadow-lg shadow-blue-950/20"
+                    className="px-3.5 py-2 bg-accent/10 hover:bg-accent hover:text-[#05221a] border border-accent/25 text-accent font-bold text-[11px] rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shadow-lg shadow-black/20"
                   >
                     <Key className="w-3.5 h-3.5 rotate-90" />
                     <span>ورود اپراتور / مدیریت</span>
@@ -2630,7 +2632,7 @@ export default function App() {
               aria-current={activeTab === 'dashboard' ? 'page' : undefined}
               className={`px-4 py-2.5 rounded-xl transition-all font-bold flex items-center gap-2 shrink-0 border cursor-pointer ${
                 activeTab === 'dashboard'
-                  ? 'bg-blue-600/10 text-blue-400 border-blue-500/30 shadow-lg shadow-blue-500/5'
+                  ? 'bg-accent/10 text-accent border-accent/30 shadow-lg shadow-accent/5'
                   : 'text-slate-400 border-transparent hover:text-white hover:bg-white/5'
               }`}
             >
@@ -2644,7 +2646,7 @@ export default function App() {
                 aria-current={activeTab === 'buffet' ? 'page' : undefined}
                 className={`px-4 py-2.5 rounded-xl transition-all font-bold flex items-center gap-2 shrink-0 border cursor-pointer ${
                   activeTab === 'buffet'
-                    ? 'bg-blue-600/10 text-blue-400 border-blue-500/30 shadow-lg shadow-blue-500/5'
+                    ? 'bg-accent/10 text-accent border-accent/30 shadow-lg shadow-accent/5'
                     : 'text-slate-400 border-transparent hover:text-white hover:bg-white/5'
                 }`}
               >
@@ -2659,7 +2661,7 @@ export default function App() {
                 aria-current={activeTab === 'debt' ? 'page' : undefined}
                 className={`px-4 py-2.5 rounded-xl transition-all font-bold flex items-center gap-2 shrink-0 border cursor-pointer ${
                   activeTab === 'debt'
-                    ? 'bg-blue-600/10 text-blue-400 border-blue-500/30 shadow-lg shadow-blue-500/5'
+                    ? 'bg-accent/10 text-accent border-accent/30 shadow-lg shadow-accent/5'
                     : 'text-slate-400 border-transparent hover:text-white hover:bg-white/5'
                 }`}
               >
@@ -2674,7 +2676,7 @@ export default function App() {
                 aria-current={activeTab === 'reports' ? 'page' : undefined}
                 className={`px-4 py-2.5 rounded-xl transition-all font-bold flex items-center gap-2 shrink-0 border cursor-pointer ${
                   activeTab === 'reports'
-                    ? 'bg-blue-600/10 text-blue-400 border-blue-500/30 shadow-lg shadow-blue-500/5'
+                    ? 'bg-accent/10 text-accent border-accent/30 shadow-lg shadow-accent/5'
                     : 'text-slate-400 border-transparent hover:text-white hover:bg-white/5'
                 }`}
               >
@@ -2689,7 +2691,7 @@ export default function App() {
                 aria-current={activeTab === 'backups' ? 'page' : undefined}
                 className={`px-4 py-2.5 rounded-xl transition-all font-bold flex items-center gap-2 shrink-0 border cursor-pointer ${
                   activeTab === 'backups'
-                    ? 'bg-blue-600/10 text-blue-400 border-blue-500/30 shadow-lg shadow-blue-500/5'
+                    ? 'bg-accent/10 text-accent border-accent/30 shadow-lg shadow-accent/5'
                     : 'text-slate-400 border-transparent hover:text-white hover:bg-white/5'
                 }`}
               >
@@ -2704,7 +2706,7 @@ export default function App() {
                 aria-current={activeTab === 'settings' ? 'page' : undefined}
                 className={`px-4 py-2.5 rounded-xl transition-all font-bold flex items-center gap-1.5 shrink-0 border cursor-pointer ${
                   activeTab === 'settings'
-                    ? 'bg-blue-600/10 text-blue-400 border-blue-500/30 shadow-lg shadow-blue-500/5'
+                    ? 'bg-accent/10 text-accent border-accent/30 shadow-lg shadow-accent/5'
                     : 'text-slate-400 border-transparent hover:text-white hover:bg-white/5'
                 }`}
               >
@@ -3368,6 +3370,8 @@ export default function App() {
         onSettleGroup={handleSettleGroupInvoice}
         cardReaders={cardReaders}
         cashDivisors={cashDivisors}
+        onRemoveBuffetItem={handleRemoveBuffetItemFromSession}
+        onRemoveExtraServiceItem={handleRemoveExtraServiceItemFromSession}
         userRole={userRole}
         userPermissions={userPermissions}
       />

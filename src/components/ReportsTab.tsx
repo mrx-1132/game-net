@@ -4,6 +4,7 @@ import {
 } from 'lucide-react';
 import { SessionHistory, DirectBuffetSale, DailyWorkingDayBackup } from '../types';
 import { formatCurrency, formatDatePersian, toPersianDigits } from '../utils';
+import JalaliDatePicker from './JalaliDatePicker';
 import InvoiceReceiptModal, { InvoiceReceiptData } from './InvoiceReceiptModal';
 
 interface ReportsTabProps {
@@ -198,8 +199,8 @@ export default function ReportsTab({
   }, [dailyBackups]);
 
   // Helper to check if a backup matches the date filter
-  const checkBackupDateInRange = (b: DailyWorkingDayBackup, filterToUse: string = dateFilter) => {
-    if (selectedBackupId !== 'all') {
+  const checkBackupDateInRange = (b: DailyWorkingDayBackup, filterToUse: string = dateFilter, ignoreSelection = false) => {
+    if (!ignoreSelection && selectedBackupId !== 'all') {
       return b.id === selectedBackupId;
     }
 
@@ -218,8 +219,8 @@ export default function ReportsTab({
   };
 
   // Helper to check if an open shift session/sale matches date filter
-  const checkOpenShiftDateInRange = (dateStr?: string, filterToUse: string = dateFilter) => {
-    if (selectedBackupId !== 'all') {
+  const checkOpenShiftDateInRange = (dateStr?: string, filterToUse: string = dateFilter, ignoreSelection = false) => {
+    if (!ignoreSelection && selectedBackupId !== 'all') {
       return false;
     }
 
@@ -337,7 +338,10 @@ export default function ReportsTab({
       }
 
       // If backup has financial summary without individual sessions, show shift row
-      if (!hasSessions && (b.totalGrossRevenue > 0 || (b.totalGameplayRevenue + b.totalSessionBuffetCost) > 0)) {
+      const grossRevenue = b.totalGrossRevenue || 0;
+      const gameplayRevenue = b.totalGameplayRevenue || 0;
+      const sessionBuffetCost = b.totalSessionBuffetCost || 0;
+      if (!hasSessions && (grossRevenue > 0 || gameplayRevenue + sessionBuffetCost > 0)) {
         const shiftId = `shift-${b.id}`;
         if (!seenIds.has(shiftId)) {
           seenIds.add(shiftId);
@@ -347,11 +351,11 @@ export default function ReportsTab({
             title: `💾 شیفت بسته شده روز کاری (${b.workingDatePersian})`,
             customer: b.notes ? `یادداشت شیفت: ${b.notes}` : 'ثبت و بایگانی شیفت در دیتابیس',
             dateStr: b.closedAt || b.dateISO || new Date().toISOString(),
-            gameplayCost: b.totalGameplayRevenue || 0,
-            buffetCost: (b.totalSessionBuffetCost || 0) + (b.totalDirectBuffetSales || 0),
+            gameplayCost: gameplayRevenue,
+            buffetCost: sessionBuffetCost + (b.totalDirectBuffetSales || 0),
             totalCost:
-              b.totalGrossRevenue ||
-              (b.totalGameplayRevenue + b.totalSessionBuffetCost + b.totalDirectBuffetSales),
+              grossRevenue ||
+              (gameplayRevenue + sessionBuffetCost + (b.totalDirectBuffetSales || 0)),
             paymentMethod:
               b.paidCardAmount && b.paidCardAmount > 0 && b.paidCashAmount && b.paidCashAmount > 0
                 ? 'mixed'
@@ -462,60 +466,60 @@ export default function ReportsTab({
   // High-Level Global KPI Cards (computed across all backups + open shift)
   const netEarningsToday = useMemo(() => {
     const fromBackups = dailyBackups
-      .filter((b) => checkBackupDateInRange(b, 'today'))
+      .filter((b) => checkBackupDateInRange(b, 'today', true))
       .reduce((sum, b) => sum + (b.totalGrossRevenue || 0), 0);
     const fromOpenSessions = history
       .filter((h) => !backupSessionIdSet.has(h.id))
-      .filter((h) => checkOpenShiftDateInRange(h.endTime || h.startTime, 'today'))
+      .filter((h) => checkOpenShiftDateInRange(h.endTime || h.startTime, 'today', true))
       .reduce((sum, h) => sum + (h.totalCost || 0), 0);
     const fromOpenSales = directSales
       .filter((s) => !backupSaleIdSet.has(s.id))
-      .filter((s) => checkOpenShiftDateInRange(s.date, 'today'))
+      .filter((s) => checkOpenShiftDateInRange(s.date, 'today', true))
       .reduce((sum, s) => sum + (s.totalCost || 0), 0);
     return fromBackups + fromOpenSessions + fromOpenSales;
   }, [dailyBackups, history, directSales, backupSessionIdSet, backupSaleIdSet]);
 
   const netEarningsWeek = useMemo(() => {
     const fromBackups = dailyBackups
-      .filter((b) => checkBackupDateInRange(b, 'week'))
+      .filter((b) => checkBackupDateInRange(b, 'week', true))
       .reduce((sum, b) => sum + (b.totalGrossRevenue || 0), 0);
     const fromOpenSessions = history
       .filter((h) => !backupSessionIdSet.has(h.id))
-      .filter((h) => checkOpenShiftDateInRange(h.endTime || h.startTime, 'week'))
+      .filter((h) => checkOpenShiftDateInRange(h.endTime || h.startTime, 'week', true))
       .reduce((sum, h) => sum + (h.totalCost || 0), 0);
     const fromOpenSales = directSales
       .filter((s) => !backupSaleIdSet.has(s.id))
-      .filter((s) => checkOpenShiftDateInRange(s.date, 'week'))
+      .filter((s) => checkOpenShiftDateInRange(s.date, 'week', true))
       .reduce((sum, s) => sum + (s.totalCost || 0), 0);
     return fromBackups + fromOpenSessions + fromOpenSales;
   }, [dailyBackups, history, directSales, backupSessionIdSet, backupSaleIdSet]);
 
   const netEarningsMonth = useMemo(() => {
     const fromBackups = dailyBackups
-      .filter((b) => checkBackupDateInRange(b, 'month'))
+      .filter((b) => checkBackupDateInRange(b, 'month', true))
       .reduce((sum, b) => sum + (b.totalGrossRevenue || 0), 0);
     const fromOpenSessions = history
       .filter((h) => !backupSessionIdSet.has(h.id))
-      .filter((h) => checkOpenShiftDateInRange(h.endTime || h.startTime, 'month'))
+      .filter((h) => checkOpenShiftDateInRange(h.endTime || h.startTime, 'month', true))
       .reduce((sum, h) => sum + (h.totalCost || 0), 0);
     const fromOpenSales = directSales
       .filter((s) => !backupSaleIdSet.has(s.id))
-      .filter((s) => checkOpenShiftDateInRange(s.date, 'month'))
+      .filter((s) => checkOpenShiftDateInRange(s.date, 'month', true))
       .reduce((sum, s) => sum + (s.totalCost || 0), 0);
     return fromBackups + fromOpenSessions + fromOpenSales;
   }, [dailyBackups, history, directSales, backupSessionIdSet, backupSaleIdSet]);
 
   const netEarningsYear = useMemo(() => {
     const fromBackups = dailyBackups
-      .filter((b) => checkBackupDateInRange(b, 'year'))
+      .filter((b) => checkBackupDateInRange(b, 'year', true))
       .reduce((sum, b) => sum + (b.totalGrossRevenue || 0), 0);
     const fromOpenSessions = history
       .filter((h) => !backupSessionIdSet.has(h.id))
-      .filter((h) => checkOpenShiftDateInRange(h.endTime || h.startTime, 'year'))
+      .filter((h) => checkOpenShiftDateInRange(h.endTime || h.startTime, 'year', true))
       .reduce((sum, h) => sum + (h.totalCost || 0), 0);
     const fromOpenSales = directSales
       .filter((s) => !backupSaleIdSet.has(s.id))
-      .filter((s) => checkOpenShiftDateInRange(s.date, 'year'))
+      .filter((s) => checkOpenShiftDateInRange(s.date, 'year', true))
       .reduce((sum, s) => sum + (s.totalCost || 0), 0);
     return fromBackups + fromOpenSessions + fromOpenSales;
   }, [dailyBackups, history, directSales, backupSessionIdSet, backupSaleIdSet]);
@@ -530,8 +534,47 @@ export default function ReportsTab({
 
   const highestValue = Math.max(...breakdownChartData.map(item => item.value), 1);
 
+  // سلامت بکاپ مالی: اگر بیش از ۳۰ روز از آخرین پشتیبان‌گیری گذشته باشد هشدار داده می‌شود
+  const BACKUP_STALE_DAYS = 30;
+  const lastBackupAt = dailyBackups.length > 0
+    ? Math.max(...dailyBackups.map((b) => new Date(b.closedAt || b.dateISO).getTime() || 0))
+    : 0;
+  const daysSinceBackup = lastBackupAt > 0 ? Math.floor((Date.now() - lastBackupAt) / 86400000) : null;
+  const backupStale = daysSinceBackup === null || daysSinceBackup >= BACKUP_STALE_DAYS;
+
   return (
     <div className="space-y-6" dir="rtl">
+
+      {/* Backup health check */}
+      {backupStale && (
+        <div className="p-4 bg-rose-950/40 border border-rose-500/40 rounded-2xl flex items-start sm:items-center justify-between gap-3 shadow-xl" role="alert">
+          <div className="flex items-start sm:items-center gap-3">
+            <div className="p-2.5 bg-rose-500/20 text-rose-400 rounded-xl border border-rose-500/30 shrink-0">
+              <Database className="w-5 h-5" />
+            </div>
+            <div className="space-y-0.5">
+              <h4 className="text-rose-300 font-bold text-sm">
+                {daysSinceBackup === null
+                  ? 'هیچ بکاپ مالی ثبت نشده است!'
+                  : `آخرین بکاپ مالی ${toPersianDigits(daysSinceBackup)} روز پیش بوده است!`}
+              </h4>
+              <p className="text-[11px] text-rose-200/70">
+                بیش از ۳۰ روز از پشتیبان‌گیری گذشته و داده‌های مالی در برابر خرابی محافظت نمی‌شوند. از بخش «دیتابیس بکاپ‌ها» همین امروز بکاپ بگیرید.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+      {!backupStale && daysSinceBackup !== null && (
+        <div className="p-3 bg-emerald-950/30 border border-emerald-500/25 rounded-2xl flex items-center gap-3 shadow-lg" role="status">
+          <div className="p-2 bg-emerald-500/15 text-emerald-400 rounded-xl border border-emerald-500/25 shrink-0">
+            <CheckCircle2 className="w-4 h-4" />
+          </div>
+          <p className="text-[11px] text-emerald-200/80 font-medium">
+            پشتیبان‌گیری مالی سالم است — آخرین بکاپ {daysSinceBackup === 0 ? 'امروز' : `${toPersianDigits(daysSinceBackup)} روز پیش`} ثبت شده است.
+          </p>
+        </div>
+      )}
       
       {/* High-Level KPIs */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -723,7 +766,7 @@ export default function ReportsTab({
                   {dailyBackups.map((b, idx) => (
                     <option key={b.id} value={b.id}>
                       {idx === 0 ? '⭐ آخرین بکاپ: ' : '📅 '}
-                      روز کاری {b.workingDatePersian} ({formatCurrency(b.totalGrossRevenue)})
+                      روز کاری {b.workingDatePersian} ({formatCurrency(b.totalGrossRevenue || 0)})
                     </option>
                   ))}
                 </select>
@@ -822,22 +865,22 @@ export default function ReportsTab({
                   همه تاریخ‌ها
                 </button>
 
-                {/* Custom Date Picker Selector */}
+                {/* Custom Date Picker Selector (تقویم شمسی) */}
                 <div className="flex items-center gap-1.5 pr-1.5 mr-1 border-r border-white/10">
-                  <input
-                    type="date"
+                  <JalaliDatePicker
                     value={customDate}
-                    onChange={(e) => {
-                      setCustomDate(e.target.value);
-                      if (e.target.value) {
-                        setSelectedBackupId('all');
-                        setDateFilter('custom');
-                      }
+                    onChange={(iso) => {
+                      setCustomDate(iso);
+                      setSelectedBackupId('all');
+                      setDateFilter('custom');
                     }}
-                    className={`bg-surface-151921 text-[10px] text-slate-300 border rounded-lg px-2 py-1 outline-none transition-all cursor-pointer font-sans ${
-                      dateFilter === 'custom' ? 'border-blue-500 text-blue-300 ring-1 ring-blue-500/20' : 'border-white/10 hover:border-white/20'
-                    }`}
-                    title="انتخاب روز خاص تقویمی"
+                    onClear={() => {
+                      setCustomDate('');
+                      setDateFilter('all');
+                    }}
+                    getJalali={getJalaliFromDate}
+                    jdnFromJalali={jalaliToJdn}
+                    toPersianDigits={toPersianDigits}
                   />
                   {dateFilter === 'custom' && (
                     <button
@@ -955,7 +998,7 @@ export default function ReportsTab({
                             ) : null}
                           </td>
                           <td className="px-4 py-3 text-left font-mono font-bold space-y-1">
-                            <div className="text-slate-100 text-xs">{formatCurrency(item.totalCost)}</div>
+                            <div className="text-slate-100 text-xs">{formatCurrency(item.totalCost || 0)}</div>
                             <div className="flex flex-col items-end gap-1">
                               {item.paymentMethod === 'card' ? (
                                 <span className="inline-block px-1.5 py-0.5 text-[8px] tracking-tight bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded">
