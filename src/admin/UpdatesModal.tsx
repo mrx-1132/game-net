@@ -221,8 +221,9 @@ export default function UpdatesModal({ licenses, onClose, notify }: Props) {
           <div className="text-xs font-bold text-white">انتشار نسخه جدید</div>
           <div className="text-[11px] text-slate-400 leading-6">
             ۱. روی کامپیوتر خودتان (نسخه را یکی بالاتر بگذارید):
-            <div className="my-1 px-2 py-1 bg-black/30 rounded-lg font-mono text-amber-300 text-left" dir="ltr">npm run release -- 1.2.0 "Fix settle bug"</div>
-            ۲. همه فایل‌های پوشه <code className="text-amber-300" dir="ltr">release/1.2.0</code> را با هم اینجا انتخاب کنید.
+            <div className="my-1 px-2 py-1 bg-black/30 rounded-lg font-mono text-amber-300 text-left" dir="ltr">npm run release -- 2.0.1 "توضیح تغییرات"</div>
+            ۲. همه فایل‌های پوشه <code className="text-amber-300" dir="ltr">release/2.0.1</code> را با هم اینجا انتخاب کنید
+            (شامل <span dir="ltr" className="font-mono">GameNet-Manager-Setup-2.0.1-x64.exe</span>، نسخه ۳۲ بیتی، و <span dir="ltr" className="font-mono">manifest.json</span> و <span dir="ltr" className="font-mono">manifest.sig</span>).
           </div>
           <label className="flex items-center justify-center gap-2 py-3 border border-dashed border-white/20 rounded-xl text-xs text-slate-300 cursor-pointer hover:bg-white/5">
             <Upload className="w-4 h-4" />
