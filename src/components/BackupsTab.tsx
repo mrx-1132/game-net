@@ -16,8 +16,9 @@ let sqlPromise: Promise<any> | null = null;
 const getSqlJsInstance = () => {
   if (!sqlPromise) {
     sqlPromise = initSqlJs({
-      locateFile: (file) => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.12.0/${file}`
-    });
+      locateFile: (file) => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.12.0/${file}`,
+      useOldExtensionFunctions: false
+    } as any);
   }
   return sqlPromise;
 };
@@ -1474,7 +1475,7 @@ export default function BackupsTab({
                 </div>
                 <div>
                   <h3 className="text-base font-bold text-white">ورود رمز عبور مدیریت</h3>
-                  <p className="text-[11px] text-slate-400">جهت تایید بازیابی و بارگذاری دیتابیس، لطفاً رمز مدیریت را وارد نمایید.</p>
+                  <p className="text-[11px] text-slate-400">جهت تایید بازیابی و بارگذاری دیتابیس، لطفاً رمز مدیریت سیستمی که این بکاپ از آن گرفته شده را وارد نمایید.</p>
                 </div>
               </div>
               <button
@@ -1510,7 +1511,8 @@ export default function BackupsTab({
                   return;
                 }
 
-                const expectedPass = adminPassword || '123';
+                const backupPass = pendingRestore.payload?.adminPassword;
+                const expectedPass = (typeof backupPass === 'string' && backupPass !== '') ? backupPass : (adminPassword || '123');
                 if (trimmed !== expectedPass) {
                   setPasswordModalError('رمز عبور وارد شده اشتباه است!');
                   return;
@@ -1539,7 +1541,7 @@ export default function BackupsTab({
                       setAdminPasswordInput(e.target.value);
                       setPasswordModalError('');
                     }}
-                    placeholder="رمز مدیریت (پیش‌فرض: 123)..."
+                    placeholder="رمز مدیریت سیستم مبدأ بکاپ..."
                     className="w-full text-center text-sm font-mono px-4 py-2.5 bg-surface-151921 border border-blue-500/30 focus:border-blue-400 rounded-xl text-white outline-none placeholder-slate-500 transition-all shadow-inner"
                   />
                   <Lock className="w-4 h-4 text-slate-500 absolute left-3 top-3 pointer-events-none" />
