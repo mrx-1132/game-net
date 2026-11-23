@@ -5,6 +5,6 @@
 // - در نسخه نهایی فقط آدرس https پذیرفته می‌شود.
 module.exports = {
   SERVERS: [
-    'https://game-net-2-production.up.railway.app',
+    'https://license.atomgclub.ir',
   ],
 };
