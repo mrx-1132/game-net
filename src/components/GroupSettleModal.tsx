@@ -375,7 +375,8 @@ export default function GroupSettleModal({
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50 overflow-y-auto" dir="rtl">
-      <div className="bg-surface-0f1219 border border-white/10 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden my-8">
+      <div className="bg-surface-0f1219 border border-white/10 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden my-8 max-h-[calc(100vh-4rem)] flex flex-col">
+        <div className="overflow-y-auto">
         
         {/* Header decoration */}
         <div className="bg-gradient-to-r from-blue-600 to-indigo-700/80 p-5 px-6 flex items-center justify-between text-white relative">
@@ -583,7 +584,92 @@ export default function GroupSettleModal({
             </div>
           </div>
 
-          {/* Mode Tabs */}
+          {/* Dedicated Bill Splitting Section (بخش مجزای محاسبه دنگ / تقسیم بر) — مستقل از روش پرداخت */}
+          <div className="p-3 bg-surface-151921/80 border border-emerald-500/25 rounded-2xl space-y-3 text-right" dir="rtl" id="group-split-bill-section">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/5 pb-2">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center">
+                  <Calculator className="w-4 h-4" />
+                </div>
+                <div>
+                  <span className="text-xs font-black text-emerald-400 block">🧮 محاسبه دنگ و تقسیم فاکتور (تقسیم بر)</span>
+                  <span className="text-[9.5px] text-slate-400 block">محاسبه و تقسیم سریع حساب جلسه بازی بین بازیکنان</span>
+                </div>
+              </div>
+
+              {cashDivision > 1 && (
+                <button
+                  type="button"
+                  onClick={() => setCashDivision(1)}
+                  className="px-2.5 py-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 rounded-lg text-[10px] font-bold transition-all cursor-pointer flex items-center gap-1"
+                >
+                  <span>بازنشانی به حالت تک‌نفره</span>
+                </button>
+              )}
+            </div>
+
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span className="text-[10px] font-bold text-slate-300">تعداد نفرات برای تقسیم حساب:</span>
+              <div className="flex items-center gap-1.5 bg-surface-0b0e14 p-1 border border-white/10 rounded-xl">
+                {(cashDivisors || [2, 3, 4, 5]).map((divisor) => (
+                  <button
+                    key={divisor}
+                    type="button"
+                    onClick={() => setCashDivision(cashDivision === divisor ? 1 : divisor)}
+                    className={`px-3 py-1 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer ${
+                      cashDivision === divisor
+                        ? 'bg-emerald-500 text-black shadow-md shadow-emerald-500/20'
+                        : 'text-emerald-300 hover:bg-emerald-500/20'
+                    }`}
+                  >
+                    ÷{divisor}
+                  </button>
+                ))}
+                <div className="flex items-center gap-1 pr-1.5 border-r border-white/10">
+                  <span className="text-[10px] text-slate-500">سفارشی:</span>
+                  <input
+                    type="number"
+                    min="1"
+                    max="100"
+                    value={cashDivision > 1 ? cashDivision : ''}
+                    onChange={(e) => {
+                      const val = Math.max(1, parseInt(e.target.value) || 1);
+                      setCashDivision(val);
+                    }}
+                    placeholder="تعداد"
+                    className="w-12 h-7 bg-surface-151921 border border-emerald-500/40 rounded-lg text-center text-xs font-mono text-emerald-300 focus:outline-none focus:border-emerald-400 font-bold"
+                    title="تعداد نفرات جهت تقسیم حساب"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {cashDivision > 1 ? (
+              <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl flex items-center justify-between text-emerald-300 text-xs font-semibold animate-in zoom-in-95 duration-150">
+                <div className="flex items-center gap-2">
+                  <Users className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <div>
+                    <span className="text-[10px] text-slate-300 block">سهم قابل پرداخت هر بازیکن ({cashDivision} نفر):</span>
+                    <span className="text-[9px] text-slate-400 font-mono">
+                      {formatCurrency(finalTotalCost)} ÷ {cashDivision} نفر
+                    </span>
+                  </div>
+                </div>
+                <div className="text-left">
+                  <span className="font-mono text-emerald-400 text-base font-black block">
+                    {formatCurrency(Math.round(finalTotalCost / cashDivision))}
+                  </span>
+                  <span className="text-[8.5px] text-slate-400">تومان برای هر نفر</span>
+                </div>
+              </div>
+            ) : (
+              <div className="text-[9.5px] text-slate-500 text-center py-1 bg-surface-0b0e14/40 rounded-lg border border-white/5">
+                💡 جهت برآورد سهم پرداختی هر بازیکن، روی کلید‌های (÷۲، ÷۳ و...) یا تعداد سفارشی کلیک کنید.
+              </div>
+            )}
+          </div>
+
+          {/* Mode Tabs — زیر بخش تقسیم */}
           <div className="space-y-1.5">
             <label className="text-[11px] text-slate-400 font-bold block">مکانیسم دریافت هزینه و روش تسویه گروهی:</label>
             <div className="grid grid-cols-4 gap-1.5 bg-surface-0b0e14 border border-white/5 p-1 rounded-xl">
@@ -617,73 +703,18 @@ export default function GroupSettleModal({
                 );
               })}
             </div>
-
-            {paymentMethod === 'cash' && (
-              <div className="p-3.5 bg-emerald-500/5 border border-emerald-500/20 rounded-xl space-y-2.5 animate-in fade-in duration-200 mt-2">
-                <div className="flex flex-wrap items-center justify-between gap-2 text-right">
-                  <div className="space-y-0.5">
-                    <span className="text-[11px] font-bold text-emerald-400 block">💵 تسویه نقدی کامل ({formatCurrency(finalTotalCost)})</span>
-                    <span className="text-[9px] text-slate-400 block">ثبت کل مبلغ فاکتور به صورت پول نقد در صندوق.</span>
-                  </div>
-
-                  {/* Division Calculator */}
-                  <div className="flex items-center gap-1 bg-surface-0b0e14 p-1 border border-emerald-500/30 rounded-lg">
-                    <div className="flex items-center gap-1 px-1 text-[10px] text-emerald-400 font-bold border-l border-white/10">
-                      <Calculator className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                      <span>تقسیم بر:</span>
-                    </div>
-                    {(cashDivisors || [2, 3, 4]).map((divisor) => (
-                      <button
-                        key={divisor}
-                        type="button"
-                        onClick={() => setCashDivision(cashDivision === divisor ? 1 : divisor)}
-                        className={`px-2 py-0.5 rounded text-xs font-mono font-bold transition-all cursor-pointer ${
-                          cashDivision === divisor
-                            ? 'bg-emerald-500 text-black shadow-sm'
-                            : 'text-emerald-300 hover:bg-emerald-500/20'
-                        }`}
-                      >
-                        ÷{divisor}
-                      </button>
-                    ))}
-                    <div className="flex items-center gap-1 pr-1 border-r border-white/10">
-                      <input
-                        type="number"
-                        min="1"
-                        max="100"
-                        value={cashDivision > 1 ? cashDivision : ''}
-                        onChange={(e) => {
-                          const val = Math.max(1, parseInt(e.target.value) || 1);
-                          setCashDivision(val);
-                        }}
-                        placeholder="تعداد"
-                        className="w-11 h-6 bg-surface-151921 border border-emerald-500/40 rounded text-center text-xs font-mono text-emerald-300 focus:outline-none focus:border-emerald-400"
-                        title="تعداد نفرات جهت تقسیم"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {cashDivision > 1 && (
-                  <div className="p-2.5 bg-surface-0b0e14 border border-emerald-500/30 rounded-lg flex items-center justify-between text-emerald-300 text-xs font-semibold animate-in zoom-in-95 duration-150">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] text-slate-400">سهم هر نفر (تقسیم بر {cashDivision} نفر):</span>
-                      <button
-                        type="button"
-                        onClick={() => setCashDivision(1)}
-                        className="text-[9px] text-rose-400 hover:underline cursor-pointer"
-                      >
-                        (لغو)
-                      </button>
-                    </div>
-                    <span className="font-mono text-emerald-400 text-sm font-bold">
-                      {formatCurrency(Math.round(finalTotalCost / cashDivision))}
-                    </span>
-                  </div>
-                )}
-              </div>
-            )}
           </div>
+
+          {paymentMethod === 'cash' && (
+            <div className="p-3.5 bg-emerald-500/5 border border-emerald-500/20 rounded-xl space-y-2.5 animate-in fade-in duration-200 mt-2">
+              <div className="flex flex-wrap items-center justify-between gap-2 text-right">
+                <div className="space-y-0.5">
+                  <span className="text-[11px] font-bold text-emerald-400 block">💵 تسویه نقدی کامل ({formatCurrency(finalTotalCost)})</span>
+                  <span className="text-[9px] text-slate-400 block">ثبت کل مبلغ فاکتور به صورت پول نقد در صندوق.</span>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Card Reader Selection */}
           {(paymentMethod === 'card' || paymentMethod === 'mixed') && (
@@ -991,6 +1022,7 @@ export default function GroupSettleModal({
             </button>
           </div>
         </form>
+        </div>
       </div>
     </div>
   );
