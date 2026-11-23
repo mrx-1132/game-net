@@ -75,18 +75,32 @@ export default function DebtTab({
 
   const activeDebtor = selectedDebtorId ? debtors.find((d) => d.id === selectedDebtorId) : null;
 
-  // Calculate total play time for a debtor (manual + recorded history)
+  const getInvoicePlayMinutes = (tx: DebtCustomer['transactions'][number]): number => {
+    if (tx.type !== 'debt_added') return 0;
+    if (typeof tx.playMinutes === 'number') return tx.playMinutes;
+    const match = tx.description?.match(/مدت:\s*(\d+)\s*دقیقه/);
+    return match ? parseInt(match[1], 10) : 0;
+  };
+
+  // Calculate total play time for a debtor (manual + game invoices on the account + history not already counted by an invoice)
   const getDebtorPlayTime = (debtor: DebtCustomer): number => {
     let totalMinutes = debtor.totalPlayTimeMinutes || 0;
+    const invoices = (debtor.transactions || [])
+      .map((tx) => ({ time: new Date(tx.date).getTime(), minutes: getInvoicePlayMinutes(tx) }))
+      .filter((inv) => inv.minutes > 0);
+    invoices.forEach((inv) => {
+      totalMinutes += inv.minutes;
+    });
     if (history && history.length > 0) {
       history.forEach((h) => {
         const isMatched =
           h.debtCustomerId === debtor.id ||
           h.debtDetails?.some((d) => d.debtorId === debtor.id) ||
           (h.customerName && h.customerName.trim().toLowerCase() === debtor.name.trim().toLowerCase());
-        if (isMatched && h.durationMinutes) {
-          totalMinutes += h.durationMinutes;
-        }
+        if (!isMatched || !h.durationMinutes) return;
+        const endTime = new Date(h.endTime).getTime();
+        const coveredByInvoice = invoices.some((inv) => Math.abs(inv.time - endTime) <= 60000);
+        if (!coveredByInvoice) totalMinutes += h.durationMinutes;
       });
     }
     return totalMinutes;

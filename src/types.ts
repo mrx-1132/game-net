@@ -90,6 +90,7 @@ export interface Transaction {
   amount: number;
   date: string; // ISO string
   description: string;
+  playMinutes?: number; // Play time (minutes) this invoice adds to the debtor's total play time
 }
 
 export interface DebtCustomer {

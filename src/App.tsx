@@ -1368,6 +1368,11 @@ export default function App() {
     let finalDebtorId = params.debtCustomerId;
     let updatedDebtors = [...debtors];
     const registeredDebtDetailLogs: { debtorId?: string; name: string; phone?: string; amount: number }[] = [];
+    const totalDebtShare = (params.debtDetails || []).reduce((sum, di) => sum + di.amount, 0);
+    const playMinutesShare = (amount: number) =>
+      params.debtDetails && params.debtDetails.length > 1 && totalDebtShare > 0
+        ? Math.round(params.durationMinutes * (amount / totalDebtShare))
+        : params.durationMinutes;
 
     // 1. Debt registration in Ledger
     if (params.debtDetails && params.debtDetails.length > 0) {
@@ -1387,6 +1392,7 @@ export default function App() {
                 amount: debtItem.amount,
                 date: new Date().toISOString(),
                 description: `سهم بدهی سیستم بازی ${sys.name} (مدت: ${params.durationMinutes} دقیقه)`,
+                playMinutes: playMinutesShare(debtItem.amount),
               },
             ],
           };
@@ -1412,6 +1418,7 @@ export default function App() {
                     amount: debtItem.amount,
                     date: new Date().toISOString(),
                     description: `سهم بدهی سیستم بازی ${sys.name} (مدت: ${params.durationMinutes} دقیقه)`,
+                    playMinutes: playMinutesShare(debtItem.amount),
                   },
                   ...d.transactions,
                 ],
@@ -1445,6 +1452,7 @@ export default function App() {
               amount: params.totalCost,
               date: new Date().toISOString(),
               description: `حساب دفتری سیستم بازی ${sys.name}`,
+              playMinutes: params.durationMinutes,
             },
           ],
         };
@@ -1463,6 +1471,7 @@ export default function App() {
                     amount: params.totalCost,
                     date: new Date().toISOString(),
                     description: `حساب دفتری سیستم بازی ${sys.name}`,
+                    playMinutes: params.durationMinutes,
                   },
                   ...d.transactions,
                 ],
@@ -1581,7 +1590,14 @@ export default function App() {
 
     const groupSumRaw = systemSessions.reduce((sum, item) => sum + item.metrics.totalCost, 0);
     // If we have rounding offset or minor adjustments, ratio works splendidly
-    const actualSubmitedCost = params.totalCost; 
+    const actualSubmitedCost = params.totalCost;
+    const groupDurationMinutes = systemSessions.reduce((sum, item) => sum + (item.metrics.durationMinutes || 0), 0);
+    const groupTotalDebtShare = (params.debtDetails || []).reduce((sum, di) => sum + di.amount, 0);
+    const groupPlayMinutesShare = (amount: number) =>
+      params.debtDetails && params.debtDetails.length > 1 && groupTotalDebtShare > 0
+        ? Math.round(groupDurationMinutes * (amount / groupTotalDebtShare))
+        : groupDurationMinutes;
+
 
     // Proportional ratios allocation
     const newHistoryItems: SessionHistory[] = [];
@@ -1607,6 +1623,7 @@ export default function App() {
                 amount: debtItem.amount,
                 date: new Date().toISOString(),
                 description: `سهم بدهی فاکتور گروهی دستگاه‌ها (مبلغ کل: ${actualSubmitedCost.toLocaleString()})`,
+                playMinutes: groupPlayMinutesShare(debtItem.amount),
               },
             ],
           };
@@ -1631,6 +1648,7 @@ export default function App() {
                     amount: debtItem.amount,
                     date: new Date().toISOString(),
                     description: `سهم بدهی فاکتور گروهی دستگاه‌ها (مجموع: ${actualSubmitedCost.toLocaleString()})`,
+                    playMinutes: groupPlayMinutesShare(debtItem.amount),
                   },
                   ...d.transactions,
                 ],
