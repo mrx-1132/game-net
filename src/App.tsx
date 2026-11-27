@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Monitor, ShoppingCart, Users, ClipboardCheck, BarChart3, 
   Settings, Flame, Info, Clock, AlertTriangle, RefreshCw,
@@ -79,6 +79,22 @@ const getStoredLocal = (key: string, defaults: any) => {
     return defaults;
   }
 };
+
+// ساعت بالای صفحه: state خودش را دارد تا هر ثانیه کل App دوباره رندر نشود
+const HeaderClock = React.memo(function HeaderClock({ part }: { part: 'time' | 'date' }) {
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(id);
+  }, []);
+  return (
+    <>
+      {part === 'time'
+        ? now.toLocaleTimeString('fa-IR')
+        : now.toLocaleDateString('fa-IR', { year: 'numeric', month: '2-digit', day: '2-digit' })}
+    </>
+  );
+});
 
 export default function App() {
   // Tabs active state
@@ -229,9 +245,6 @@ export default function App() {
   const [addExtraServiceSysId, setAddExtraServiceSysId] = useState<string | null>(null);
   const [isCloseDayModalOpen, setIsCloseDayModalOpen] = useState(false);
 
-  // Live time ticker for general header stats (optional)
-  const [headerTime, setHeaderTime] = useState(new Date());
-
   // LocalStorage Loading Cycle & Power Outage Detection
   useEffect(() => {
     try {
@@ -349,15 +362,46 @@ export default function App() {
     };
   }, []);
 
-  // Save to LocalStorage whenever state modifies
+  // Refs برای ذخیره‌ی debounce شده
+  const lastSavedRef = useRef<Record<string, any>>({});
+  const pendingSaveRef = useRef<(() => void) | null>(null);
+  const storageWarnedRef = useRef(false);
+
+  // اگر برنامه بسته شد و ذخیره‌ی معلقی مانده بود، فوراً ذخیره شود
   useEffect(() => {
-    const saveStore = (key: string, data: any) => {
-      if (data === undefined) {
-        localStorage.removeItem(LOCAL_STORAGE_KEY_PREFIX + key);
-      } else {
-        localStorage.setItem(LOCAL_STORAGE_KEY_PREFIX + key, JSON.stringify(data));
-      }
+    const flush = () => { pendingSaveRef.current?.(); };
+    window.addEventListener('beforeunload', flush);
+    window.addEventListener('pagehide', flush);
+    return () => {
+      window.removeEventListener('beforeunload', flush);
+      window.removeEventListener('pagehide', flush);
     };
+  }, []);
+
+  // Save to LocalStorage whenever state modifies
+  // - ذخیره با ۵۰۰ میلی‌ثانیه تأخیر (debounce) تا با هر تغییر پشت‌سرهم، کل داده‌ها دوباره نوشته نشود
+  // - فقط کلیدهایی که واقعاً تغییر کرده‌اند دوباره JSON می‌شوند
+  // - اگر حافظه پر شد، خطا ثبت می‌شود و یک بار به کاربر هشدار داده می‌شود
+  useEffect(() => {
+    const doSave = () => {
+      pendingSaveRef.current = null;
+      const saveStore = (key: string, data: any) => {
+        if (key in lastSavedRef.current && lastSavedRef.current[key] === data) return;
+        try {
+          if (data === undefined) {
+            localStorage.removeItem(LOCAL_STORAGE_KEY_PREFIX + key);
+          } else {
+            localStorage.setItem(LOCAL_STORAGE_KEY_PREFIX + key, JSON.stringify(data));
+          }
+          lastSavedRef.current[key] = data;
+        } catch (err) {
+          console.error(`Failed to save "${key}" to localStorage`, err);
+          if (!storageWarnedRef.current) {
+            storageWarnedRef.current = true;
+            setTimeout(() => alert('هشدار: حافظه ذخیره‌سازی برنامه پر شده و تغییرات جدید ذخیره نمی‌شوند. لطفاً از بخش بکاپ یک نسخه پشتیبان بگیرید و داده‌های قدیمی را پاک کنید.'), 0);
+          }
+        }
+      };
     saveStore('rates', rates);
     saveStore('systems', systems);
     saveStore('buffetItems', buffetItems);
@@ -380,13 +424,11 @@ export default function App() {
     saveStore('requireOperatorLogin', requireOperatorLogin);
     saveStore('extraServicePresets', extraServicePresets);
     saveStore('telegramConfig', telegramConfig);
+    };
+    pendingSaveRef.current = doSave;
+    const timerId = setTimeout(doSave, 500);
+    return () => clearTimeout(timerId);
   }, [rates, systems, buffetItems, debtors, history, directSales, dailyBackups, layoutMode, alarmIntervalSeconds, presetTimerMinutes, cashDivisors, cardReaders, adminPassword, adminUsername, adminAutoLogoutMinutes, appName, appLogo, userPermissions, operators, requireOperatorLogin, extraServicePresets, telegramConfig]);
-
-  // General Clock Tick
-  useEffect(() => {
-    const id = setInterval(() => setHeaderTime(new Date()), 1000);
-    return () => clearInterval(id);
-  }, []);
 
   // Admin Auto-logout on Inactivity
   useEffect(() => {
@@ -2080,6 +2122,8 @@ export default function App() {
 
   const handleResetFactoryDefaults = () => {
     localStorage.clear();
+    lastSavedRef.current = {};
+    pendingSaveRef.current = null;
     setRates(DEFAULT_RATES);
     setSystems(DEFAULT_SYSTEMS);
     setBuffetItems(DEFAULT_BUFFET);
@@ -2562,9 +2606,9 @@ export default function App() {
             </button>
 
             <div className="hidden md:flex flex-col text-left items-end justify-center">
-              <span className="text-white text-base sm:text-xl font-black font-mono tracking-wide leading-none">{headerTime.toLocaleTimeString('fa-IR')}</span>
+              <span className="text-white text-base sm:text-xl font-black font-mono tracking-wide leading-none"><HeaderClock part="time" /></span>
               <span className="text-zinc-300 text-base sm:text-xl font-black font-mono tracking-wide leading-none mt-1 select-none" dir="ltr">
-                {headerTime.toLocaleDateString('fa-IR', { year: 'numeric', month: '2-digit', day: '2-digit' })}
+                <HeaderClock part="date" />
               </span>
             </div>
 

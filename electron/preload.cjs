@@ -36,3 +36,8 @@ contextBridge.exposeInMainWorld('updateBridge', {
     return () => ipcRenderer.removeListener('update:changed', h);
   },
 });
+
+contextBridge.exposeInMainWorld('appBridge', {
+  // بعد از alert/confirm فوکوس صفحه‌کلید را به پنجره برمی‌گرداند (باگ Electron روی ویندوز)
+  refocus: () => ipcRenderer.send('app:refocus'),
+});

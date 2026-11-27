@@ -139,6 +139,20 @@ export function getSessionMetrics(
 /**
  * Format date nicely in Persian style
  */
+let _faDateTimeFmt: Intl.DateTimeFormat | null = null;
+function getFaDateTimeFmt(): Intl.DateTimeFormat {
+  if (!_faDateTimeFmt) {
+    _faDateTimeFmt = new Intl.DateTimeFormat('fa-IR', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  }
+  return _faDateTimeFmt;
+}
+
 export function formatDatePersian(dateStr: string): string {
   if (!dateStr) return '-';
   try {
@@ -146,13 +160,7 @@ export function formatDatePersian(dateStr: string): string {
     if (isNaN(d.getTime())) {
       return toLatinDigits(String(dateStr));
     }
-    const formatted = d.toLocaleDateString('fa-IR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    const formatted = getFaDateTimeFmt().format(d);
     return toLatinDigits(formatted);
   } catch (e) {
     return toLatinDigits(String(dateStr));

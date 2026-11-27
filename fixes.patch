@@ -1,0 +1,359 @@
+--- a/electron/main.cjs	2026-11-26 09:29:01.000000000 +0000
++++ b/electron/main.cjs	2026-11-27 14:48:42.871976115 +0000
+@@ -1,4 +1,4 @@
+-const { app, BrowserWindow, Menu, dialog } = require('electron');
++const { app, BrowserWindow, Menu, dialog, ipcMain } = require('electron');
+ const fs = require('fs');
+ const path = require('path');
+ 
+@@ -61,6 +61,18 @@
+ 
+ let mainWindow;
+ 
++// بعد از بسته شدن alert/confirm روی ویندوز فوکوس صفحه‌کلید از صفحه گرفته می‌شود
++// (ماوس کار می‌کند ولی تایپ نه). با blur/focus فوکوس برمی‌گردد.
++ipcMain.on('app:refocus', () => {
++  const w = mainWindow;
++  if (!w || w.isDestroyed()) return;
++  try {
++    w.blur();
++    w.focus();
++    w.webContents.focus();
++  } catch (e) { log('refocus failed', e); }
++});
++
+ function createWindow() {
+   mainWindow = new BrowserWindow({
+     title: 'سامانه هوشمند مدیریت گیم‌نت | GameNet Manager',
+--- a/electron/preload.cjs	2026-11-26 09:29:01.000000000 +0000
++++ b/electron/preload.cjs	2026-11-27 14:48:42.871645548 +0000
+@@ -36,3 +36,8 @@
+     return () => ipcRenderer.removeListener('update:changed', h);
+   },
+ });
++
++contextBridge.exposeInMainWorld('appBridge', {
++  // بعد از alert/confirm فوکوس صفحه‌کلید را به پنجره برمی‌گرداند (باگ Electron روی ویندوز)
++  refocus: () => ipcRenderer.send('app:refocus'),
++});
+--- a/src/main.tsx	2026-11-26 09:29:01.000000000 +0000
++++ b/src/main.tsx	2026-11-27 14:48:42.872164280 +0000
+@@ -3,6 +3,19 @@
+ import App from './App.tsx';
+ import './index.css';
+ 
++// رفع باگ فوکوس در Electron/ویندوز: بعد از هر alert/confirm/prompt فوکوس پنجره را برمی‌گردانیم
++(() => {
++  const refocus = () => {
++    try { (window as any).appBridge?.refocus?.(); } catch { /* ignore */ }
++  };
++  const origAlert = window.alert.bind(window);
++  const origConfirm = window.confirm.bind(window);
++  const origPrompt = window.prompt.bind(window);
++  window.alert = (msg?: any) => { origAlert(msg); refocus(); };
++  window.confirm = (msg?: string) => { const r = origConfirm(msg); refocus(); return r; };
++  window.prompt = (msg?: string, def?: string) => { const r = origPrompt(msg, def); refocus(); return r; };
++})();
++
+ createRoot(document.getElementById('root')!).render(
+   <StrictMode>
+     <App />
+--- a/src/utils.ts	2026-11-26 09:29:01.000000000 +0000
++++ b/src/utils.ts	2026-11-27 14:48:42.872366948 +0000
+@@ -139,6 +139,20 @@
+ /**
+  * Format date nicely in Persian style
+  */
++let _faDateTimeFmt: Intl.DateTimeFormat | null = null;
++function getFaDateTimeFmt(): Intl.DateTimeFormat {
++  if (!_faDateTimeFmt) {
++    _faDateTimeFmt = new Intl.DateTimeFormat('fa-IR', {
++      year: 'numeric',
++      month: 'long',
++      day: 'numeric',
++      hour: '2-digit',
++      minute: '2-digit',
++    });
++  }
++  return _faDateTimeFmt;
++}
++
+ export function formatDatePersian(dateStr: string): string {
+   if (!dateStr) return '-';
+   try {
+@@ -146,13 +160,7 @@
+     if (isNaN(d.getTime())) {
+       return toLatinDigits(String(dateStr));
+     }
+-    const formatted = d.toLocaleDateString('fa-IR', {
+-      year: 'numeric',
+-      month: 'long',
+-      day: 'numeric',
+-      hour: '2-digit',
+-      minute: '2-digit'
+-    });
++    const formatted = getFaDateTimeFmt().format(d);
+     return toLatinDigits(formatted);
+   } catch (e) {
+     return toLatinDigits(String(dateStr));
+--- a/src/App.tsx	2026-11-26 09:29:01.000000000 +0000
++++ b/src/App.tsx	2026-11-27 14:49:04.312256079 +0000
+@@ -1,4 +1,4 @@
+-import React, { useState, useEffect } from 'react';
++import React, { useState, useEffect, useRef } from 'react';
+ import { 
+   Monitor, ShoppingCart, Users, ClipboardCheck, BarChart3, 
+   Settings, Flame, Info, Clock, AlertTriangle, RefreshCw,
+@@ -80,6 +80,22 @@
+   }
+ };
+ 
++// ساعت بالای صفحه: state خودش را دارد تا هر ثانیه کل App دوباره رندر نشود
++const HeaderClock = React.memo(function HeaderClock({ part }: { part: 'time' | 'date' }) {
++  const [now, setNow] = useState(() => new Date());
++  useEffect(() => {
++    const id = setInterval(() => setNow(new Date()), 1000);
++    return () => clearInterval(id);
++  }, []);
++  return (
++    <>
++      {part === 'time'
++        ? now.toLocaleTimeString('fa-IR')
++        : now.toLocaleDateString('fa-IR', { year: 'numeric', month: '2-digit', day: '2-digit' })}
++    </>
++  );
++});
++
+ export default function App() {
+   // Tabs active state
+   const [activeTab, setActiveTab] = useState<'dashboard' | 'buffet' | 'debt' | 'reports' | 'settings' | 'backups' | 'services'>('dashboard');
+@@ -229,9 +245,6 @@
+   const [addExtraServiceSysId, setAddExtraServiceSysId] = useState<string | null>(null);
+   const [isCloseDayModalOpen, setIsCloseDayModalOpen] = useState(false);
+ 
+-  // Live time ticker for general header stats (optional)
+-  const [headerTime, setHeaderTime] = useState(new Date());
+-
+   // LocalStorage Loading Cycle & Power Outage Detection
+   useEffect(() => {
+     try {
+@@ -349,15 +362,46 @@
+     };
+   }, []);
+ 
+-  // Save to LocalStorage whenever state modifies
++  // Refs برای ذخیره‌ی debounce شده
++  const lastSavedRef = useRef<Record<string, any>>({});
++  const pendingSaveRef = useRef<(() => void) | null>(null);
++  const storageWarnedRef = useRef(false);
++
++  // اگر برنامه بسته شد و ذخیره‌ی معلقی مانده بود، فوراً ذخیره شود
+   useEffect(() => {
+-    const saveStore = (key: string, data: any) => {
+-      if (data === undefined) {
+-        localStorage.removeItem(LOCAL_STORAGE_KEY_PREFIX + key);
+-      } else {
+-        localStorage.setItem(LOCAL_STORAGE_KEY_PREFIX + key, JSON.stringify(data));
+-      }
++    const flush = () => { pendingSaveRef.current?.(); };
++    window.addEventListener('beforeunload', flush);
++    window.addEventListener('pagehide', flush);
++    return () => {
++      window.removeEventListener('beforeunload', flush);
++      window.removeEventListener('pagehide', flush);
+     };
++  }, []);
++
++  // Save to LocalStorage whenever state modifies
++  // - ذخیره با ۵۰۰ میلی‌ثانیه تأخیر (debounce) تا با هر تغییر پشت‌سرهم، کل داده‌ها دوباره نوشته نشود
++  // - فقط کلیدهایی که واقعاً تغییر کرده‌اند دوباره JSON می‌شوند
++  // - اگر حافظه پر شد، خطا ثبت می‌شود و یک بار به کاربر هشدار داده می‌شود
++  useEffect(() => {
++    const doSave = () => {
++      pendingSaveRef.current = null;
++      const saveStore = (key: string, data: any) => {
++        if (key in lastSavedRef.current && lastSavedRef.current[key] === data) return;
++        try {
++          if (data === undefined) {
++            localStorage.removeItem(LOCAL_STORAGE_KEY_PREFIX + key);
++          } else {
++            localStorage.setItem(LOCAL_STORAGE_KEY_PREFIX + key, JSON.stringify(data));
++          }
++          lastSavedRef.current[key] = data;
++        } catch (err) {
++          console.error(`Failed to save "${key}" to localStorage`, err);
++          if (!storageWarnedRef.current) {
++            storageWarnedRef.current = true;
++            setTimeout(() => alert('هشدار: حافظه ذخیره‌سازی برنامه پر شده و تغییرات جدید ذخیره نمی‌شوند. لطفاً از بخش بکاپ یک نسخه پشتیبان بگیرید و داده‌های قدیمی را پاک کنید.'), 0);
++          }
++        }
++      };
+     saveStore('rates', rates);
+     saveStore('systems', systems);
+     saveStore('buffetItems', buffetItems);
+@@ -380,14 +424,12 @@
+     saveStore('requireOperatorLogin', requireOperatorLogin);
+     saveStore('extraServicePresets', extraServicePresets);
+     saveStore('telegramConfig', telegramConfig);
++    };
++    pendingSaveRef.current = doSave;
++    const timerId = setTimeout(doSave, 500);
++    return () => clearTimeout(timerId);
+   }, [rates, systems, buffetItems, debtors, history, directSales, dailyBackups, layoutMode, alarmIntervalSeconds, presetTimerMinutes, cashDivisors, cardReaders, adminPassword, adminUsername, adminAutoLogoutMinutes, appName, appLogo, userPermissions, operators, requireOperatorLogin, extraServicePresets, telegramConfig]);
+ 
+-  // General Clock Tick
+-  useEffect(() => {
+-    const id = setInterval(() => setHeaderTime(new Date()), 1000);
+-    return () => clearInterval(id);
+-  }, []);
+-
+   // Admin Auto-logout on Inactivity
+   useEffect(() => {
+     if (userRole !== 'admin' || adminAutoLogoutMinutes <= 0) {
+@@ -2080,6 +2122,8 @@
+ 
+   const handleResetFactoryDefaults = () => {
+     localStorage.clear();
++    lastSavedRef.current = {};
++    pendingSaveRef.current = null;
+     setRates(DEFAULT_RATES);
+     setSystems(DEFAULT_SYSTEMS);
+     setBuffetItems(DEFAULT_BUFFET);
+@@ -2562,9 +2606,9 @@
+             </button>
+ 
+             <div className="hidden md:flex flex-col text-left items-end justify-center">
+-              <span className="text-white text-base sm:text-xl font-black font-mono tracking-wide leading-none">{headerTime.toLocaleTimeString('fa-IR')}</span>
++              <span className="text-white text-base sm:text-xl font-black font-mono tracking-wide leading-none"><HeaderClock part="time" /></span>
+               <span className="text-zinc-300 text-base sm:text-xl font-black font-mono tracking-wide leading-none mt-1 select-none" dir="ltr">
+-                {headerTime.toLocaleDateString('fa-IR', { year: 'numeric', month: '2-digit', day: '2-digit' })}
++                <HeaderClock part="date" />
+               </span>
+             </div>
+ 
+--- a/src/components/ReportsTab.tsx	2026-11-26 09:29:01.000000000 +0000
++++ b/src/components/ReportsTab.tsx	2026-11-27 14:48:42.873752475 +0000
+@@ -1,4 +1,4 @@
+-import React, { useState, useMemo } from 'react';
++import React, { useState, useMemo, useEffect } from 'react';
+ import { 
+   TrendingUp, Calendar, Search, Layers, CircleDollarSign, Receipt, Printer, Filter, Database, CheckCircle2, ChevronDown
+ } from 'lucide-react';
+@@ -40,18 +40,32 @@
+ }
+ 
+ // Extract Jalali year, month, day from a Date object
++// formatter فقط یک بار ساخته می‌شود (ساختنش گران است) و نتیجه‌ها کش می‌شوند
++let _jalaliFmt: Intl.DateTimeFormat | null = null;
++const _jalaliCache = new Map<number, { jy: number; jm: number; jd: number }>();
+ function getJalaliFromDate(d: Date): { jy: number; jm: number; jd: number } {
++  const t = d.getTime();
++  const cached = _jalaliCache.get(t);
++  if (cached) return cached;
+   try {
+-    const parts = new Intl.DateTimeFormat('fa-IR-u-nu-latn', {
+-      year: 'numeric',
+-      month: 'numeric',
+-      day: 'numeric',
+-    }).formatToParts(d);
+-    return {
++    if (!_jalaliFmt) {
++      _jalaliFmt = new Intl.DateTimeFormat('fa-IR-u-nu-latn', {
++        year: 'numeric',
++        month: 'numeric',
++        day: 'numeric',
++      });
++    }
++    const parts = _jalaliFmt.formatToParts(d);
++    const res = {
+       jy: parseInt(parts.find((p) => p.type === 'year')?.value || '1405', 10),
+       jm: parseInt(parts.find((p) => p.type === 'month')?.value || '1', 10),
+       jd: parseInt(parts.find((p) => p.type === 'day')?.value || '1', 10),
+     };
++    if (!isNaN(t)) {
++      if (_jalaliCache.size > 20000) _jalaliCache.clear();
++      _jalaliCache.set(t, res);
++    }
++    return res;
+   } catch {
+     return { jy: 1405, jm: 1, jd: 1 };
+   }
+@@ -165,7 +179,7 @@
+   return true;
+ }
+ 
+-export default function ReportsTab({
++function ReportsTab({
+   history = [],
+   directSales = [],
+   dailyBackups = [],
+@@ -175,6 +189,7 @@
+   const [selectedBackupId, setSelectedBackupId] = useState<string>('all');
+   const [customDate, setCustomDate] = useState<string>('');
+   const [search, setSearch] = useState('');
++  const [page, setPage] = useState(1);
+   const [selectedInvoiceForModal, setSelectedInvoiceForModal] = useState<InvoiceReceiptData | null>(null);
+ 
+   // Set of session and sale IDs present in closed backups to prevent duplicate counting and rendering
+@@ -463,6 +478,16 @@
+     });
+   }, [unfilteredDisplayItems, search]);
+ 
++  // صفحه‌بندی: فقط ۵۰ ردیف در هر صفحه رندر می‌شود
++  const PAGE_SIZE = 50;
++  const totalPages = Math.max(1, Math.ceil(displayItems.length / PAGE_SIZE));
++  const currentPage = Math.min(page, totalPages);
++  const pagedItems = useMemo(
++    () => displayItems.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE),
++    [displayItems, currentPage]
++  );
++  useEffect(() => { setPage(1); }, [dateFilter, selectedBackupId, customDate, search]);
++
+   // High-Level Global KPI Cards (computed across all backups + open shift)
+   const netEarningsToday = useMemo(() => {
+     const fromBackups = dailyBackups
+@@ -967,7 +992,7 @@
+                         </td>
+                       </tr>
+                     ) : (
+-                      displayItems.map((item, idx) => (
++                      pagedItems.map((item, idx) => (
+                         <tr key={`${item.type}-${item.id}-${idx}`} className="hover:bg-white/5 transition-colors text-[11px]">
+                           <td className="px-4 py-3">
+                             <span className="font-bold text-slate-200 block">{item.title}</span>
+@@ -1074,6 +1099,29 @@
+                   </tbody>
+                 </table>
+               </div>
++              {totalPages > 1 && (
++                <div className="flex items-center justify-center gap-3 py-3 border-t border-white/5 text-xs">
++                  <button
++                    type="button"
++                    disabled={currentPage <= 1}
++                    onClick={() => setPage(currentPage - 1)}
++                    className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 font-bold disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed"
++                  >
++                    قبلی
++                  </button>
++                  <span className="text-slate-400 font-mono">
++                    صفحه {currentPage} از {totalPages}
++                  </span>
++                  <button
++                    type="button"
++                    disabled={currentPage >= totalPages}
++                    onClick={() => setPage(currentPage + 1)}
++                    className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 font-bold disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed"
++                  >
++                    بعدی
++                  </button>
++                </div>
++              )}
+             </div>
+           </div>
+ 
+@@ -1093,3 +1141,5 @@
+     </div>
+   );
+ }
++
++export default React.memo(ReportsTab);

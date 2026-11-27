@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, dialog } = require('electron');
+const { app, BrowserWindow, Menu, dialog, ipcMain } = require('electron');
 const fs = require('fs');
 const path = require('path');
 
@@ -60,6 +60,18 @@ try {
 }
 
 let mainWindow;
+
+// بعد از بسته شدن alert/confirm روی ویندوز فوکوس صفحه‌کلید از صفحه گرفته می‌شود
+// (ماوس کار می‌کند ولی تایپ نه). با blur/focus فوکوس برمی‌گردد.
+ipcMain.on('app:refocus', () => {
+  const w = mainWindow;
+  if (!w || w.isDestroyed()) return;
+  try {
+    w.blur();
+    w.focus();
+    w.webContents.focus();
+  } catch (e) { log('refocus failed', e); }
+});
 
 function createWindow() {
   mainWindow = new BrowserWindow({

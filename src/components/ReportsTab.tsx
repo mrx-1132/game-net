@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { 
   TrendingUp, Calendar, Search, Layers, CircleDollarSign, Receipt, Printer, Filter, Database, CheckCircle2, ChevronDown
 } from 'lucide-react';
@@ -40,18 +40,32 @@ function jalaliToJdn(jy: number, jm: number, jd: number): number {
 }
 
 // Extract Jalali year, month, day from a Date object
+// formatter فقط یک بار ساخته می‌شود (ساختنش گران است) و نتیجه‌ها کش می‌شوند
+let _jalaliFmt: Intl.DateTimeFormat | null = null;
+const _jalaliCache = new Map<number, { jy: number; jm: number; jd: number }>();
 function getJalaliFromDate(d: Date): { jy: number; jm: number; jd: number } {
+  const t = d.getTime();
+  const cached = _jalaliCache.get(t);
+  if (cached) return cached;
   try {
-    const parts = new Intl.DateTimeFormat('fa-IR-u-nu-latn', {
-      year: 'numeric',
-      month: 'numeric',
-      day: 'numeric',
-    }).formatToParts(d);
-    return {
+    if (!_jalaliFmt) {
+      _jalaliFmt = new Intl.DateTimeFormat('fa-IR-u-nu-latn', {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+      });
+    }
+    const parts = _jalaliFmt.formatToParts(d);
+    const res = {
       jy: parseInt(parts.find((p) => p.type === 'year')?.value || '1405', 10),
       jm: parseInt(parts.find((p) => p.type === 'month')?.value || '1', 10),
       jd: parseInt(parts.find((p) => p.type === 'day')?.value || '1', 10),
     };
+    if (!isNaN(t)) {
+      if (_jalaliCache.size > 20000) _jalaliCache.clear();
+      _jalaliCache.set(t, res);
+    }
+    return res;
   } catch {
     return { jy: 1405, jm: 1, jd: 1 };
   }
@@ -165,7 +179,7 @@ function matchDateFilter(
   return true;
 }
 
-export default function ReportsTab({
+function ReportsTab({
   history = [],
   directSales = [],
   dailyBackups = [],
@@ -175,6 +189,7 @@ export default function ReportsTab({
   const [selectedBackupId, setSelectedBackupId] = useState<string>('all');
   const [customDate, setCustomDate] = useState<string>('');
   const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
   const [selectedInvoiceForModal, setSelectedInvoiceForModal] = useState<InvoiceReceiptData | null>(null);
 
   // Set of session and sale IDs present in closed backups to prevent duplicate counting and rendering
@@ -462,6 +477,16 @@ export default function ReportsTab({
       );
     });
   }, [unfilteredDisplayItems, search]);
+
+  // صفحه‌بندی: فقط ۵۰ ردیف در هر صفحه رندر می‌شود
+  const PAGE_SIZE = 50;
+  const totalPages = Math.max(1, Math.ceil(displayItems.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const pagedItems = useMemo(
+    () => displayItems.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE),
+    [displayItems, currentPage]
+  );
+  useEffect(() => { setPage(1); }, [dateFilter, selectedBackupId, customDate, search]);
 
   // High-Level Global KPI Cards (computed across all backups + open shift)
   const netEarningsToday = useMemo(() => {
@@ -967,7 +992,7 @@ export default function ReportsTab({
                         </td>
                       </tr>
                     ) : (
-                      displayItems.map((item, idx) => (
+                      pagedItems.map((item, idx) => (
                         <tr key={`${item.type}-${item.id}-${idx}`} className="hover:bg-white/5 transition-colors text-[11px]">
                           <td className="px-4 py-3">
                             <span className="font-bold text-slate-200 block">{item.title}</span>
@@ -1074,6 +1099,29 @@ export default function ReportsTab({
                   </tbody>
                 </table>
               </div>
+              {totalPages > 1 && (
+                <div className="flex items-center justify-center gap-3 py-3 border-t border-white/5 text-xs">
+                  <button
+                    type="button"
+                    disabled={currentPage <= 1}
+                    onClick={() => setPage(currentPage - 1)}
+                    className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 font-bold disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed"
+                  >
+                    قبلی
+                  </button>
+                  <span className="text-slate-400 font-mono">
+                    صفحه {currentPage} از {totalPages}
+                  </span>
+                  <button
+                    type="button"
+                    disabled={currentPage >= totalPages}
+                    onClick={() => setPage(currentPage + 1)}
+                    className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 font-bold disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed"
+                  >
+                    بعدی
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
@@ -1093,3 +1141,5 @@ export default function ReportsTab({
     </div>
   );
 }
+
+export default React.memo(ReportsTab);
