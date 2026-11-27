@@ -1,17 +1,17 @@
 name: Build Windows EXE (GameNet Manager)
 
-# با هر تغییر در کد برنامه ویندوز، نسخه exe را می‌سازد و در بخش Releases می‌گذارد.
+# با هر تغییر در کد برنامه، نصب‌کننده‌های ۶۴ و ۳۲ بیتی را می‌سازد، manifest.json را تولید و
+# با کلید خصوصی (Secret: LICENSE_SIGNING_KEY) امضا می‌کند (manifest.sig) و همه را در Releases می‌گذارد.
+# همین ۴ فایل را در پنل لایسنس‌سرور ← انتشار نسخه جدید انتخاب و آپلود کنید.
 # - خودکار: push به main یا feature/secure-licensing (به‌جز تغییرات پوشه mobile)
-# - نسخه: major.minor از version.json + patch خودکار (با هر کامیت یکی بالا می‌رود: 1.2.1، 1.2.2، ...)
-#   برای آپدیت بزرگ (مثلاً 1.3) فقط minor را در version.json عوض کن؛ patch دوباره از 0 شروع می‌شود.
+# - نسخه: major.minor از version.json + patch خودکار (تعداد کامیت‌ها بعد از آخرین تغییر version.json)
 # - دستی: تب Actions ← Run workflow (با امکان تعیین نسخه)
-# خروجی: GameNet-Manager-Setup-<نسخه>.exe (نصب) و GameNet-Manager-Portable-<نسخه>.exe (بدون نصب)
 
 on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'نسخه (مثلاً 1.2.1) — خالی بگذار برای همان نسخه package.json'
+        description: 'نسخه (مثلاً 1.2.3) — خالی بگذار برای نسخه خودکار'
         required: false
   push:
     branches: [main, feature/secure-licensing]
@@ -23,6 +23,7 @@ on:
       - 'package.json'
       - 'version.json'
       - 'scripts/compute-version.mjs'
+      - 'scripts/release.mjs'
       - 'vite.config.ts'
       - '.github/workflows/build-exe.yml'
 
@@ -36,7 +37,7 @@ concurrency:
 jobs:
   build:
     runs-on: windows-latest
-    timeout-minutes: 40
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
         with:
@@ -55,35 +56,45 @@ jobs:
 
       - name: تعیین نسخه
         shell: bash
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
         run: |
-          if [ -n "${{ inputs.version }}" ]; then
-            VERSION="${{ inputs.version }}"
+          if [ -n "$INPUT_VERSION" ]; then
+            VERSION="$INPUT_VERSION"
           else
             VERSION="$(node scripts/compute-version.mjs)"
           fi
           echo "APP_VERSION=$VERSION" >> "$GITHUB_ENV"
           npm version "$VERSION" --no-git-tag-version --allow-same-version
 
-      - name: بیلد رابط کاربری
-        run: |
-          npm run build
-          test -f dist/index.html
-
-      - name: پکیج ویندوز
-        run: npx electron-builder --win --publish never
+      - name: ساخت و امضای آپدیت
+        shell: bash
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SIGNING_KEY: ${{ secrets.LICENSE_SIGNING_KEY }}
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+        run: |
+          if [ -z "$SIGNING_KEY" ]; then
+            echo "::error::Secret با نام LICENSE_SIGNING_KEY تنظیم نشده است."
+            exit 1
+          fi
+          mkdir -p update-signing
+          printf '%s\n' "$SIGNING_KEY" > update-signing/update-private.pem
+          NOTES="$(printf '%s' "${COMMIT_MSG:-GitHub build}" | head -n 1)"
+          node scripts/release.mjs "$APP_VERSION" "$NOTES"
+
+      - name: پاک کردن کلید از روی runner
+        if: always()
+        shell: bash
+        run: rm -f update-signing/update-private.pem
 
       - name: آپلود در Releases
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ env.APP_VERSION }}
           name: GameNet Manager ${{ env.APP_VERSION }}
-          files: |
-            dist-electron/*.exe
-            dist-electron/*.yml
+          files: release/${{ env.APP_VERSION }}/*
           body: |
             نسخه ویندوز GameNet Manager
-            - Setup: نصب معمولی روی ویندوز
-            - Portable: اجرا بدون نصب
-          fail_on_unmatched_files: false
+            برای انتشار در پنل لایسنس‌سرور هر ۴ فایل را با هم انتخاب کنید:
+            manifest.json، manifest.sig و دو نصب‌کننده x64 و ia32
+          fail_on_unmatched_files: true
